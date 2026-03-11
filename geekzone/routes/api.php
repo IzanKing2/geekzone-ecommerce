@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
@@ -31,6 +32,10 @@ Route::middleware('jwt.auth')->group(function () {
     // ———— Perfil de usuario —————————————————————————————————
     Route::get('/perfil', [ProfileController::class, 'show']);
     Route::put('/perfil', [ProfileController::class, 'update']);
+
+    // ———— Subir imagen —————————————————————————————————
+    // Acepta archvos via multipart/form-data (no JSON)
+    Route::post('/imagenes', [ImageController::class, 'store']);
 });
 
 // ———————————————————————————————————————————————————————————————————————————
