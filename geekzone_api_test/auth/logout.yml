@@ -1,0 +1,18 @@
+info:
+  name: logout
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: http://localhost:8080/api/logout
+  headers:
+    - name: Authorization
+      value: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2xvZ2luIiwiaWF0IjoxNzczMjM0NjI2LCJleHAiOjE3NzMyMzgyMjYsIm5iZiI6MTc3MzIzNDYyNiwianRpIjoiTmRTWXRzZUN6MUFaenNCMiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3Iiwicm9sIjoiYWRtaW4ifQ.f6hgB6YWIocGeL1bUjNCkNZThOJTXOOD6Me3a3tvEaM
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
