@@ -1,30 +1,39 @@
-/vendor/
-node_modules/
-npm-debug.log
-yarn-error.log
+# ——————————————————————————————————————————————————————————————————————
+# .gitignore para GeekZone
+# ——————————————————————————————————————————————————————————————————————
+# Lista de archivos y carpetas que Git debe IGNORAR.
+# Estos archivos NO se subirán al repositorio porque:
+# - Contienen datos sensibles (.env, contraseñas)
+# - Son generados automáticamente (vendor, node_modules)
+# - Son específicos de cada máquina (logs, caché)
+# ——————————————————————————————————————————————————————————————————————
 
-# Laravel 4 specific
-bootstrap/compiled.php
-app/storage/
-
-# Laravel 5 & Lumen specific
-public/storage
-public/hot
-
-# Laravel 5 & Lumen specific with changed public path
-public_html/storage
-public_html/hot
-
-storage/*.key
+# ———— Archivos sensibles ————————————————————————
 .env
-Homestead.yaml
-Homestead.json
-/.vagrant
-.phpunit.result.cache
+*.env.local
 
-/public/build
-/storage/pail
-.env.backup
-.env.production
-.phpactor.json
-auth.json
+# ———— Dependencias (se regeneran con composer/npm install) ————————————————————————
+/src/vendor/
+/src/node_modules/
+
+# ———— Archivos de caché y logs de Laravel ————————————————————————
+/src/storage/logs/*
+/src/storage/framework/cache/*
+/src/storage/framework/sessions/*
+/src/storage/framework/views/*
+/src/bootstrap/cache/*
+
+# ———— Archivos del sistema operativo ————————————————————————
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ———— Archivos de IDEs ————————————————————————
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ———— Docker ————————————————————————
+# Los volúmenes de datos de MySQL se gestionan por Docker, no por Git
+geekzone-db-data/
