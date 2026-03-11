@@ -32,7 +32,7 @@ Route::middleware('jwt.auth')->group(function () {
 // RUTAS DE ADMINISTRACIÓN (requieren JWT + rol admin)
 // ———————————————————————————————————————————————————————————————————————————
 
-Route::middleware(['jwt.auth', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['jwt.auth', 'admin'])->group(function () {
     // ———— CRUD Categorías —————————————————————————————————
     Route::post('/categorias', [CategoryController::class, 'store']);
     Route::put('/categorias/{id}', [CategoryController::class, 'update']);

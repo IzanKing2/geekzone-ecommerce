@@ -11,7 +11,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::withCount('products')
-            ->orderBy('nombre')
+            ->orderBy('name')
             ->get();
 
         return response()->json([
@@ -26,18 +26,18 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nombre'      => 'required|string|max:255|unique:categorias',
-            'descripcion' => 'nullable|string',
-            'imagen_url'  => 'nullable|string|max:500',
+            'name'      => 'required|string|max:255|unique:categories',
+            'description' => 'nullable|string',
+            'image_url'  => 'nullable|string|max:500',
         ], [
-            'nombre.required' => 'El nombre de la categoría es obligatorio.',
-            'nombre.unique'   => 'Ya existe una categoría con ese nombre.',
+            'name.required' => 'El nombre de la categoría es obligatorio.',
+            'name.unique'   => 'Ya existe una categoría con ese nombre.',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'mensaje' => 'Error de validación.',
-                'errores' => $validator->errors(),
+                'message' => 'Error de validación.',
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -60,9 +60,9 @@ class CategoryController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'nombre'      => 'sometimes|string|max:255|unique:categorias,nombre,' . $category->id,
-            'descripcion' => 'sometimes|nullable|string',
-            'imagen_url'  => 'sometimes|nullable|string|max:500',
+            'name'      => 'sometimes|string|max:255|unique:categories,name,' . $category->id,
+            'description' => 'sometimes|nullable|string',
+            'image_url'  => 'sometimes|nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {
@@ -91,10 +91,10 @@ class CategoryController extends Controller
         }
 
         // Verificar si tiene productos asociados
-        $cantidadProductos = $category->products()->count();
-        if ($cantidadProductos > 0) {
+        $quantityProducts = $category->products()->count();
+        if ($quantityProducts > 0) {
             return response()->json([
-                'message' => 'No se puede eliminar: esta categoría tiene ' . $cantidadProductos . ' productos asociados. Elimina o mueve los productos primero.',
+                'message' => 'No se puede eliminar: esta categoría tiene ' . $quantityProducts . ' productos asociados. Elimina o mueve los productos primero.',
             ], 400);
         }
 

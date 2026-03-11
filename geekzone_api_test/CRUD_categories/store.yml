@@ -6,6 +6,19 @@ info:
 http:
   method: POST
   url: http://localhost:8080/api/categorias
+  headers:
+    - name: Authorization
+      value: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2xvZ2luIiwiaWF0IjoxNzczMjQzMzk5LCJleHAiOjE3NzMyNDY5OTksIm5iZiI6MTc3MzI0MzM5OSwianRpIjoia000T0M2cVRNTUlpWnlEciIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3Iiwicm9sZSI6ImFkbWluIn0.ehn_-qewGmW0eohb1vB076jYMfIYGkC6wohyQ4E-e_Q
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Gaming",
+        "description": "Videojuegos y tarjetas de compra. Experimenta, disfruta, juega!",
+        "image_url": "img/categories/gaming.jpg"
+      }
   auth: inherit
 
 settings:

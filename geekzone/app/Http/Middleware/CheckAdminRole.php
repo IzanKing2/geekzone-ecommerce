@@ -18,7 +18,7 @@ class CheckAdminRole
     {
         $user = Auth::user();
 
-        if (!$user || $user->rol !== 'admin') {
+        if (!$user || $user->role !== 'admin') {
             return response()->json([
                 'message' => 'Acceso denegado: debes ser administrador para acceder a este recurso',
             ], 403);
