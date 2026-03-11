@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -13,8 +14,11 @@ use Illuminate\Support\Facades\Route;
 // ———— Registro de usuario —————————————————————————————————
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
 // ———— Productos y categorías: acceso público —————————————————————————————————
 Route::get('/categorias', [CategoryController::class, 'index']);
+Route::get('/productos', [ProductController::class, 'index']);
+Route::get('/productos/{id}', [ProductController::class, 'show']);
 
 // ———————————————————————————————————————————————————————————————————————————
 // RUTAS PROTEGIDAS (requieren JWT — cualquier usuario)
@@ -23,6 +27,7 @@ Route::get('/categorias', [CategoryController::class, 'index']);
 Route::middleware('jwt.auth')->group(function () {
     // ———— Registro de usuario —————————————————————————————————
     Route::post('/logout', [AuthController::class, 'logout']);
+
     // ———— Perfil de usuario —————————————————————————————————
     Route::get('/perfil', [ProfileController::class, 'show']);
     Route::put('/perfil', [ProfileController::class, 'update']);
@@ -37,4 +42,9 @@ Route::middleware(['jwt.auth', 'admin'])->group(function () {
     Route::post('/categorias', [CategoryController::class, 'store']);
     Route::put('/categorias/{id}', [CategoryController::class, 'update']);
     Route::delete('/categorias/{id}', [CategoryController::class, 'destroy']);
+
+    // ———— CRUD Productos —————————————————————————————————
+    Route::post('/productos', [ProductController::class, 'store']);
+    Route::put('/productos/{id}', [ProductController::class, 'update']);
+    Route::delete('/productos/{id}', [ProductController::class, 'destroy']);
 });

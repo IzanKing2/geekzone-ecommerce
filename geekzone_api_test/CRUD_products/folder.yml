@@ -1,0 +1,7 @@
+info:
+  name: CRUD_products
+  type: folder
+  seq: 4
+
+request:
+  auth: inherit

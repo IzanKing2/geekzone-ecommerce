@@ -1,0 +1,31 @@
+info:
+  name: store
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: http://localhost:8080/api/productos
+  headers:
+    - name: Authorization
+      value: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2xvZ2luIiwiaWF0IjoxNzczMjQzNzY3LCJleHAiOjE3NzMyNDczNjcsIm5iZiI6MTc3MzI0Mzc2NywianRpIjoiZVZ3QklTVVZUa1RpZWFNQiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3Iiwicm9sZSI6ImFkbWluIn0.mO_oqFx1DZXZtH7gGOmhTsbL7O4lxKCBnUKb-39UX2w
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Marvel's Spider-Man 2 Figura",
+        "description": "Figura de colección del videojuego de Imsomniac Games Marvel's Spider-Man 2 con Venom y Miles Morales",
+        "price": 146.68,
+        "stock": 6,
+        "image_url": "img/products/spiderman2.jpg",
+        "category_id": 1
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
