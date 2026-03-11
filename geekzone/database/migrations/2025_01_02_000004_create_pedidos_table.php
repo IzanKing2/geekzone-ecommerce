@@ -11,12 +11,12 @@ return new class extends Migration
         // ——————————————————————————————————————————————————————————————————————
         // TABLA PEDIDOS (cabecera del pedido)
         // ——————————————————————————————————————————————————————————————————————
-        Schema::create('pedidos', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
                   ->constrained('users')
                   ->onDelete('cascade');
-            $table->enum('estado', ['pendiente', 'procesando', 'enviado', 'entregado', 'cancelado'])
+            $table->enum('status', ['pendiente', 'procesando', 'enviado', 'entregado', 'cancelado'])
                   ->default('pendiente');
             $table->decimal('total', 10, 2);
             $table->timestamps();
@@ -26,23 +26,23 @@ return new class extends Migration
         // ——————————————————————————————————————————————————————————————————————
         // TABLA DETALLE_PEDIDOS (líneas del pedido)
         // ——————————————————————————————————————————————————————————————————————
-        Schema::create('detalle_pedidos', function (Blueprint $table) {
+        Schema::create('order_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pedido_id')
-                  ->constrained('pedidos')
+            $table->foreignId('order_id')
+                  ->constrained('orders')
                   ->onDelete('cascade');
-            $table->foreignId('producto_id')
-                  ->constrained('productos')
+            $table->foreignId('product_id')
+                  ->constrained('products')
                   ->onDelete('restrict');
-            $table->integer('cantidad')->unsigned();
-            $table->decimal('precio_unitario', 10, 2);
+            $table->integer('quantity')->unsigned();
+            $table->decimal('price', 10, 2);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('detalle_pedidos');
-        Schema::dropIfExists('pedidos');
+        Schema::dropIfExists('order_details');
+        Schema::dropIfExists('orders');
     }
 };

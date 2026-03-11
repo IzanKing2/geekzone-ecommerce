@@ -4,34 +4,34 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Producto extends Model
+class Order extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
-    protected $table = 'productos';
+    protected $table = 'orders';
 
     protected $fillable = [
-        'nombre',
-        'descripcion',
-        'precio',
-        'stock',
-        'imagen_url',
-        'categoria_id',
+        'user_id',
+        'status',
+        'total',
     ];
 
     protected $casts = [
-        'precio' => 'decimal:2',
-        'stock' => 'integer',
+        'total' => 'decimal:2',
     ];
 
     // ——————————————————————————————————————————————————————————————————————————
     // RELACIONES
     // ——————————————————————————————————————————————————————————————————————————
 
-    public function categoria()
+    public function user()
     {
-        return $this->belongsTo(Categoria::class, 'categoria_id');
+        return $this->belongsTo(User::class);
+    }
+
+    public function details()
+    {
+        return $this->hasMany(OrderDetail::class);
     }
 }

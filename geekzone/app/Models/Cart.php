@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pedido extends Model
+class Cart extends Model
 {
     use HasFactory;
 
-    protected $table = 'pedidos';
+    protected $table = 'carts';
 
     protected $fillable = [
         'user_id',
-        'estado',
-        'total',
+        'product_id',
+        'quantity',
     ];
 
     protected $casts = [
-        'total' => 'decimal:2',
+        'quantity' => 'integer',
     ];
 
     // ——————————————————————————————————————————————————————————————————————————
@@ -30,8 +30,8 @@ class Pedido extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function detalles()
+    public function product()
     {
-        return $this->hasMany(DetallePedido::class);
+        return $this->belongsTo(Product::class);
     }
 }

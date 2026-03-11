@@ -5,35 +5,35 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DetallePedido extends Model
+class OrderDetail extends Model
 {
     use HasFactory;
 
-    protected $table = 'detalle_pedidos';
+    protected $table = 'order_details';
 
     protected $fillable = [
-        'pedido_id',
-        'producto_id',
-        'cantidad',
-        'precio_unitario',
+        'order_id',
+        'product_id',
+        'quantity',
+        'price',
     ];
 
     protected $casts = [
-        'cantidad' => 'integer',
-        'precio_unitario' => 'decimal:2',
+        'quantity' => 'integer',
+        'price' => 'decimal:2',
     ];
 
     // ——————————————————————————————————————————————————————————————————————————
     // RELACIONES
     // ——————————————————————————————————————————————————————————————————————————
 
-    public function pedido()
+    public function order()
     {
-        return $this->belongsTo(Pedido::class);
+        return $this->belongsTo(Order::class);
     }
 
-    public function producto()
+    public function product()
     {
-        return $this->belongsTo(Producto::class);
+        return $this->belongsTo(Product::class);
     }
 }

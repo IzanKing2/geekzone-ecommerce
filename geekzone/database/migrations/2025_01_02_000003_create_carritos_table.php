@@ -8,23 +8,23 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('carritos', function (Blueprint $table) {
+        Schema::create('carts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
                   ->constrained('users')
                   ->onDelete('cascade');
-            $table->foreignId('producto_id')
-                  ->constrained('productos')
+            $table->foreignId('product_id')
+                  ->constrained('products')
                   ->onDelete('cascade');
-            $table->integer('cantidad')->unsigned()->default(1);
+            $table->integer('quantity')->unsigned()->default(1);
             $table->timestamps();
             $table->index('user_id');
-            $table->unique(['user_id', 'producto_id']);
+            $table->unique(['user_id', 'product_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('carritos');
+        Schema::dropIfExists('carts');
     }
 };

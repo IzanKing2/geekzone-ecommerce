@@ -8,17 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre')->unique(); // Marvel, Stray Kids, Fútbol
-            $table->text('descripcion')->nullable();
-            $table->string('imagen_url')->nullable();
+            $table->string('name')->unique(); // Marvel, Stray Kids, Fútbol
+            $table->text('description')->nullable();
+            $table->string('image_url')->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('categories');
     }
 };

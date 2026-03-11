@@ -4,34 +4,34 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Carrito extends Model
+class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    protected $table = 'carritos';
+    protected $table = 'products';
 
     protected $fillable = [
-        'user_id',
-        'producto_id',
-        'cantidad',
+        'name',
+        'description',
+        'price',
+        'stock',
+        'image_url',
+        'category_id',
     ];
 
     protected $casts = [
-        'cantidad' => 'integer',
+        'price' => 'decimal:2',
+        'stock' => 'integer',
     ];
 
     // ——————————————————————————————————————————————————————————————————————————
     // RELACIONES
     // ——————————————————————————————————————————————————————————————————————————
 
-    public function user()
+    public function category()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function producto()
-    {
-        return $this->belongsTo(Producto::class);
+        return $this->belongsTo(Category::class, 'categoria_id');
     }
 }

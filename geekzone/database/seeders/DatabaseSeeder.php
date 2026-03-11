@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->command->info('🌱 Iniciando seeders...');
         $this->call([
-            CategoriaSeeder::class,
-            ProductoSeeder::class,
+            CategorySeeder::class,
+            ProductSeeder::class,
             UserSeeder::class,
         ]);
         $this->command->info('✅ Seeders completados');

@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin GeekZone',
             'email' => 'admin@geekzone.com',
             'password' => 'admin123',  // Se hashea automáticamente
-            'rol' => 'admin',
+            'role' => 'admin',
         ]);
 
         // ——————————————————————————————————————————————————————————————————————
@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
             'name' => 'Cliente Prueba',
             'email' => 'user@geekzone.com',
             'password' => 'user123',  // Se hashea automáticamente
-            'rol' => 'user',
+            'role' => 'user',
         ]);
     }
 }

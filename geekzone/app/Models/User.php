@@ -16,7 +16,7 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
-        'rol',
+        'role',
     ];
 
     protected $hidden = [
@@ -41,7 +41,7 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [
-            'rol' => $this->rol,
+            'role' => $this->role,
         ];
     }
 
@@ -51,20 +51,20 @@ class User extends Authenticatable implements JWTSubject
 
     public function esAdmin(): bool
     {
-        return $this->rol === 'admin';
+        return $this->role === 'admin';
     }
 
     // ——————————————————————————————————————————————————————————————————————————
     // RELACIONES
     // ——————————————————————————————————————————————————————————————————————————
 
-    public function pedidos()
+    public function orders()
     {
-        return $this->hasMany(Pedido::class);
+        return $this->hasMany(Order::class);
     }
 
-    public function carritos()
+    public function carts()
     {
-        return $this->hasMany(Carrito::class);
+        return $this->hasMany(Cart::class);
     }
 }
