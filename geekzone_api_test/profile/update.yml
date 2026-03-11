@@ -1,0 +1,27 @@
+info:
+  name: update
+  type: http
+  seq: 2
+
+http:
+  method: PUT
+  url: http://localhost:8080/api/perfil
+  headers:
+    - name: Authorization
+      value: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2xvZ2luIiwiaWF0IjoxNzczMjM2Mzc0LCJleHAiOjE3NzMyMzk5NzQsIm5iZiI6MTc3MzIzNjM3NCwianRpIjoiaFR2bHR6d1FQWUxocHhxUiIsInN1YiI6IjYiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3Iiwicm9sIjoidXNlciJ9.oSR6ADPaCkz28ch75FQqczcT0inv4_w4PPBcqEHNXok
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "password": "user123",
+        "password_confirmation": "user123"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

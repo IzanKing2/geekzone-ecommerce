@@ -12,7 +12,7 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $validador = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name'     => 'required|string|max:255',
             'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
@@ -27,14 +27,14 @@ class AuthController extends Controller
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
-        if ($validador->fails()) {
+        if ($validator->fails()) {
             return response()->json([
-                'mensaje' => 'Error de validación.',
-                'errores' => $validador->errors(),
+                'message' => 'Error de validación.',
+                'errors' => $validator->errors(),
             ], 422);
         }
 
-        $usuario = User::create([
+        $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => $request->password,
@@ -42,20 +42,20 @@ class AuthController extends Controller
         ]);
 
         // Generar token JWT para el usuario recién creado
-        $token = JWTAuth::fromUser($usuario);
+        $token = JWTAuth::fromUser($user);
 
         return response()->json([
-            'mensaje' => '¡Usuario registrado correctamente!',
-            'usuario' => $usuario,
+            'message' => '¡Usuario registrado correctamente!',
+            'user' => $user,
             'token'   => $token,
-            'tipo'    => 'Bearer',
+            'type'    => 'Bearer',
         ], 201);
     }
 
     
     public function login(Request $request)
     {
-        $validador = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'email'    => 'required|string|email',
             'password' => 'required|string',
         ], [
@@ -64,30 +64,30 @@ class AuthController extends Controller
             'password.required' => 'La contraseña es obligatoria.',
         ]);
 
-        if ($validador->fails()) {
+        if ($validator->fails()) {
             return response()->json([
-                'mensaje' => 'Error de validación.',
-                'errores' => $validador->errors(),
+                'message' => 'Error de validación.',
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         // Intentar autenticar con email y password
-        $credenciales = $request->only('email', 'password');
-        $token = Auth::attempt($credenciales);
+        $credentials = $request->only('email', 'password');
+        $token = Auth::attempt($credentials);
 
         if (!$token) {
             return response()->json([
-                'mensaje' => 'Credenciales incorrectas. Verifica tu email y contraseña.',
+                'message' => 'Credenciales incorrectas. Verifica tu email y contraseña.',
             ], 401);
         }
 
         $token = JWTAuth::fromUser(Auth::user());
 
         return response()->json([
-            'mensaje' => '¡Inicio de sesión exitoso!',
-            'usuario' => Auth::user(),
+            'message' => '¡Inicio de sesión exitoso!',
+            'user' => Auth::user(),
             'token'   => $token,
-            'tipo'    => 'Bearer',
+            'type'    => 'Bearer',
         ]);
     }
 
@@ -96,7 +96,7 @@ class AuthController extends Controller
         Auth::logout();
 
         return response()->json([
-            'mensaje' => 'Sesión cerrada correctamente.',
+            'message' => 'Sesión cerrada correctamente.',
         ]);
     }
 }
