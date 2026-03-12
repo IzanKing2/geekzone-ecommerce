@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
@@ -39,6 +40,10 @@ Route::middleware('jwt.auth')->group(function () {
     Route::post('/carrito', [CartController::class, 'store']);
     Route::put('/carrito/{id}', [CartController::class, 'update']);
     Route::delete('/carrito/{id}', [CartController::class, 'destroy']);
+
+    // ———— Pedidos —————————————————————————————————
+    Route::get('/pedidos', [OrderController::class, 'index']);
+    Route::post('/pedidos', [OrderController::class, 'store']);
 
     // ———— Subir imagen —————————————————————————————————
     // Acepta archvos via multipart/form-data (no JSON)

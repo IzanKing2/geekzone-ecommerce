@@ -1,14 +1,17 @@
 info:
-  name: delete
+  name: store
   type: http
-  seq: 3
+  seq: 2
 
 http:
-  method: DELETE
-  url: http://localhost:8080/api/carrito/1
+  method: POST
+  url: http://localhost:8080/api/pedidos
   headers:
     - name: Authorization
       value: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2xvZ2luIiwiaWF0IjoxNzczMzE1Mzg3LCJleHAiOjE3NzMzMTg5ODcsIm5iZiI6MTc3MzMxNTM4NywianRpIjoiT1JydEdQQ2w4N0F0OUpQbyIsInN1YiI6IjIiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3Iiwicm9sZSI6InVzZXIifQ.epCZKyHUmnSLMZ_rTtJzERwO-zMdvthVKDeRsK1jHZA
+  body:
+    type: json
+    data: ""
   auth: inherit
 
 settings:
