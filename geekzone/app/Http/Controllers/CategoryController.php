@@ -10,13 +10,20 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::withCount('products')
-            ->orderBy('name')
-            ->get();
+        try {
+            $categories = Category::withCount('products')
+                ->orderBy('name')
+                ->get();
 
-        return response()->json([
-            'categories' => $categories,
-        ], 200);
+            return response()->json([
+                'categories' => $categories,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener las categorías.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     // ——————————————————————————————————————————————————————————————————————————
@@ -51,57 +58,71 @@ class CategoryController extends Controller
 
     public function update(Request $request, int $id)
     {
-        $category = Category::find($id);
+        try {
+            $category = Category::find($id);
 
-        if (!$category) {
+            if (!$category) {
+                return response()->json([
+                    'message' => 'Categoría no encontrada.',
+                ], 404);
+            }
+
+            $validator = Validator::make($request->all(), [
+                'name'      => 'sometimes|string|max:255|unique:categories,name,' . $category->id,
+                'description' => 'sometimes|nullable|string',
+                'image_url'  => 'sometimes|nullable|string|max:500',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Error de validación.',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            $category->update($request->all());
+
             return response()->json([
-                'message' => 'Categoría no encontrada.',
-            ], 404);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'name'      => 'sometimes|string|max:255|unique:categories,name,' . $category->id,
-            'description' => 'sometimes|nullable|string',
-            'image_url'  => 'sometimes|nullable|string|max:500',
-        ]);
-
-        if ($validator->fails()) {
+                'message'   => 'Categoría actualizada correctamente.',
+                'category' => $category,
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Error de validación.',
-                'errors' => $validator->errors(),
-            ], 422);
+                'message' => 'Error al actualizar la categoría.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        $category->update($request->all());
-
-        return response()->json([
-            'message'   => 'Categoría actualizada correctamente.',
-            'category' => $category,
-        ]);
     }
 
     public function destroy(int $id)
     {
-        $category = Category::find($id);
-
-        if (!$category) {
+        try {
+            $category = Category::find($id);
+            
+            if (!$category) {
+                return response()->json([
+                    'message' => 'Categoría no encontrada.',
+                ], 404);
+            }
+        
+            // Verificar si tiene productos asociados
+            $quantityProducts = $category->products()->count();
+            if ($quantityProducts > 0) {
+                return response()->json([
+                    'message' => 'No se puede eliminar: esta categoría tiene ' . $quantityProducts . ' productos asociados. Elimina o mueve los productos primero.',
+                ], 400);
+            }
+        
+            $category->delete();
+        
             return response()->json([
-                'message' => 'Categoría no encontrada.',
-            ], 404);
-        }
-
-        // Verificar si tiene productos asociados
-        $quantityProducts = $category->products()->count();
-        if ($quantityProducts > 0) {
+                'message' => 'Categoría eliminada correctamente.',
+            ], 200);
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'No se puede eliminar: esta categoría tiene ' . $quantityProducts . ' productos asociados. Elimina o mueve los productos primero.',
-            ], 400);
+                'message' => 'Error al eliminar la categoría.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        $category->delete();
-
-        return response()->json([
-            'message' => 'Categoría eliminada correctamente.',
-        ], 200);
     }
 }
