@@ -71,8 +71,8 @@ docker-compose exec app php artisan db:seed
 
 | Rol | Email | Contraseña |
 |-----|-------|-----------|
-| Admin | <admin@geekzone.com> | password |
-| Cliente | <user@geekzone.com> | password |
+| Admin | <admin@geekzone.com> | admin123 |
+| Cliente | <user@geekzone.com> | user123 |
 
 ---
 
@@ -84,10 +84,10 @@ Proyecto final/
 ├── Dockerfile               # Imagen PHP personalizada
 ├── nginx/default.conf       # Configuración de Nginx
 ├── .env.example             # Plantilla de variables de entorno
-├── src/                     # Código fuente Laravel
+├── geekzone/                # Código fuente Laravel
 │   ├── app/Controllers/     # Controladores de la API
 │   ├── app/Models/          # Modelos Eloquent
-│   ├── app/Middleware/       # JWT y CheckAdminRole
+│   ├── app/Middleware/      # JWT y CheckAdminRole
 │   ├── database/migrations/ # Migraciones de la BD
 │   ├── database/seeders/    # Datos de prueba
 │   ├── routes/api.php       # Rutas de la API
