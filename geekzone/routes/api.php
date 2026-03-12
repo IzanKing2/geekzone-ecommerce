@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProductController;
@@ -32,6 +33,12 @@ Route::middleware('jwt.auth')->group(function () {
     // ———— Perfil de usuario —————————————————————————————————
     Route::get('/perfil', [ProfileController::class, 'show']);
     Route::put('/perfil', [ProfileController::class, 'update']);
+
+    // ———— CRUD Carrito —————————————————————————————————
+    Route::get('/carrito', [CartController::class, 'index']);
+    Route::post('/carrito', [CartController::class, 'store']);
+    Route::put('/carrito/{id}', [CartController::class, 'update']);
+    Route::delete('/carrito/{id}', [CartController::class, 'destroy']);
 
     // ———— Subir imagen —————————————————————————————————
     // Acepta archvos via multipart/form-data (no JSON)
