@@ -12,11 +12,11 @@ class OrderTest extends TestCase
 {
     use RefreshDatabase, CreateBaseData;
 
-    // ══════════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════════════════════════════════
     // TEST DE PEDIDOS
-    // ══════════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════════════════════════════════
 
-    // ———— Test para crear un pedido ——————————————————————————————————————————————————————————————————
+    // ———— Test para crear un pedido —————————————————————————————————————————
     public function test_create_order_from_cart(): void
     {
         // Preparar datos
@@ -61,7 +61,7 @@ class OrderTest extends TestCase
         $this->assertEquals(4, $product2->stock);
     }
 
-    // ———— Test para crear un pedido con carrito vacío ——————————————————————————————————————————————————————————————————
+    // ———— Test para crear un pedido con carrito vacío —————————————————————————————————————————
     public function test_create_order_with_empty_cart(): void
     {
         $headers = $this->loginAsUser();
@@ -74,7 +74,7 @@ class OrderTest extends TestCase
             ]);
     }
 
-    // ———— Test para listar los pedidos del usuario ——————————————————————————————————————————————————————————————————
+    // ———— Test para listar los pedidos del usuario —————————————————————————————————————————
     public function test_list_orders_for_user(): void
     {
         [$marvel] = $this->createCategoriesForTest();
@@ -103,11 +103,11 @@ class OrderTest extends TestCase
         $this->assertEquals(1, $response->json('total'));
     }
 
-    // ══════════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════════════════════════════════
     // TEST SIN AUTENTICACIÓN
-    // ══════════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════════════════════════════════
 
-    // ———— Test para listar los pedidos sin autenticación ——————————————————————————————————————————————————————————————————
+    // ———— Test para listar los pedidos sin autenticación —————————————————————————————————————————
     public function test_list_orders_without_authentication(): void
     {
         $response = $this->getJson('/api/pedidos');
