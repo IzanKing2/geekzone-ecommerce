@@ -8,8 +8,8 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\JwtMiddleware;
 
 // ———————————————————————————————————————————————————————————————————————————
 // RUTAS PÚBLICAS (sin autenticación)
@@ -28,7 +28,7 @@ Route::get('/productos/{id}', [ProductController::class, 'show']);
 // RUTAS PROTEGIDAS (requieren JWT — cualquier usuario)
 // ———————————————————————————————————————————————————————————————————————————
 
-Route::middleware('jwt.auth')->group(function () {
+Route::middleware(JwtMiddleware::class)->group(function () {
     // ———— Registro de usuario —————————————————————————————————
     Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -55,7 +55,7 @@ Route::middleware('jwt.auth')->group(function () {
 // RUTAS DE ADMINISTRACIÓN (requieren JWT + rol admin)
 // ———————————————————————————————————————————————————————————————————————————
 
-Route::middleware(['jwt.auth', 'admin'])->group(function () {
+Route::middleware([JwtMiddleware::class, 'admin'])->group(function () {
 
     // ———— Dashboard —————————————————————————————————
     Route::get('/admin/dashboard/resumen', [AdminDashboardController::class, 'resumen']);

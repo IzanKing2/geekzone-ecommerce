@@ -32,11 +32,7 @@ class JwtMiddleware
             return response()->json([
                 'message' => 'Token expirado',
             ], 401);
-        } catch (TokenInvalidException $e) {
-            return response()->json([
-                'message' => 'Token inválido',
-            ], 401);
-        } catch (JWTException $e) {
+        } catch (TokenInvalidException|JWTException $e) {
             return response()->json([
                 'message' => 'Token no encontrado',
             ], 401);
