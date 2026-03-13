@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -55,6 +56,13 @@ Route::middleware('jwt.auth')->group(function () {
 // ———————————————————————————————————————————————————————————————————————————
 
 Route::middleware(['jwt.auth', 'admin'])->group(function () {
+
+    // ———— Dashboard —————————————————————————————————
+    Route::get('/admin/dashboard/resumen', [AdminDashboardController::class, 'resumen']);
+    Route::get('/admin/dashboard/ingresos', [AdminDashboardController::class, 'ingresos']);
+    Route::get('/admin/dashboard/top-productos', [AdminDashboardController::class, 'topProductos']);
+    Route::get('/admin/dashboard/pedidos-por-cliente', [AdminDashboardController::class, 'pedidosPorCliente']);
+
     // ———— CRUD Categorías —————————————————————————————————
     Route::post('/categorias', [CategoryController::class, 'store']);
     Route::put('/categorias/{id}', [CategoryController::class, 'update']);

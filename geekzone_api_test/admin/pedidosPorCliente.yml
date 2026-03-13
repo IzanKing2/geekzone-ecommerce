@@ -1,0 +1,18 @@
+info:
+  name: pedidosPorCliente
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: http://localhost:8080/api/admin/dashboard/pedidos-por-cliente
+  headers:
+    - name: Authorization
+      value: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2xvZ2luIiwiaWF0IjoxNzczNDA0MjcwLCJleHAiOjE3NzM0MDc4NzAsIm5iZiI6MTc3MzQwNDI3MCwianRpIjoiMFZiQVZJbllmdjBONERnOCIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3Iiwicm9sZSI6ImFkbWluIn0.1Zg8-TZbzNQlIY4l9JNrEMrRMbMSxQ_pKalx2ElaQq4
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
