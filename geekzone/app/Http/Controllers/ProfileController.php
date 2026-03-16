@@ -18,20 +18,19 @@ class ProfileController extends Controller
             $user = User::find($userId);
 
             if (!$user) {
-                return response()->json([
-                    'message' => 'Perfil no encontrado.',
-                ], 404);
+                return $this->errorResponse('Perfil no encontrado.', 404);
             }
 
-            return response()->json([
-                'message' => 'Perfil obtenido correctamente.',
-                'user' => $user,
-            ], 200);
+            return $this->successResponse(
+                ['user' => $user],
+                'Perfil obtenido correctamente.'
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener el perfil.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al obtener el perfil.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -40,18 +39,14 @@ class ProfileController extends Controller
         try {
             $authUser = JWTAuth::user();
 
-        if (!$authUser) {
-            return response()   ->json([
-                'message' => 'Usuario no autenticado.',
-            ], 401) ;
-        }
+            if (!$authUser) {
+                return $this->errorResponse('Usuario no autenticado.', 401);
+            }
 
-                $user = User::find($authUser->id);
+            $user = User::find($authUser->id);
 
             if (!$user) {
-                return response()->json([
-                    'message' => 'Perfil no encontrado.',
-                ], 404);
+                return $this->errorResponse('Perfil no encontrado.', 404);
             }
 
             $reglas = [
@@ -70,10 +65,7 @@ class ProfileController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Error de validación.',
-                    'errors' => $validator->errors(),
-                ], 422);
+                return $this->validationErrorResponse($validator->errors());
             }
 
             // Actualizar solo los campos que se enviaron
@@ -89,15 +81,16 @@ class ProfileController extends Controller
 
             $user->save();
 
-            return response()->json([
-                'message' => 'Perfil actualizado correctamente.',
-                'user' => $user,
-            ], 200);
+            return $this->successResponse(
+                ['user' => $user],
+                'Perfil actualizado correctamente.'
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar el perfil.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al actualizar el perfil.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 }

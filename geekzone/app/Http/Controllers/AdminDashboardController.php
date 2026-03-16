@@ -13,10 +13,10 @@ class AdminDashboardController extends Controller
 {
     public function resumen()
     {
-        return response()->json([
-            'total_usuarios'  => User::count(),
-            'total_productos' => Product::count(),
-            'total_pedidos'   => Order::count(),
+        return $this->successResponse([
+            'total_usuarios'   => User::count(),
+            'total_productos'  => Product::count(),
+            'total_pedidos'    => Order::count(),
             'ingresos_totales' => round(Order::sum('total'), 2),
         ]);
     }
@@ -32,7 +32,7 @@ class AdminDashboardController extends Controller
             ->orderBy('mes')
             ->get();
 
-        return response()->json([
+        return $this->successResponse([
             'ingresos_mensuales' => $ingresos,
         ]);
     }
@@ -50,7 +50,7 @@ class AdminDashboardController extends Controller
             ->with('product:id,name,image_url')
             ->get();
 
-        return response()->json([
+        return $this->successResponse([
             'top_productos' => $topProductos,
         ]);
     }
@@ -67,7 +67,7 @@ class AdminDashboardController extends Controller
             ->with('user:id,name,email')
             ->get();
 
-        return response()->json([
+        return $this->successResponse([
             'pedidos_por_cliente' => $pedidosPorCliente,
         ]);
     }

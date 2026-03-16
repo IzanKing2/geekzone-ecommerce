@@ -7,7 +7,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class OrderController extends Controller
@@ -22,15 +22,16 @@ class OrderController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            return response()->json([
+            return $this->successResponse([
                 'orders' => $orders,
-                'total' => $orders->count(),
-            ], 200);
+                'total'  => $orders->count(),
+            ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener los pedidos.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al obtener los pedidos.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -39,72 +40,85 @@ class OrderController extends Controller
         try {
             $user = JWTAuth::user();
 
-            $CartItems = Cart::with('product')
+            $cartItems = Cart::with('product')
                 ->where('user_id', $user->id)
                 ->get();
 
-            if ($CartItems->isEmpty()) {
-                return response()->json([
-                    'message' => 'No hay items en el carrito. Añade productos para crear un pedido.',
-                ], 404);
+            if ($cartItems->isEmpty()) {
+                return $this->errorResponse(
+                    'No hay items en el carrito. Añade productos para crear un pedido.',
+                    404
+                );
             }
 
-            foreach ($CartItems as $item) {
+            foreach ($cartItems as $item) {
                 if ($item->product->stock < $item->quantity) {
-                    return response()->json([
-                        'message' => 'No hay suficiente stock para el producto ' . $item->product->name . '. Disponible: ' . $item->product->stock,
-                    ], 400);
+                    return $this->errorResponse(
+                        'No hay suficiente stock para el producto ' . $item->product->name . '. Disponible: ' . $item->product->stock,
+                        400
+                    );
                 }
             }
 
             $total = 0;
-            foreach ($CartItems as $item) {
+            foreach ($cartItems as $item) {
                 $total += $item->product->price * $item->quantity;
             }
 
-            $order = Order::create([
-                'user_id' => $user->id,
-                'status' => 'pendiente',
-                    'total' => round($total, 2),
-            ]);
-
-            $orderDetails = [];
-            foreach ($CartItems as $item) {
-                $orderDetail = OrderDetail::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item->product_id,
-                    'quantity' => $item->quantity,
-                    'price' => $item->product->price,
+            $order = DB::transaction(function () use ($user, $cartItems, $total) {
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'status'  => 'pendiente',
+                    'total'   => round($total, 2),
                 ]);
 
-                $orderDetails[] = $orderDetail;
+                foreach ($cartItems as $item) {
+                    OrderDetail::create([
+                        'order_id'   => $order->id,
+                        'product_id' => $item->product_id,
+                        'quantity'   => $item->quantity,
+                        'price'      => $item->product->price,
+                    ]);
 
-                $product = Product::find($item->product_id);
-        
-                if (!$product) {
-                    return response()->json([
-                        'message' => 'Producto no encontrado.',
-                    ], 404);
+                    $product = Product::lockForUpdate()->find($item->product_id);
+
+                    if (!$product) {
+                        throw new \RuntimeException('Producto no encontrado.');
+                    }
+
+                    if ($product->stock < $item->quantity) {
+                        throw new \RuntimeException(
+                            'No hay suficiente stock para el producto ' . $product->name . '. Disponible: ' . $product->stock
+                        );
+                    }
+
+                    $product->stock -= $item->quantity;
+                    $product->save();
                 }
-            
-                $product->stock -= $item->quantity;
-                $product->save();
-            }
 
-            Cart::where('user_id', $user->id)
-                ->delete();
+                Cart::where('user_id', $user->id)->delete();
+
+                return $order;
+            });
 
             $order->load('details.product');
 
-            return response()->json([
-                'message' => 'Pedido creado correctamente.',
-                'order' => $order,
-            ], 201);
+            return $this->successResponse(
+                ['order' => $order],
+                'Pedido creado correctamente.',
+                201
+            );
+        } catch (\RuntimeException $e) {
+            return $this->errorResponse(
+                $e->getMessage(),
+                400
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al crear el pedido.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al crear el pedido.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 }

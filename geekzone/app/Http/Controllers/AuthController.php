@@ -30,10 +30,7 @@ class AuthController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Error de validación.',
-                    'errors' => $validator->errors(),
-                ], 422);
+                return $this->validationErrorResponse($validator->errors());
             }
 
             $user = User::create([
@@ -46,17 +43,21 @@ class AuthController extends Controller
             // Generar token JWT para el usuario recién creado
             $token = JWTAuth::fromUser($user);
 
-            return response()->json([
-                'message' => '¡Usuario registrado correctamente!',
-                'user' => $user,
-                'token'   => $token,
-                'type'    => 'Bearer',
-            ], 201);
+            return $this->successResponse(
+                [
+                    'user'  => $user,
+                    'token' => $token,
+                    'type'  => 'Bearer',
+                ],
+                '¡Usuario registrado correctamente!',
+                201
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al registrar el usuario.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al registrar el usuario.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -74,10 +75,7 @@ class AuthController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Error de validación.',
-                    'errors' => $validator->errors(),
-                ], 422);
+                return $this->validationErrorResponse($validator->errors());
             }
 
             // Intentar autenticar con email y password
@@ -85,23 +83,27 @@ class AuthController extends Controller
             $token = JWTAuth::attempt($credentials);
 
             if (!$token) {
-                return response()->json([
-                    'message' => 'Credenciales incorrectas. Verifica tu email y contraseña.',
-                ], 401);
+                return $this->errorResponse(
+                    'Credenciales incorrectas. Verifica tu email y contraseña.',
+                    401
+                );
             }
 
-            return response()->json([
-                'message' => '¡Inicio de sesión exitoso!',
-                'user' => JWTAuth::user(),
-                'token'   => $token,
-                'expires_in' => JWTAuth::factory()->getTTL() * 60, // Tiempo de expiración del token en minutos
-                'type'    => 'Bearer',
-            ]);
+            return $this->successResponse(
+                [
+                    'user'       => JWTAuth::user(),
+                    'token'      => $token,
+                    'expires_in' => JWTAuth::factory()->getTTL() * 60, // Tiempo de expiración del token en segundos
+                    'type'       => 'Bearer',
+                ],
+                '¡Inicio de sesión exitoso!'
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al iniciar sesión.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al iniciar sesión.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -110,14 +112,13 @@ class AuthController extends Controller
         try {
             JWTAuth::invalidate(JWTAuth::getToken());
 
-            return response()->json([
-                'message' => 'Sesión cerrada correctamente.',
-            ]);
+            return $this->successResponse(null, 'Sesión cerrada correctamente.');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al cerrar sesión.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al cerrar sesión.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 }

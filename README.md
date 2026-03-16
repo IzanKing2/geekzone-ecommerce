@@ -8,6 +8,13 @@ Proyecto intermodular de **2º DAW** — IES Villa de Agüimes (Curso 2025/2026)
 
 ---
 
+## 🧾 Documentación del proyecto
+
+- **Documentación funcional y roadmap**: [`docs/proyecto-geekzone.md`](docs/proyecto-geekzone.md)
+- **Este README**: guía rápida de stack, instalación, endpoints y comandos básicos.
+
+---
+
 ## 🛠️ Stack Tecnológico
 
 | Componente | Tecnología |
@@ -105,6 +112,8 @@ Proyecto final/
 # Ejecutar todos los tests
 docker-compose exec app php artisan test --testdox
 ```
+
+---
 
 ---
 

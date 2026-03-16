@@ -27,16 +27,17 @@ class CartController extends Controller
                 $total += $item->product->price * $item->quantity;
             }
 
-            return response()->json([
-                'cart' => $items,
-                'total' => round($total, 2),
+            return $this->successResponse([
+                'cart'        => $items,
+                'total'       => round($total, 2),
                 'items_count' => $items->count(),
-            ], 200);
+            ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener los items del carrito.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al obtener los items del carrito.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -53,10 +54,7 @@ class CartController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Error de validación.',
-                    'errors' => $validator->errors(),
-                ], 422);
+                return $this->validationErrorResponse($validator->errors());
             }
 
             $user = JWTAuth::user();
@@ -66,9 +64,10 @@ class CartController extends Controller
             $product = Product::find($request->product_id);
 
             if ($product->stock < $quantity) {
-                return response()->json([
-                    'message' => 'No hay suficiente stock. Disponible: ' . $product->stock,
-                ], 400);
+                return $this->errorResponse(
+                    'No hay suficiente stock. Disponible: ' . $product->stock,
+                    400
+                );
             }
 
             $item = Cart::where('user_id', $user->id)
@@ -88,15 +87,17 @@ class CartController extends Controller
 
             $item->load('product');
 
-            return response()->json([
-                'message' => 'Producto agregado al carrito correctamente.',
-                'cart_item' => $item,
-            ], 201);
+            return $this->successResponse(
+                ['cart_item' => $item],
+                'Producto agregado al carrito correctamente.',
+                201
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al agregar el producto al carrito.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al agregar el producto al carrito.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -108,10 +109,7 @@ class CartController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Error de validación.',
-                    'errors' => $validator->errors(),
-                ], 422);
+                return $this->validationErrorResponse($validator->errors());
             }
 
             $user = JWTAuth::user();
@@ -121,32 +119,32 @@ class CartController extends Controller
                 ->first();
 
             if (!$item) {
-                return response()->json([
-                    'message' => 'Item no encontrado en el carrito.',
-                ], 404);
+                return $this->errorResponse('Item no encontrado en el carrito.', 404);
             }
 
             $product = Product::find($item->product_id);
 
             if ($product->stock < $request->quantity) {
-                return response()->json([
-                    'message' => 'No hay suficiente stock. Disponible: ' . $product->stock,
-                ], 400);
+                return $this->errorResponse(
+                    'No hay suficiente stock. Disponible: ' . $product->stock,
+                    400
+                );
             }
 
             $item->quantity = $request->quantity;
             $item->save();
             $item->load('product');
 
-            return response()->json([
-                'message' => 'Cantidad actualizada correctamente.',
-                'cart_item' => $item,
-            ], 200);
+            return $this->successResponse(
+                ['cart_item' => $item],
+                'Cantidad actualizada correctamente.'
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar la cantidad del producto.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al actualizar la cantidad del producto.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -160,21 +158,21 @@ class CartController extends Controller
                 ->first();
             
             if (!$item) {
-                return response()->json([
-                    'message' => 'Item no encontrado en el carrito.',
-                ], 404);
+                return $this->errorResponse('Item no encontrado en el carrito.', 404);
             }
             
             $item->delete();
         
-            return response()->json([
-                    'message' => 'Item eliminado del carrito correctamente.',
-            ], 200);
+            return $this->successResponse(
+                null,
+                'Item eliminado del carrito correctamente.'
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al eliminar el item del carrito.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al eliminar el item del carrito.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 }

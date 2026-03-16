@@ -21,17 +21,26 @@ class ProductController extends Controller
                 $query->where('name', 'like', '%' . $request->input('search') . '%');
             }
 
-            $products = $query->orderBy('created_at', 'desc')->get();
+            $perPage = (int) $request->input('per_page', 12);
+            $perPage = $perPage > 0 && $perPage <= 100 ? $perPage : 12;
 
-            return response()->json([
-                'products' => $products,
-                'total' => $products->count(),
+            $products = $query
+                ->orderBy('created_at', 'desc')
+                ->paginate($perPage);
+
+            return $this->successResponse([
+                'items'      => $products->items(),
+                'total'      => $products->total(),
+                'per_page'   => $products->perPage(),
+                'current_page' => $products->currentPage(),
+                'last_page'  => $products->lastPage(),
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener los productos.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al obtener los productos.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -41,19 +50,16 @@ class ProductController extends Controller
             $product = Product::with('category')->find($id);
 
             if (!$product) {
-                return response()->json([
-                    'message' => 'Producto no encontrado.',
-                ], 404);
+                return $this->errorResponse('Producto no encontrado.', 404);
             }
 
-            return response()->json([
-                'product' => $product,
-            ]);
+            return $this->successResponse(['product' => $product]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener el producto.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al obtener el producto.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -74,24 +80,23 @@ class ProductController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Error de validación.',
-                    'errors' => $validator->errors(),
-                ], 422);
+                return $this->validationErrorResponse($validator->errors());
             }
 
             $product = Product::create($request->all());
             $product->load('category');
 
-            return response()->json([
-                'message'  => 'Producto creado correctamente.',
-                'product' => $product,
-            ], 201);
+            return $this->successResponse(
+                ['product' => $product],
+                'Producto creado correctamente.',
+                201
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al crear el producto.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al crear el producto.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -101,9 +106,7 @@ class ProductController extends Controller
             $product = Product::find($id);
 
             if (!$product) {
-                return response()->json([
-                    'message' => 'Producto no encontrado.',
-                ], 404);
+                return $this->errorResponse('Producto no encontrado.', 404);
             }
 
             $validator = Validator::make($request->all(), [
@@ -116,24 +119,22 @@ class ProductController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Error de validación.',
-                    'errors' => $validator->errors(),
-                ], 422);
+                return $this->validationErrorResponse($validator->errors());
             }
 
             $product->update($request->all());
             $product->load('category');
 
-            return response()->json([
-                'message'  => 'Producto actualizado correctamente.',
-                'product' => $product,
-            ]);
+            return $this->successResponse(
+                ['product' => $product],
+                'Producto actualizado correctamente.'
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al actualizar el producto.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al actualizar el producto.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 
@@ -143,21 +144,21 @@ class ProductController extends Controller
             $product = Product::find($id);
             
             if (!$product) {
-                return response()->json([
-                    'message' => 'Producto no encontrado.',
-                ], 404);
+                return $this->errorResponse('Producto no encontrado.', 404);
             }
         
             $product->delete();
         
-            return response()->json([
-                'message' => 'Producto eliminado correctamente.',
-            ]);
+            return $this->successResponse(
+                null,
+                'Producto eliminado correctamente.'
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al eliminar el producto.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al eliminar el producto.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 }

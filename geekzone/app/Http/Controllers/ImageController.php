@@ -21,10 +21,7 @@ class ImageController extends Controller
             ]);
         
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Error de validación.',
-                    'errors' => $validator->errors(),
-                ], 422);
+                return $this->validationErrorResponse($validator->errors());
             }
         
             $image = $request->file('image');
@@ -35,15 +32,16 @@ class ImageController extends Controller
             $publicPath = Storage::url($ruta);
         
         
-            return response()->json([
-                'message' => 'Imagen subida correctamente.',
-                'image' => $publicPath,
-            ], 200);
+            return $this->successResponse(
+                ['image' => $publicPath],
+                'Imagen subida correctamente.'
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al subir la imagen.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse(
+                'Error al subir la imagen.',
+                500,
+                ['exception' => [$e->getMessage()]]
+            );
         }
     }
 }
