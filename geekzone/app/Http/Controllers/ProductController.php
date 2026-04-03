@@ -21,8 +21,7 @@ class ProductController extends Controller
                 $query->where('name', 'like', '%' . $request->input('search') . '%');
             }
 
-            $perPage = (int) $request->input('per_page', 12);
-            $perPage = $perPage > 0 && $perPage <= 100 ? $perPage : 12;
+            $paginacion = $this->GetPaginacion($request);
 
             $products = $query
                 ->orderBy('created_at', 'desc')
@@ -160,5 +159,13 @@ class ProductController extends Controller
                 ['exception' => [$e->getMessage()]]
             );
         }
+    }
+
+    //PAGINACION PAGINA
+    public function GetPaginacion(Request $request): int
+    {
+        $arraypaginaciones = [6,12,24];
+        $paginacion = (int) $request -> input('pagn', 12);
+        return in_array($paginacion,$arraypaginaciones) ? $paginacion : 12;
     }
 }
