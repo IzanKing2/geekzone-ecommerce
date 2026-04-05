@@ -25,7 +25,7 @@ class ProductController extends Controller
 
             $products = $query
                 ->orderBy('created_at', 'desc')
-                ->paginate($perPage);
+                ->paginate($paginacion);
 
             return $this->successResponse([
                 'items'      => $products->items(),
