@@ -1,0 +1,228 @@
+/* ══════════════════════════════════════
+   AUTH PAGES
+══════════════════════════════════════ */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dark);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(rgba(0, 71, 171, .05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 71, 171, .05) 1px, transparent 1px);
+    background-size: 55px 55px;
+}
+
+.auth-page::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 71, 171, .15) 0%, transparent 70%);
+    top: -100px;
+    right: -100px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    z-index: 2;
+    background: var(--mid);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .5);
+}
+
+.auth-card-header {
+    padding: 2rem 2rem 1.5rem;
+    background: linear-gradient(135deg, var(--cobalt-dark), var(--cobalt));
+    text-align: center;
+}
+
+.auth-card-header .nav-logo {
+    font-size: 2.2rem;
+    justify-content: center;
+    display: block
+}
+
+.nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 4px;
+    color: var(--white);
+}
+
+.nav-logo span {
+    color: var(--gold)
+}
+
+.auth-card-header p {
+    color: rgba(255, 255, 255, .75);
+    font-size: .9rem;
+    margin-top: .4rem
+}
+
+.auth-card-body {
+    padding: 2rem
+}
+
+.auth-footer {
+    padding: 1.2rem 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: .88rem;
+    color: var(--grey);
+}
+
+.auth-footer a {
+    color: var(--cobalt-light);
+    transition: color .2s
+}
+
+.auth-footer a:hover {
+    color: var(--gold)
+}
+
+.remember-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.4rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .88rem;
+    color: var(--grey);
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    accent-color: var(--cobalt);
+    cursor: pointer
+}
+
+.forgot-link {
+    font-size: .85rem;
+    color: var(--cobalt-light);
+    transition: color .2s
+}
+
+.forgot-link:hover {
+    color: var(--gold)
+}
+
+/* ══════════════════════════════════════
+   ALERTS
+══════════════════════════════════════ */
+.alert {
+    padding: .9rem 1.2rem;
+    border-radius: 4px;
+    font-size: .9rem;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    margin-bottom: 1.2rem;
+}
+
+.alert-info {
+    background: rgba(0, 71, 171, .15);
+    border: 1px solid var(--border);
+    color: var(--offwhite)
+}
+
+/* ══════════════════════════════════════
+   FORMS
+══════════════════════════════════════ */
+.form-group {
+    margin-bottom: 1.4rem
+}
+
+.form-label {
+    display: block;
+    margin-bottom: .5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .82rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--grey);
+}
+
+.form-control {
+    width: 100%;
+    padding: .75rem 1rem;
+    background: var(--mid2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--white);
+    font-size: .95rem;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--cobalt);
+    box-shadow: 0 0 0 3px rgba(0, 71, 171, .18);
+}
+
+.form-control::placeholder {
+    color: rgba(156, 163, 175, .5)
+}
+
+select.form-control option {
+    background: var(--mid)
+}
+
+/* ══════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: .95rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
+    padding: .75rem 1.8rem;
+}
+
+.btn-primary {
+    background: var(--cobalt);
+    color: #fff
+}
+
+.btn-primary:hover {
+    background: var(--cobalt-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--cobalt-glow)
+}
+
+.btn-block {
+    width: 100%
+}
+
+.btn-lg {
+    padding: 1rem 2.5rem;
+    font-size: 1.05rem
+}
