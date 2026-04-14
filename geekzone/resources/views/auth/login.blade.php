@@ -43,7 +43,7 @@
                 </form>
             </div>
             <div class="auth-footer">
-                ¿No tienes cuenta? <a href="register.html">Regístrate aquí</a>
+                ¿No tienes cuenta? <a href="{{ route('register') }}">Regístrate aquí</a>
             </div>
         </div>
     </div>

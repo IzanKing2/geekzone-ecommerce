@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Cart;
 use App\Models\Product;
@@ -18,7 +18,7 @@ class CartController extends Controller
         $items = Cart::with('product')
             ->where('user_id', $user->id)
             ->get();
-        
+
         // Calcular el total del carrito
         $total = 0;
         foreach ($items as $item) {
@@ -65,7 +65,7 @@ class CartController extends Controller
         $item = Cart::where('user_id', $user->id)
             ->where('product_id', $request->product_id)
             ->first();
-        
+
         if ($item) {
             $item->quantity += $quantity;
             $item->save();
@@ -103,7 +103,7 @@ class CartController extends Controller
         $item = Cart::where('id', $id)
             ->where('user_id', $user->id)
             ->first();
-        
+
         if (!$item) {
             return response()->json([
                 'message' => 'Item no encontrado en el carrito.',
@@ -135,13 +135,13 @@ class CartController extends Controller
         $item = Cart::where('id', $id)
             ->where('user_id', $user->id)
             ->first();
-        
+
         if (!$item) {
             return response()->json([
                 'message' => 'Item no encontrado en el carrito.',
             ], 404);
         }
-        
+
         $item->delete();
 
         return response()->json([

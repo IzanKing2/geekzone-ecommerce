@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -67,7 +66,7 @@ class OrderController extends Controller
                 'quantity' => $item->quantity,
                 'price' => $item->product->price,
             ]);
-            
+
             $orderDetails[] = $orderDetail;
         }
 
@@ -81,10 +80,10 @@ class OrderController extends Controller
 
         $product->stock -= $item->quantity;
         $product->save();
-        
+
         Cart::where('user_id', $user->id)
             ->delete();
-        
+
         $order->load('details.product');
 
         return response()->json([

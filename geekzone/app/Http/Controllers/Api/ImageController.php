@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -28,9 +28,9 @@ class ImageController extends Controller
 
         $image = $request->file('image');
         $imageName = time() . '.' . $image->getClientOriginalExtension();
-        
+
         $ruta = $image->storeAs('images', $imageName, 'public');
-    
+
         $publicPath = Storage::url($ruta);
 
 

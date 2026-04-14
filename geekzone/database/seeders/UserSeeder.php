@@ -13,17 +13,21 @@ class UserSeeder extends Seeder
         // ADMINISTRADOR
         // ——————————————————————————————————————————————————————————————————————
         User::create([
-            'name' => 'Admin GeekZone',
-            'email' => 'admin@geekzone.com',
+            'name'     => 'Admin',
+            'surname'  => 'GeekZone',
+            'username' => 'Administrador',
+            'email'    => 'admin@geekzone.com',
             'password' => 'admin123',  // Se hashea automáticamente
-            'role' => 'admin',
+            'role'     => 'admin',
         ]);
 
         // ——————————————————————————————————————————————————————————————————————
         // CLIENTE
         // ——————————————————————————————————————————————————————————————————————
         User::create([
-            'name' => 'Cliente Prueba',
+            'name' => 'User',
+            'surname'  => 'GeekZone',
+            'username' => 'Usuario',
             'email' => 'user@geekzone.com',
             'password' => 'user123',  // Se hashea automáticamente
             'role' => 'user',
