@@ -12,7 +12,7 @@ class ProductSeeder extends Seeder
     {
         // Categorías
         $marvel = Category::where('name', 'Marvel')->first();
-        $strayKids = Category::where('name', 'Stray Kids')->first();
+        $kpop = Category::where('name', 'K-Pop')->first();
         $futbol = Category::where('name', 'Fútbol')->first();
 
         // ——————————————————————————————————————————————————————————————————————
@@ -64,14 +64,14 @@ class ProductSeeder extends Seeder
         // ——————————————————————————————————————————————————————————————————————
         // PRODUCTOS STRAY KIDS
         // ——————————————————————————————————————————————————————————————————————
-        $StrayKidsProducts = [
+        $kpopProducts = [
             [
                 'name' => 'Álbum MAXIDENT',
                 'description' => 'Mini álbum MAXIDENT de Stray Kids. Incluye CD, photobook, photocards aleatorias y póster plegable.',
                 'price' => 22.99,
                 'stock' => 50,
                 'image_url' => 'img/products/album-maxident.jpg',
-                'category_id' => $strayKids->id,
+                'category_id' => $kpop->id,
             ],
             [
                 'name' => 'Lightstick Oficial Nachimbong',
@@ -79,7 +79,7 @@ class ProductSeeder extends Seeder
                 'price' => 49.99,
                 'stock' => 20,
                 'image_url' => 'img/products/lightstick-skz.jpg',
-                'category_id' => $strayKids->id,
+                'category_id' => $kpop->id,
             ],
             [
                 'name' => 'Set Photocards Coleccionables',
@@ -87,7 +87,7 @@ class ProductSeeder extends Seeder
                 'price' => 14.99,
                 'stock' => 45,
                 'image_url' => 'img/products/photocards-skz.jpg',
-                'category_id' => $strayKids->id,
+                'category_id' => $kpop->id,
             ],
             [
                 'name' => 'Sudadera SKZ Logo',
@@ -95,7 +95,7 @@ class ProductSeeder extends Seeder
                 'price' => 39.99,
                 'stock' => 30,
                 'image_url' => 'img/products/sudadera-skz.jpg',
-                'category_id' => $strayKids->id,
+                'category_id' => $kpop->id,
             ],
             [
                 'name' => 'Álbum 5-STAR',
@@ -103,7 +103,7 @@ class ProductSeeder extends Seeder
                 'price' => 27.99,
                 'stock' => 40,
                 'image_url' => 'img/products/album-5star.jpg',
-                'category_id' => $strayKids->id,
+                'category_id' => $kpop->id,
             ],
         ];
 
@@ -153,7 +153,7 @@ class ProductSeeder extends Seeder
             ],
         ];
 
-        foreach (array_merge($MarvelProducts, $StrayKidsProducts, $FutbolProducts) as $producto) {
+        foreach (array_merge($MarvelProducts, $kpopProducts, $FutbolProducts) as $producto) {
             Product::create($producto);
         }
     }

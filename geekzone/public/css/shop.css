@@ -313,21 +313,6 @@
     cursor: pointer;
 }
 
-/* Marvel card */
-.cat-card.marvel .cat-bg {
-    background: linear-gradient(160deg, #8B0000 0%, #E01020 40%, #0047AB 100%);
-}
-
-/* Kpop card */
-.cat-card.kpop .cat-bg {
-    background: linear-gradient(160deg, #0047AB 0%, #8A2BE2 60%, #FF69B4 100%);
-}
-
-/* Fútbol card */
-.cat-card.futbol .cat-bg {
-    background: linear-gradient(160deg, #003080 0%, #0047AB 50%, #1a7f37 100%);
-}
-
 .cat-bg {
     position: absolute;
     inset: 0;

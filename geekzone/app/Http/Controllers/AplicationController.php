@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Product;
+
 class AplicationController
 {
     public function index()
     {
-        return view('shop');
+        $products = Product::all();
+        $categories = Category::all();
+
+        return view('shop', compact('products', 'categories'));
     }
 }
