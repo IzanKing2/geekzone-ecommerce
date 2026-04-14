@@ -82,11 +82,9 @@
 
         if (response.ok) {
             const remember = document.getElementById('remember').checked;
-            if (remember) {
-                localStorage.setItem('token', result.token);
-            } else {
-                sessionStorage.setItem('token', result.token);
-            }
+            const storage  = remember ? localStorage : sessionStorage;
+            storage.setItem('token', result.token);
+            storage.setItem('role', result.user.role);
             window.location.href = "{{ route('shop') }}";
         } else {
             submitBtn.disabled = false;

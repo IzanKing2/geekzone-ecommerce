@@ -8,6 +8,7 @@
     </ul>
     <div class="nav-right">
         <div id="user-menu" style="display:none;">
+            <a id="admin-btn" href="#" class="nav-user" style="display:none;">⚙️ Panel Admin</a>
             <a href="#" class="nav-user">👤 Mi Perfil</a>
             <form id="logoutForm" style="display:inline;">
                 <button type="submit" class="nav-user" style="background:none; border:none; cursor:pointer;">🚪 Cerrar Sesión</button>
@@ -28,9 +29,15 @@
             const userMenu = document.getElementById('user-menu');
             const guestMenu = document.getElementById('guest-menu');
 
+            const role = localStorage.getItem('role') || sessionStorage.getItem('role');
+
             if (token) {
                 if (userMenu) userMenu.style.display = 'flex';
                 if (guestMenu) guestMenu.style.display = 'none';
+
+                if (role === 'admin') {
+                    document.getElementById('admin-btn').style.display = 'inline-flex';
+                }
 
                 // --- Cargar contador del carrito ---
                 fetch('/api/carrito', {
@@ -76,7 +83,9 @@
                         console.error('Error de red al intentar cerrar sesión:', error);
                     } finally {
                         localStorage.removeItem('token');
+                        localStorage.removeItem('role');
                         sessionStorage.removeItem('token');
+                        sessionStorage.removeItem('role');
                         window.location.href = "{{ route('shop') }}";
                     }
                 });
