@@ -51,7 +51,7 @@
                     <div class="cat-content">
                         <h3 class="cat-name">{{ $category->name }}</h3>
                         <p class="cat-desc">{{ $category->description }}</p>
-                        <a href="#" class="cat-btn">Explorar</a>
+                        <a href="{{ route('shop', ['category' => $category->id]) }}#productos" class="cat-btn">Explorar</a>
                     </div>
                 </div>
             @endforeach
@@ -60,32 +60,31 @@
 
     <section class="section" id="productos">
         <div class="filter-bar">
-            <button class="filter-pill active">Todos</button>
+            <a href="{{ route('shop') }}#productos"
+               class="filter-pill {{ is_null($activeCategory) ? 'active' : '' }}">Todos</a>
             @foreach ($categories as $category)
-                <button class="filter-pill">{{ $category->name }}</button>
+                <a href="{{ route('shop', ['category' => $category->id]) }}#productos"
+                   class="filter-pill {{ $activeCategory == $category->id ? 'active' : '' }}">
+                    {{ $category->name }}
+                </a>
             @endforeach
             <div class="filter-right">
                 <div class="search-wrap">
-                    <input type="text" class="form-control" placeholder="Buscar producto…"
+                    <input id="search-input" type="text" class="form-control" placeholder="Buscar producto…"
                         style="width:220px;padding:.45rem 1rem .45rem 2.2rem" />
                 </div>
-                <select class="filter-select">
-                    <option>Ordenar: Relevancia</option>
-                    <option>Precio: menor a mayor</option>
-                    <option>Precio: mayor a menor</option>
-                    <option>Más recientes</option>
-                </select>
             </div>
         </div>
 
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
-            <p style="color:var(--grey);font-size:.88rem"><strong style="color:var(--white)">{{ count($products) }} productos</strong>
-                encontrados</p>
+            <p style="color:var(--grey);font-size:.88rem">
+                <strong id="product-count" style="color:var(--white)">{{ count($products) }} productos</strong> encontrados
+            </p>
         </div>
 
-        <div class="prod-grid">
+        <div class="prod-grid" id="prod-grid">
             @foreach ($products as $product)
-                <div class="prod-card">
+                <div class="prod-card" data-name="{{ strtolower($product->name) }}">
                     <div class="prod-img">
                         <img src="{{ $product->image_url }}" alt="">
                         <div class="prod-badge new">Nuevo</div>
@@ -100,6 +99,29 @@
                 </div>
             @endforeach
         </div>
+
+        <script>
+            // Búsqueda en tiempo real
+            const searchInput = document.getElementById('search-input');
+            const cards = document.querySelectorAll('#prod-grid .prod-card');
+            const countEl = document.getElementById('product-count');
+
+            searchInput.addEventListener('input', () => {
+                const term = searchInput.value.toLowerCase().trim();
+                let visible = 0;
+                cards.forEach(card => {
+                    const matches = card.dataset.name.includes(term);
+                    card.style.display = matches ? '' : 'none';
+                    if (matches) visible++;
+                });
+                countEl.textContent = `${visible} productos`;
+            });
+
+            // Scroll automático a #productos si hay un filtro activo en la URL
+            if (window.location.hash === '#productos' || new URLSearchParams(window.location.search).has('category')) {
+                document.getElementById('productos').scrollIntoView({ behavior: 'smooth' });
+            }
+        </script>
 
         <div class="pagination">
             <button class="page-btn">‹</button>
