@@ -93,7 +93,8 @@
                         <p class="prod-cat">{{ $product->category->name }}</p>
                         <p class="prod-name">{{ $product->name }}</p>
                         <div class="prod-footer">
-                            <p class="prod-price">{{ $product->price }}€</p><button class="add-btn">+</button>
+                            <p class="prod-price">{{ $product->price }}€</p>
+                            <button class="add-btn" data-product-id="{{ $product->id }}">+</button>
                         </div>
                     </div>
                 </div>
@@ -121,6 +122,58 @@
             if (window.location.hash === '#productos' || new URLSearchParams(window.location.search).has('category')) {
                 document.getElementById('productos').scrollIntoView({ behavior: 'smooth' });
             }
+
+            // ——— Añadir al carrito ———
+            function showToast(msg, color = '#0047AB') {
+                let t = document.getElementById('shop-toast');
+                if (!t) {
+                    t = document.createElement('div');
+                    t.id = 'shop-toast';
+                    t.style.cssText = 'position:fixed;bottom:2rem;right:2rem;padding:.8rem 1.5rem;border-radius:6px;font-family:"Barlow Condensed",sans-serif;letter-spacing:1px;font-size:.9rem;text-transform:uppercase;color:#fff;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999;';
+                    document.body.appendChild(t);
+                }
+                t.textContent = msg;
+                t.style.background = color;
+                t.style.opacity = '1';
+                clearTimeout(t._timer);
+                t._timer = setTimeout(() => t.style.opacity = '0', 2500);
+            }
+
+            document.getElementById('prod-grid').addEventListener('click', async (e) => {
+                const btn = e.target.closest('.add-btn');
+                if (!btn) return;
+
+                const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                if (!token) {
+                    showToast('Inicia sesión para añadir productos', '#c0392b');
+                    return;
+                }
+
+                btn.disabled = true;
+                const productId = btn.dataset.productId;
+
+                const res = await fetch('/api/carrito', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ product_id: parseInt(productId), quantity: 1 })
+                });
+
+                btn.disabled = false;
+
+                if (res.ok) {
+                    showToast('Añadido al carrito ✓');
+                    // Actualizar contador en header
+                    const countEl = document.getElementById('cartCount');
+                    if (countEl) countEl.textContent = parseInt(countEl.textContent || 0) + 1;
+                } else {
+                    const err = await res.json();
+                    showToast(err.message || 'Error al añadir', '#c0392b');
+                }
+            });
         </script>
 
         <div class="pagination">

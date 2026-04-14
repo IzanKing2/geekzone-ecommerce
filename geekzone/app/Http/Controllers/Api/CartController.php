@@ -15,7 +15,7 @@ class CartController extends Controller
         $user = Auth::user();
 
         // Obtener items del carrito con la info del producto
-        $items = Cart::with('product')
+        $items = Cart::with('product.category')
             ->where('user_id', $user->id)
             ->get();
 

@@ -1,6 +1,6 @@
 <header>
   <nav>
-    <div class="nav-logo">Geek<span>Zone</span></div>
+    <div class="nav-logo"><a href="{{ route('shop') }}">Geek<span>Zone</span></a></div>
     <ul class="nav-links">
       <li><a href="{{ route('shop') }}" class="active">Tienda</a></li>
       <li><a href="#categorias">Categorías</a></li>
@@ -18,19 +18,32 @@
             <a href="{{ route('login') }}" class="nav-user">👤 Iniciar Sesión</a>
         </div>
 
-        <a href="#" class="btn-cart">🛒 Carrito <span id="cartCount" class="cart-count">0</span></a>
+        <a href="{{ route('cart') }}" class="btn-cart">🛒 Carrito <span id="cartCount" class="cart-count">0</span></a>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- 1. GESTIÓN DE LA INTERFAZ (MOSTRAR/OCULTAR BOTONES) ---
-            const token = localStorage.getItem('token');
-            const userMenu = document.getElementById('user-menu'); // Contenedor de Perfil/Logout
-            const guestMenu = document.getElementById('guest-menu'); // Contenedor de Login/Register
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            const userMenu = document.getElementById('user-menu');
+            const guestMenu = document.getElementById('guest-menu');
 
             if (token) {
                 if (userMenu) userMenu.style.display = 'flex';
                 if (guestMenu) guestMenu.style.display = 'none';
+
+                // --- Cargar contador del carrito ---
+                fetch('/api/carrito', {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+                })
+                .then(r => r.ok ? r.json() : null)
+                .then(data => {
+                    if (data) {
+                        const total = data.cart.reduce((sum, i) => sum + i.quantity, 0);
+                        document.getElementById('cartCount').textContent = total;
+                    }
+                })
+                .catch(() => {});
             } else {
                 if (userMenu) userMenu.style.display = 'none';
                 if (guestMenu) guestMenu.style.display = 'flex';
@@ -55,8 +68,6 @@
                             }
                         });
 
-                        // Independientemente de si el servidor responde OK o Error (ej. token expirado),
-                        // procedemos a limpiar el navegador para que el usuario no se quede "atrapado".
                         if (!response.ok) {
                             console.warn('El servidor no pudo invalidar el token, pero cerraremos localmente.');
                         }
@@ -64,8 +75,8 @@
                     } catch (error) {
                         console.error('Error de red al intentar cerrar sesión:', error);
                     } finally {
-                        // Limpiar local y redirigir siempre
                         localStorage.removeItem('token');
+                        sessionStorage.removeItem('token');
                         window.location.href = "{{ route('shop') }}";
                     }
                 });

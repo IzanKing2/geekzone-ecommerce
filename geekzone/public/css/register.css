@@ -201,3 +201,34 @@ select.form-control option {
     padding: 1rem 2.5rem;
     font-size: 1.05rem
 }
+
+/* ══════════════════════════════════════
+   ERROR STATES
+══════════════════════════════════════ */
+.alert-error {
+    background: rgba(185, 28, 28, .15);
+    border: 1px solid rgba(185, 28, 28, .4);
+    color: #fca5a5;
+    display: none;
+}
+
+.form-control.is-invalid {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, .15);
+}
+
+.field-error {
+    display: block;
+    margin-top: .35rem;
+    font-size: .8rem;
+    color: #f87171;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: .5px;
+}
+
+.form-hint {
+    margin-top: .35rem;
+    font-size: .78rem;
+    color: var(--grey);
+    font-family: 'Barlow Condensed', sans-serif;
+}

@@ -26,20 +26,20 @@
                     <div class="form-group">
                         <label class="form-label">Correo electrónico</label>
                         <input type="email" id="email" class="form-control" placeholder="tu@email.com" />
+                        <span id="err-email" style="display:none;margin-top:.35rem;font-size:.8rem;color:#f87171;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;"></span>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Contraseña</label>
                         <input type="password" id="password" class="form-control" placeholder="••••••••" />
+                        <span id="err-password" style="display:none;margin-top:.35rem;font-size:.8rem;color:#f87171;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;"></span>
                     </div>
-                    <!--
                     <div class="remember-row">
                         <label class="checkbox-label">
-                            <input type="checkbox" /> Recordarme
+                            <input type="checkbox" id="remember" /> Recordarme
                         </label>
-                        <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
                     </div>
-                    -->
-                    <button type="submit" class="btn btn-primary btn-block btn-lg" style="text-align:center">Iniciar sesión</button>
+                    <p id="err-general" style="display:none;margin-bottom:.8rem;font-size:.85rem;color:#f87171;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;"></p>
+                    <button type="submit" id="submit-btn" class="btn btn-primary btn-block btn-lg" style="text-align:center">Iniciar sesión</button>
                 </form>
             </div>
             <div class="auth-footer">
@@ -51,14 +51,24 @@
 
 <script>
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault(); // Evita que la página se recargue
+        e.preventDefault();
+
+        // Limpiar errores previos
+        ['email', 'password'].forEach(id => {
+            document.getElementById('err-' + id).style.display = 'none';
+            document.getElementById(id).style.borderColor = '';
+        });
+        document.getElementById('err-general').style.display = 'none';
+
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Iniciando sesión…';
 
         const data = {
             email: document.getElementById('email').value,
             password: document.getElementById('password').value
         };
 
-        // Llamada a tu ruta de API
         const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
@@ -71,14 +81,40 @@
         const result = await response.json();
 
         if (response.ok) {
-            // GUARDAR EL TOKEN: Esto es lo más importante
-            localStorage.setItem('token', result.token);
-
-            // Redireccionar al perfil o home
+            const remember = document.getElementById('remember').checked;
+            if (remember) {
+                localStorage.setItem('token', result.token);
+            } else {
+                sessionStorage.setItem('token', result.token);
+            }
             window.location.href = "{{ route('shop') }}";
         } else {
-            alert('Error en el login: ' + result.error);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Iniciar sesión';
+
+            if (result.errors) {
+                // Errores de validación campo por campo
+                Object.entries(result.errors).forEach(([field, msgs]) => {
+                    const span = document.getElementById('err-' + field);
+                    const input = document.getElementById(field);
+                    if (span)  { span.textContent = msgs[0]; span.style.display = 'block'; }
+                    if (input) input.style.borderColor = '#ef4444';
+                });
+            } else {
+                // Error general (credenciales incorrectas, etc.)
+                const errEl = document.getElementById('err-general');
+                errEl.textContent = result.message || 'Error al iniciar sesión.';
+                errEl.style.display = 'block';
+            }
         }
+    });
+
+    // Limpiar error de campo al escribir
+    ['email', 'password'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            document.getElementById('err-' + id).style.display = 'none';
+            document.getElementById(id).style.borderColor = '';
+        });
     });
 </script>
 

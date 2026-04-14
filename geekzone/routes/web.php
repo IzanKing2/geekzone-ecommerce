@@ -9,3 +9,7 @@ Route::get('/', [AplicationController::class, 'index'])->name('shop');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+
+Route::get('/cart', function() {
+    return view('cart.cart');
+})->name('cart');
