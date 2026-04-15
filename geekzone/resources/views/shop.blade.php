@@ -14,7 +14,7 @@
                 Figuras, ropa, coleccionables y mucho más. Marvel, K-Pop y Fútbol en un solo lugar.
             </p>
             <div class="hero-cta">
-                <a href="#categorias" class="btn-primary">Explorar tienda</a>
+                <a href="{{ route('catalog') }}" class="btn-primary">Explorar tienda</a>
             </div>
         </div>
         <div class="scroll-hint">
@@ -59,76 +59,35 @@
     </section>
 
     <section class="section" id="productos">
-        <div class="filter-bar">
-            <a href="{{ route('shop') }}#productos"
-               class="filter-pill {{ is_null($activeCategory) ? 'active' : '' }}">Todos</a>
-            @foreach ($categories as $category)
-                <a href="{{ route('shop', ['category' => $category->id]) }}#productos"
-                   class="filter-pill {{ $activeCategory == $category->id ? 'active' : '' }}">
-                    {{ $category->name }}
-                </a>
-            @endforeach
-            <div class="filter-right">
-                <div class="search-wrap">
-                    <input id="search-input" type="text" class="form-control" placeholder="Buscar producto…"
-                        style="width:220px;padding:.45rem 1rem .45rem 2.2rem" />
-                </div>
+        <div class="section-header">
+            <div>
+                <p class="section-eyebrow">Lo más top</p>
+                <h2 class="section-title">Productos Destacados</h2>
             </div>
-        </div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
-            <p style="color:var(--grey);font-size:.88rem">
-                <strong id="product-count" style="color:var(--white)">{{ $products->total() }} productos</strong> encontrados
-            </p>
+            <a href="{{ route('catalog') }}" class="btn-secondary">Ver catálogo completo →</a>
         </div>
 
         <div class="prod-grid" id="prod-grid">
             @foreach ($products as $product)
-                <div class="prod-card" data-name="{{ strtolower($product->name) }}">
+                <a href="{{ route('product.show', $product->id) }}" class="prod-card" style="text-decoration:none">
                     <div class="prod-img">
                         <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy">
-                        <div class="prod-badge new">Nuevo</div>
+                        <div class="prod-badge new">Destacado</div>
                     </div>
                     <div class="prod-info">
                         <p class="prod-cat">{{ $product->category->name }}</p>
                         <p class="prod-name">{{ $product->name }}</p>
                         <div class="prod-footer">
                             <p class="prod-price">{{ $product->price }}€</p>
-                            <button class="add-btn" data-product-id="{{ $product->id }}">+</button>
+                            <button class="add-btn" data-product-id="{{ $product->id }}"
+                                    onclick="event.preventDefault()">+</button>
                         </div>
                     </div>
-                </div>
+                </a>
             @endforeach
         </div>
 
         <script>
-            // Búsqueda en tiempo real
-            const searchInput = document.getElementById('search-input');
-            const cards = document.querySelectorAll('#prod-grid .prod-card');
-            const countEl = document.getElementById('product-count');
-
-            const totalProducts = {{ $products->total() }};
-            searchInput.addEventListener('input', () => {
-                const term = searchInput.value.toLowerCase().trim();
-                if (!term) {
-                    cards.forEach(card => card.style.display = '');
-                    countEl.textContent = `${totalProducts} productos`;
-                    return;
-                }
-                let visible = 0;
-                cards.forEach(card => {
-                    const matches = card.dataset.name.includes(term);
-                    card.style.display = matches ? '' : 'none';
-                    if (matches) visible++;
-                });
-                countEl.textContent = `${visible} productos`;
-            });
-
-            // Scroll automático a #productos si hay un filtro activo en la URL
-            if (window.location.hash === '#productos' || new URLSearchParams(window.location.search).has('category')) {
-                document.getElementById('productos').scrollIntoView({ behavior: 'smooth' });
-            }
-
             // ——— Añadir al carrito ———
             function showToast(msg, color = '#0047AB') {
                 let t = document.getElementById('shop-toast');
