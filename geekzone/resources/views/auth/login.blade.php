@@ -7,6 +7,7 @@
     <title>GeekZone — Iniciar Sesión</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/login.css" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -39,6 +40,9 @@
                         <label class="form-label">Contraseña</label>
                         <input type="password" id="password" class="form-control" placeholder="••••••••" />
                         <span id="err-password" style="display:none;margin-top:.35rem;font-size:.8rem;color:#f87171;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;"></span>
+                    </div>
+                    <div class="captcha" style="width:100%; display:flex; justify-content:center; margin:1.5rem 0;">
+                        <div class="g-recaptcha" data-sitekey="6LdKObcsAAAAAIhT2WoE0dKLNcU8uDHdq2GdGAHp"></div>
                     </div>
                     <div class="remember-row">
                         <label class="checkbox-label">
@@ -86,6 +90,15 @@
         submitBtn.disabled = true;
         submitBtn.textContent = 'Iniciando sesión…';
 
+        if (typeof grecaptcha === "undefined" || !grecaptcha.getResponse()) {
+            const errorcaptcha = document.getElementById('err-general');
+            errorcaptcha.textContent = "Por favor, completa el captcha.";
+            errorcaptcha.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Iniciar sesión';
+            return;
+        }
+        
         const data = {
             email: document.getElementById('email').value,
             password: document.getElementById('password').value

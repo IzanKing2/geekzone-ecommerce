@@ -7,6 +7,7 @@
     <title>GeekZone — Registrarse</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/register.css') }}" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -67,6 +68,9 @@
                             <input id="passwordConfirm" type="password" class="form-control" placeholder="Repite la contraseña" autocomplete="new-password" />
                             <span class="field-error" id="err-passwordConfirm"></span>
                         </div>
+                    </div>
+                    <div class="captcha" style="width:100%; display:flex; justify-content:center; margin:1.5rem 0;">
+                        <div class="g-recaptcha" data-sitekey="6LdKObcsAAAAAIhT2WoE0dKLNcU8uDHdq2GdGAHp"></div>
                     </div>
                     <div class="form-group">
                         <label class="checkbox-label" style="margin-bottom:.8rem">
@@ -182,6 +186,12 @@
             if (!validateClient()) return;
 
             setLoading(true);
+
+            if (typeof grecaptcha === "undefined" || !grecaptcha.getResponse()) {
+                showGeneralError("Por favor, completa el captcha.");
+                setLoading(false);
+                return;
+            }
 
             const data = {
                 name:                  document.getElementById('name').value.trim(),
