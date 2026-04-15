@@ -46,8 +46,10 @@ class ProfileController extends Controller
         }
 
         $reglas = [
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+            'name'     => 'sometimes|string|max:255',
+            'surname'  => 'sometimes|string|max:255',
+            'username' => 'sometimes|string|max:255|unique:users,username,' . $user->id,
+            'email'    => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
         ];
 
         if ($request->filled('password')) {
@@ -55,8 +57,9 @@ class ProfileController extends Controller
         }
 
         $validator = Validator::make($request->all(), $reglas, [
-            'email.unique' => 'El email ya está registrado.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'username.unique' => 'Ese nombre de usuario ya está en uso.',
+            'email.unique'    => 'El email ya está registrado.',
+            'password.min'    => 'La contraseña debe tener al menos 6 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
@@ -67,12 +70,10 @@ class ProfileController extends Controller
             ], 422);
         }
 
-        // Actualizar solo los campos que se enviaron
-        if ($request->filled('name')) {
-            $user->name = $request->name;
-        }
-        if ($request->filled('email')) {
-            $user->email = $request->email;
+        foreach (['name', 'surname', 'username', 'email'] as $field) {
+            if ($request->filled($field)) {
+                $user->$field = $request->$field;
+            }
         }
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);

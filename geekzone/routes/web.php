@@ -13,3 +13,7 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::get('/cart', function() {
     return view('cart.cart');
 })->name('cart');
+
+Route::get('/panel', function() {
+    return view('userPanel');
+})->name('panel');

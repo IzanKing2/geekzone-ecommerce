@@ -1,7 +1,7 @@
 <header>
   <nav>
     <div class="nav-logo"><a href="{{ route('shop') }}">Geek<span>Zone</span></a></div>
-    <ul class="nav-links">
+    <ul class="nav-links" id="nav-links">
       <li><a href="{{ route('shop') }}" class="active">Tienda</a></li>
       <li><a href="#categorias">Categorías</a></li>
       <li><a href="#productos">Productos</a></li>
@@ -9,7 +9,7 @@
     <div class="nav-right">
         <div id="user-menu" style="display:none;">
             <a id="admin-btn" href="#" class="nav-user" style="display:none;">⚙️ Panel Admin</a>
-            <a href="#" class="nav-user">👤 Mi Perfil</a>
+            <a href="{{ route('panel') }}" class="nav-user">👤 Mi Perfil</a>
             <form id="logoutForm" style="display:inline;">
                 <button type="submit" class="nav-user" style="background:none; border:none; cursor:pointer;">🚪 Cerrar Sesión</button>
             </form>
@@ -20,6 +20,9 @@
         </div>
 
         <a href="{{ route('cart') }}" class="btn-cart">🛒 Carrito <span id="cartCount" class="cart-count">0</span></a>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menú">
+            <span></span><span></span><span></span>
+        </button>
     </div>
 
     <script>
@@ -91,6 +94,23 @@
                 });
             }
         });
+
+        // --- Hamburguesa ---
+        const hamburger = document.getElementById('nav-hamburger');
+        const navLinks = document.getElementById('nav-links');
+        if (hamburger && navLinks) {
+            hamburger.addEventListener('click', () => {
+                navLinks.classList.toggle('open');
+                hamburger.classList.toggle('open');
+            });
+            // Cerrar al hacer clic en un enlace
+            navLinks.querySelectorAll('a').forEach(a => {
+                a.addEventListener('click', () => {
+                    navLinks.classList.remove('open');
+                    hamburger.classList.remove('open');
+                });
+            });
+        }
     </script>
   </nav>
 </header>

@@ -45,7 +45,7 @@
         <div class="cat-grid">
             @foreach ($categories as $category)
                 <div class="cat-card">
-                    <img src="{{ $category->image_url }}" alt="">
+                    <img src="{{ $category->image_url }}" alt="{{ $category->name }}" loading="lazy">
                     <div class="cat-bg"></div>
                     <div class="cat-pattern"></div>
                     <div class="cat-content">
@@ -78,7 +78,7 @@
 
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
             <p style="color:var(--grey);font-size:.88rem">
-                <strong id="product-count" style="color:var(--white)">{{ count($products) }} productos</strong> encontrados
+                <strong id="product-count" style="color:var(--white)">{{ $products->total() }} productos</strong> encontrados
             </p>
         </div>
 
@@ -86,7 +86,7 @@
             @foreach ($products as $product)
                 <div class="prod-card" data-name="{{ strtolower($product->name) }}">
                     <div class="prod-img">
-                        <img src="{{ $product->image_url }}" alt="">
+                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy">
                         <div class="prod-badge new">Nuevo</div>
                     </div>
                     <div class="prod-info">
@@ -107,8 +107,14 @@
             const cards = document.querySelectorAll('#prod-grid .prod-card');
             const countEl = document.getElementById('product-count');
 
+            const totalProducts = {{ $products->total() }};
             searchInput.addEventListener('input', () => {
                 const term = searchInput.value.toLowerCase().trim();
+                if (!term) {
+                    cards.forEach(card => card.style.display = '');
+                    countEl.textContent = `${totalProducts} productos`;
+                    return;
+                }
                 let visible = 0;
                 cards.forEach(card => {
                     const matches = card.dataset.name.includes(term);
@@ -176,11 +182,5 @@
             });
         </script>
 
-        <div class="pagination">
-            <button class="page-btn">‹</button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <button class="page-btn">›</button>
-        </div>
+        {{ $products->appends(request()->query())->links('vendor.pagination.custom') }}
     </section>

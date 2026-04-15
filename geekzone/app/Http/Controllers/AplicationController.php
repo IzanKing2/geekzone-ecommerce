@@ -12,13 +12,13 @@ class AplicationController
     {
         $categories = Category::all();
 
-        $query = Product::query();
+        $query = Product::with('category');
 
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
-        $products = $query->get();
+        $products = $query->paginate(12);
 
         $activeCategory = $request->category;
 
