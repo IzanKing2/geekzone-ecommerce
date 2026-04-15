@@ -10,6 +10,13 @@
 </head>
 
 <body>
+    <!-- Loader de página (mismo que el resto del sitio) -->
+    <div id="page-loader" role="status" aria-label="Cargando">
+        <div class="loader-logo">Geek<span>Zone</span></div>
+        <div class="loader-spinner" aria-hidden="true"></div>
+        <p class="loader-text">Cargando…</p>
+    </div>
+
     <div class="auth-page">
         <div class="auth-card">
             <div class="auth-card-header">
@@ -50,6 +57,21 @@
 </body>
 
 <script>
+    // ─── Ocultar loader cuando la página está lista ───
+    const loginLoader = document.getElementById('page-loader');
+    if (loginLoader) {
+        function ocultarLoader() {
+            loginLoader.classList.add('loader-hidden');
+            setTimeout(() => loginLoader.style.display = 'none', 600);
+        }
+        if (document.readyState === 'complete') {
+            ocultarLoader();
+        } else {
+            window.addEventListener('load', ocultarLoader);
+        }
+    }
+
+    // ─── Lógica del formulario de login ───
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 

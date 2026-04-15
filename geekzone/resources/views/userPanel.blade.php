@@ -9,7 +9,7 @@
 <div class="layout-sidebar">
 
     <!-- ══ SIDEBAR ══ -->
-    <aside class="sidebar">
+    <aside class="sidebar fade-in-up">
         <div class="sidebar-user">
             <div class="avatar avatar-md" id="sidebar-initials">--</div>
             <div>
@@ -40,12 +40,14 @@
     <!-- ══ MAIN ══ -->
     <main class="main-content">
 
-        <div class="panel-header">
+        <div class="panel-header fade-in-up">
+
             <p class="page-eyebrow">Panel de usuario</p>
             <h2 class="panel-title">Mi <span>Cuenta</span></h2>
         </div>
 
-        <div class="profile-header">
+        <div class="profile-header fade-in-up delay-2">
+
             <div class="avatar avatar-lg" id="header-initials">--</div>
             <div class="profile-info">
                 <h3 id="header-fullname">Cargando…</h3>

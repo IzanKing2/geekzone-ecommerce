@@ -24,6 +24,26 @@
       <a href="{{ route('login') }}" class="btn btn-gold">Iniciar sesión</a>
     </div>
 
+    {{-- Estado: pedido completado --}}
+    <div id="cart-success" style="display:none; text-align:center; padding:4rem 0;">
+      <p style="font-size:4rem; margin-bottom:1rem;">🎉</p>
+      <h2 style="font-family:'Bebas Neue',sans-serif; font-size:2.5rem; margin-bottom:.5rem; letter-spacing:2px;">
+        ¡Pedido realizado!
+      </h2>
+      <p style="color:var(--grey); margin-bottom:.5rem;">
+        Tu pedido <strong id="success-order-id" style="color:var(--gold)"></strong> ha sido registrado correctamente.
+      </p>
+      <p style="color:var(--grey); font-size:.9rem; margin-bottom:2rem;">
+        Total: <strong id="success-order-total" style="color:var(--white)"></strong>
+      </p>
+      <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="{{ route('panel') }}?tab=pedidos" class="btn btn-gold">Ver mis pedidos</a>
+        <a href="{{ route('shop') }}" class="btn" style="background:var(--mid2); color:var(--white); border:1px solid var(--border);">
+          Seguir comprando
+        </a>
+      </div>
+    </div>
+
     {{-- Estado: carrito vacío --}}
     <div id="cart-empty" style="display:none; text-align:center; padding:4rem 0;">
       <p style="font-size:4rem; margin-bottom:1rem;">🛒</p>
@@ -47,36 +67,6 @@
           </div>
           <div id="cart-items"></div>
         </div>
-
-        <div class="card" style="margin-top:1.2rem">
-          <div class="card-header"><h3>Dirección de envío</h3></div>
-          <div class="card-body">
-            <div class="form-row">
-              <div class="form-group" style="margin-bottom:0">
-                <label class="form-label">Nombre completo</label>
-                <input type="text" class="form-control" placeholder="Tu nombre"/>
-              </div>
-              <div class="form-group" style="margin-bottom:0">
-                <label class="form-label">Teléfono</label>
-                <input type="tel" class="form-control" placeholder="+34 600 000 000"/>
-              </div>
-            </div>
-            <div class="form-group" style="margin-top:1rem">
-              <label class="form-label">Dirección</label>
-              <input type="text" class="form-control" placeholder="Calle, número, piso…"/>
-            </div>
-            <div class="form-row" style="margin-top:.2rem">
-              <div class="form-group" style="margin-bottom:0">
-                <label class="form-label">Ciudad</label>
-                <input type="text" class="form-control" placeholder="Tu ciudad"/>
-              </div>
-              <div class="form-group" style="margin-bottom:0">
-                <label class="form-label">Código Postal</label>
-                <input type="text" class="form-control" placeholder="28001"/>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       {{-- RESUMEN --}}
@@ -96,9 +86,9 @@
               <span>Total</span>
               <span id="summary-total">0,00€</span>
             </div>
-            <a href="#" class="btn btn-gold btn-block btn-lg" style="text-align:center;margin-top:.5rem">
+            <button id="checkout-btn" class="btn btn-gold btn-block btn-lg" style="margin-top:.5rem">
               Finalizar compra →
-            </a>
+            </button>
             <div style="display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:1rem;color:var(--grey);font-size:.8rem">
               <span>🔒</span> Pago 100% seguro y protegido
             </div>
@@ -244,6 +234,31 @@
       const res = await apiFetch(`/api/carrito/${id}`, { method: 'DELETE' });
       if (res.ok) { loadCart(); showToast('Producto eliminado'); }
     }
+
+    document.getElementById('checkout-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('checkout-btn');
+      btn.disabled = true;
+      btn.textContent = 'Procesando…';
+
+      const res = await apiFetch('/api/pedidos', { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        // Ocultar todo el layout y mostrar confirmación
+        document.getElementById('cart-layout').style.display = 'none';
+        document.getElementById('success-order-id').textContent = `#${String(data.order.id).padStart(4, '0')}`;
+        document.getElementById('success-order-total').textContent = fmt(parseFloat(data.order.total));
+        document.getElementById('cart-success').style.display = 'block';
+
+        // Resetear contador del header
+        const headerCount = document.getElementById('cartCount');
+        if (headerCount) headerCount.textContent = '0';
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Finalizar compra →';
+        showToast(data.message || 'Error al procesar el pedido', '#c0392b');
+      }
+    });
 
     document.getElementById('clear-cart-btn').addEventListener('click', async () => {
       const ids = [...document.querySelectorAll('[id^="item-"]')]

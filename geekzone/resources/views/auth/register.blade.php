@@ -10,6 +10,14 @@
 </head>
 
 <body>
+
+    <!-- Loader de página (mismo que el resto del sitio) -->
+    <div id="page-loader" role="status" aria-label="Cargando">
+        <div class="loader-logo">Geek<span>Zone</span></div>
+        <div class="loader-spinner" aria-hidden="true"></div>
+        <p class="loader-text">Cargando…</p>
+    </div>
+
     <div class="auth-page">
         <div class="auth-card" style="max-width:500px">
             <div class="auth-card-header">
@@ -82,6 +90,21 @@
     </div>
 
     <script>
+        // ─── Ocultar loader cuando la página está lista ───
+        const registerLoader = document.getElementById('page-loader');
+        if (registerLoader) {
+            function ocultarLoader() {
+                registerLoader.classList.add('loader-hidden');
+                setTimeout(() => registerLoader.style.display = 'none', 600);
+            }
+            if (document.readyState === 'complete') {
+                ocultarLoader();
+            } else {
+                window.addEventListener('load', ocultarLoader);
+            }
+        }
+
+        // ─── Lógica del formulario de registro ───
         const form      = document.getElementById('registerForm');
         const submitBtn = document.getElementById('submit-btn');
 

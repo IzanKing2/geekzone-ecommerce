@@ -3,7 +3,7 @@
 
 @section('content')
     <section class="hero">
-        <div class="hero-content">
+        <div class="hero-content fade-in-up">
             <p class="hero-eyebrow">✦ La tienda friki definitiva ✦</p>
             <h1 class="hero-title">
                 Tu <span>universo</span><br>
@@ -17,7 +17,7 @@
                 <a href="#categorias" class="btn-primary">Explorar tienda</a>
             </div>
         </div>
-        <div class="scroll-hint">
+        <div class="scroll-hint fade-in delay-4">
             <span>Scroll</span>
             <div class="scroll-arrow"></div>
         </div>
@@ -34,8 +34,8 @@
         </div>
     </div>
 
-    <section class="section" id="categorias">
-        <div class="section-header">
+    <section class="section fade-in-up" id="categorias">
+        <div class="section-header fade-in-up delay-1">
             <div>
                 <p class="section-eyebrow">Explora por género</p>
                 <h2 class="section-title">Nuestras Categorías</h2>
@@ -58,8 +58,8 @@
         </div>
     </section>
 
-    <section class="section" id="productos">
-        <div class="filter-bar">
+    <section class="section fade-in-up" id="productos">
+        <div class="filter-bar fade-in-up delay-1">
             <a href="{{ route('shop') }}#productos"
                class="filter-pill {{ is_null($activeCategory) ? 'active' : '' }}">Todos</a>
             @foreach ($categories as $category)
