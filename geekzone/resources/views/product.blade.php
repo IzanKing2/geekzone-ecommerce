@@ -157,7 +157,7 @@
     }
 
     async function addToCart(productId, quantity = 1) {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const token = Auth.getToken();
         if (!token) { showToast('Inicia sesión para añadir productos', '#c0392b'); return; }
 
         const res = await fetch('/api/carrito', {
@@ -190,14 +190,65 @@
         });
     }
 
-    // ——— Favorito (visual) ———
-    const wishBtn = document.getElementById('wish-btn');
+    // ——— Favorito ———
+    const wishBtn    = document.getElementById('wish-btn');
+    const PRODUCT_ID = {{ $product->id }};
+    let   isFav      = false;
+
+    function setWishState(active) {
+        isFav = active;
+        wishBtn.textContent   = active ? '♥' : '♡';
+        wishBtn.style.color       = active ? 'var(--red)' : '';
+        wishBtn.style.borderColor = active ? 'var(--red)' : '';
+        wishBtn.title = active ? 'Quitar de favoritos' : 'Añadir a favoritos';
+    }
+
+    async function initWishBtn() {
+        if (!Auth.isLoggedIn()) return;
+        try {
+            const res  = await fetch('/api/favoritos', {
+                headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${Auth.getToken()}` }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            const found = (data.favorites ?? []).some(f => f.product_id === PRODUCT_ID);
+            setWishState(found);
+        } catch {}
+    }
+
     if (wishBtn) {
-        wishBtn.addEventListener('click', () => {
-            const active = wishBtn.textContent === '♥';
-            wishBtn.textContent = active ? '♡' : '♥';
-            wishBtn.style.color = active ? '' : 'var(--red)';
-            wishBtn.style.borderColor = active ? '' : 'var(--red)';
+        initWishBtn();
+
+        wishBtn.addEventListener('click', async () => {
+            if (!Auth.isLoggedIn()) {
+                showToast('Inicia sesión para guardar favoritos', '#c0392b');
+                return;
+            }
+
+            wishBtn.style.opacity = '.5';
+            wishBtn.style.pointerEvents = 'none';
+
+            try {
+                if (isFav) {
+                    const res = await fetch(`/api/favoritos/${PRODUCT_ID}`, {
+                        method: 'DELETE',
+                        headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${Auth.getToken()}` }
+                    });
+                    if (res.ok) { setWishState(false); showToast('Eliminado de favoritos'); }
+                } else {
+                    const res = await fetch('/api/favoritos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${Auth.getToken()}` },
+                        body: JSON.stringify({ product_id: PRODUCT_ID })
+                    });
+                    if (res.ok) { setWishState(true); showToast('Añadido a favoritos ♥', '#e01020'); }
+                }
+            } catch {
+                showToast('Error al actualizar favoritos', '#c0392b');
+            } finally {
+                wishBtn.style.opacity = '';
+                wishBtn.style.pointerEvents = '';
+            }
         });
     }
 

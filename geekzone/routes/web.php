@@ -19,3 +19,7 @@ Route::get('/cart', function() {
 Route::get('/panel', function() {
     return view('userPanel');
 })->name('panel');
+
+Route::get('/favoritos', function() {
+    return view('favorites');
+})->name('favorites');

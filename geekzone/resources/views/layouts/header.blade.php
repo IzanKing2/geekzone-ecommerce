@@ -44,8 +44,8 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const role  = localStorage.getItem('role')  || sessionStorage.getItem('role');
+        const token = Auth.getToken();
+        const role  = Auth.getRole();
 
         // Referencias desktop
         const userMenu  = document.getElementById('user-menu');
@@ -100,23 +100,19 @@
 
         // Función de logout reutilizable
         async function doLogout() {
-          const currentToken = localStorage.getItem('token');
           try {
             await fetch('/api/logout', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${currentToken}`
+                'Authorization': `Bearer ${Auth.getToken()}`
               }
             });
           } catch (e) {
             console.error('Error al cerrar sesión:', e);
           } finally {
-            localStorage.removeItem('token');
-            localStorage.removeItem('role');
-            sessionStorage.removeItem('token');
-            sessionStorage.removeItem('role');
+            Auth.clear();
             window.location.href = "{{ route('shop') }}";
           }
         }

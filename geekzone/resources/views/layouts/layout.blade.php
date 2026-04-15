@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/header.css') }}">
     <link rel="stylesheet" href="{{ asset('css/shop.css') }}">
     @stack('styles')
+    <script src="{{ asset('js/auth.js') }}"></script>
 </head>
 <body>
     @include('layouts.header')

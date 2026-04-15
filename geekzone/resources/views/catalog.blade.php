@@ -221,7 +221,7 @@
         const btn = e.target.closest('.add-btn');
         if (!btn) return;
 
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const token = Auth.getToken();
         if (!token) {
             showToast('Inicia sesión para añadir productos', '#c0392b');
             return;

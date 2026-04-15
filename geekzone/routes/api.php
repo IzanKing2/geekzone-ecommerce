@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
@@ -45,6 +46,11 @@ Route::middleware('jwt.auth')->group(function () {
     // ———— Pedidos —————————————————————————————————
     Route::get('/pedidos', [OrderController::class, 'index']);
     Route::post('/pedidos', [OrderController::class, 'store']);
+
+    // ———— Favoritos —————————————————————————————————
+    Route::get('/favoritos', [FavoriteController::class, 'index']);
+    Route::post('/favoritos', [FavoriteController::class, 'store']);
+    Route::delete('/favoritos/{productId}', [FavoriteController::class, 'destroy']);
 
     // ———— Subir imagen —————————————————————————————————
     // Acepta archvos via multipart/form-data (no JSON)

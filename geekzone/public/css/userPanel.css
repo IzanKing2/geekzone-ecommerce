@@ -25,7 +25,7 @@
 .sidebar-link.active{color:var(--white);background:rgba(0,71,171,.18);border-left-color:var(--cobalt)}
 .sidebar-link .icon{font-size:1.1rem;width:22px;text-align:center}
 .sidebar-divider{border:none;border-top:1px solid var(--border);margin:.8rem 1.5rem}
-.main-content{flex:1;padding:2.5rem;overflow:hidden}
+.main-content{flex:1;padding:2.5rem;overflow-x:auto;min-width:0}
 
 /* ══════════════════════════════════════
    PAGE HEADER
@@ -110,6 +110,7 @@
   background:var(--mid2);border:1px solid var(--border);
   border-radius:4px;color:var(--white);font-size:.95rem;
   transition:border-color .2s,box-shadow .2s;
+  box-sizing:border-box; /* Evita que padding desborde el contenedor */
 }
 .form-control:focus{
   outline:none;border-color:var(--cobalt);
@@ -231,29 +232,199 @@ select.form-control option{background:var(--mid)}
 .empty-icon{font-size:3rem;margin-bottom:1rem;opacity:.5}
 
 /* ══════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — TABLET (≤900px)
+   Sidebar pasa a franja horizontal
 ══════════════════════════════════════ */
 @media (max-width: 900px) {
-  .layout-sidebar{flex-direction:column}
-  .sidebar{
-    width:100%;height:auto;position:static;
-    min-height:unset;border-right:none;border-bottom:1px solid var(--border);
-    padding:1rem 0;
+  /* Layout: cambia de fila a columna */
+  .layout-sidebar { flex-direction: column }
+
+  /* Sidebar como barra horizontal con scroll si se necesita */
+  .sidebar {
+    width: 100%; height: auto; min-height: unset;
+    position: static;
+    border-right: none; border-bottom: 1px solid var(--border);
+    padding: 0;
+    display: flex; flex-direction: row;
+    flex-wrap: nowrap; /* Evita que los links salten a otra línea */
+    align-items: stretch;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
   }
-  .sidebar-user{padding:.8rem 1.2rem}
-  .sidebar-nav{display:flex;flex-wrap:wrap;gap:.25rem;padding:.5rem 1rem}
-  .sidebar-link{border-left:none !important;border-bottom:2px solid transparent;padding:.5rem .85rem}
-  .sidebar-link.active{border-bottom-color:var(--cobalt) !important}
-  .sidebar-divider{display:none}
-  .sidebar-logout{margin:0 1rem .25rem}
-  .main-content{padding:1.5rem}
+
+  /* Scrollbar sutil para la sidebar horizontal */
+  .sidebar::-webkit-scrollbar { height: 3px }
+  .sidebar::-webkit-scrollbar-track { background: transparent }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--cobalt); border-radius: 3px }
+
+  /* Info de usuario: columna izquierda compacta */
+  .sidebar-user {
+    padding: .5rem 1rem;
+    border-bottom: none;
+    border-right: 1px solid var(--border);
+    margin-bottom: 0;
+    flex-shrink: 0;
+    gap: .6rem;
+  }
+  .sidebar-name { font-size: .88rem }
+  .sidebar-role { font-size: .72rem }
+
+  /* Nav ocupa el espacio sobrante en fila */
+  .sidebar-nav {
+    flex: 1;
+    display: flex; flex-direction: row;
+    flex-wrap: nowrap; /* Una sola fila, scroll horizontal si es necesario */
+    gap: 0; padding: 0;
+    min-width: 0; /* Permite que se encoja correctamente */
+  }
+  .sidebar-label { display: none }
+
+  /* Todos los links: horizontales, borde inferior como indicador */
+  .sidebar-link {
+    border-left: none !important;
+    border-bottom: 3px solid transparent !important;
+    padding: 0 .9rem;
+    min-height: 48px;
+    white-space: nowrap;
+    flex-shrink: 0; /* No se encogen, mejor que hagan scroll */
+  }
+  .sidebar-link:hover  { border-bottom-color: var(--cobalt-light) !important }
+  .sidebar-link.active { border-bottom-color: var(--cobalt) !important }
+
+  /* Separador oculto */
+  .sidebar-divider { display: none }
+
+  /* Seguridad (fuera del nav) queda pegado al final */
+  .sidebar > .sidebar-link { flex-shrink: 0 }
+
+  /* Cerrar sesión empujado al extremo derecho */
+  .sidebar-logout { margin-left: auto !important }
+
+  .main-content { padding: 1.5rem }
+
+  /* Profile header: reorganizar en 2 líneas */
+  .profile-header {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .profile-info { min-width: 0 } /* Evita desborde del texto */
+  .profile-info h3 { font-size: 1.5rem }
 }
 
+/* ══════════════════════════════════════
+   RESPONSIVE — NAV CAMBIA DE ALTURA (≤768px)
+   El nav pasa de 68px fijos a height:auto,
+   así que ajustamos el padding-top del layout
+══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .layout-sidebar {
+    padding-top: 56px; /* Aproxima la nueva altura mínima del nav */
+  }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — MÓVIL (≤600px)
+══════════════════════════════════════ */
 @media (max-width: 600px) {
-  .profile-header{flex-wrap:wrap;gap:1rem}
-  .profile-total{width:100%;text-align:left}
-  .form-row{grid-template-columns:1fr}
-  .main-content{padding:1rem}
-  .order-head{flex-direction:column;align-items:flex-start;gap:.6rem}
-  .order-right{width:100%;justify-content:space-between}
+  .main-content { padding: 1rem }
+
+  /* Título */
+  .panel-title { font-size: 2rem }
+  .panel-header { margin-bottom: 1.2rem }
+
+  /* Perfil header: apilar todo verticalmente */
+  .profile-header {
+    flex-direction: column; /* Apilamiento completo */
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.2rem;
+  }
+  .avatar-lg { width: 56px; height: 56px; font-size: 1.4rem }
+  .profile-info h3 { font-size: 1.4rem }
+  .profile-email { font-size: .82rem; word-break: break-all } /* Emails largos */
+  .profile-total {
+    width: 100%;
+    text-align: left;
+    padding-top: .8rem;
+    border-top: 1px solid var(--border); /* Separador visual */
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+  }
+  .total-amount { font-size: 1.6rem }
+
+  /* Sidebar: ocultar info de usuario, mostrar solo links */
+  .sidebar-user { display: none }
+  .sidebar {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+
+  /* Tabs: scrollables para que no se rompan */
+  .tab-bar {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    scrollbar-width: thin; /* Firefox */
+  }
+  .tab-bar::-webkit-scrollbar { height: 2px }
+  .tab-bar::-webkit-scrollbar-track { background: transparent }
+  .tab-bar::-webkit-scrollbar-thumb { background: var(--cobalt); border-radius: 2px }
+  .tab { white-space: nowrap; padding: .65rem .9rem; font-size: .78rem; flex-shrink: 0 }
+
+  /* Formularios: una columna */
+  .form-row { grid-template-columns: 1fr }
+
+  /* Card footer: botones en columna */
+  .card-footer { flex-direction: column; align-items: stretch }
+  .card-footer .btn { width: 100%; justify-content: center }
+
+  /* Pedidos: apilar cabecera y detalles */
+  .order-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .6rem;
+    padding: 1rem;
+  }
+  .order-right { width: 100%; justify-content: space-between }
+  .order-items { padding: .75rem 1rem }
+  .order-item { font-size: .82rem; gap: .5rem }
+  .order-item-name {
+    min-width: 0;           /* Permite que se encoja */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Texto largo se corta con "..." */
+    white-space: nowrap;
+  }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — MÓVIL PEQUEÑO (≤400px)
+══════════════════════════════════════ */
+@media (max-width: 400px) {
+  .panel-title { font-size: 1.6rem }
+  .page-eyebrow { font-size: .7rem; letter-spacing: 3px }
+
+  /* Sidebar: texto de links más pequeño */
+  .sidebar-link { font-size: .75rem; padding: 0 .55rem; letter-spacing: 1px }
+  .sidebar-link .icon { display: none } /* Ocultar emojis para ganar espacio */
+
+  /* Tabs */
+  .tab { padding: .55rem .65rem; font-size: .72rem; letter-spacing: 1.5px }
+
+  /* Profile aún más compacto */
+  .profile-header { padding: 1rem }
+  .avatar-lg { width: 48px; height: 48px; font-size: 1.2rem }
+  .profile-info h3 { font-size: 1.2rem }
+  .total-amount { font-size: 1.3rem }
+
+  /* Botones: reducir padding */
+  .btn { padding: .6rem 1.2rem; font-size: .85rem; letter-spacing: 1.5px }
+  .card-body { padding: 1rem }
+  .card-header { padding: .9rem 1rem }
+  .card-header h3 { font-size: 1.1rem }
+
+  /* Pedidos: id y fecha más compactos */
+  .order-id { font-size: 1rem }
+  .order-total { font-size: 1.1rem }
+  .order-status { font-size: .65rem; padding: .2rem .6rem }
 }

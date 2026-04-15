@@ -138,7 +138,7 @@
   </div>
 
   <script>
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const token = Auth.getToken();
     const SHIPPING_THRESHOLD = 50;
     const SHIPPING_COST = 4.99;
 
