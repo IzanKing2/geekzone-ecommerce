@@ -129,12 +129,15 @@
             {{-- Product grid --}}
             <div class="catalog-grid" id="catalog-grid">
                 @forelse($products as $product)
-                <a href="{{ route('product.show', $product->id) }}" class="prod-card" style="text-decoration:none">
+                <a href="{{ route('product.show', $product->id) }}" class="prod-card{{ $product->stock <= 0 ? ' out-of-stock' : '' }}" style="text-decoration:none">
                     <div class="prod-img">
                         <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy"
                             style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
                         @if($product->featured)
                             <div class="prod-badge new">Destacado</div>
+                        @endif
+                        @if($product->stock <= 0)
+                            <div class="prod-badge out-of-stock" style="top:.7rem;left:auto;right:.7rem">Sin stock</div>
                         @endif
                     </div>
                     <div class="prod-info">
@@ -143,7 +146,9 @@
                         <div class="prod-footer">
                             <p class="prod-price">{{ $product->price }}€</p>
                             <button type="button" class="add-btn" data-product-id="{{ $product->id }}"
-                                    onclick="event.preventDefault()">+</button>
+                                    onclick="event.preventDefault()"
+                                    {{ $product->stock <= 0 ? 'disabled' : '' }}
+                                    title="{{ $product->stock <= 0 ? 'Sin stock' : 'Añadir al carrito' }}">+</button>
                         </div>
                     </div>
                 </a>
@@ -219,7 +224,7 @@
 
     document.getElementById('catalog-grid').addEventListener('click', async (e) => {
         const btn = e.target.closest('.add-btn');
-        if (!btn) return;
+        if (!btn || btn.disabled) return;
 
         const token = Auth.getToken();
         if (!token) {

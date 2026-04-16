@@ -76,7 +76,7 @@
                     id="add-to-cart-btn"
                     data-product-id="{{ $product->id }}"
                     {{ $product->stock <= 0 ? 'disabled' : '' }}>
-                    🛒 Añadir al carrito
+                    {{ $product->stock <= 0 ? '✕ Sin stock' : '🛒 Añadir al carrito' }}
                 </button>
                 <div class="btn-wish" id="wish-btn" title="Añadir a favoritos">♡</div>
             </div>
