@@ -32,8 +32,8 @@ class AdminTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'message',
-                'product' =>
-                    [
+                'data' => [
+                    'product' => [
                         'id',
                         'name',
                         'description',
@@ -42,6 +42,7 @@ class AdminTest extends TestCase
                         'image_url',
                         'category_id',
                     ],
+                ],
             ]);
     }
 
@@ -140,10 +141,12 @@ class AdminTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'total_usuarios',
-                'total_productos',
-                'total_pedidos',
-                'ingresos_totales',
+                'data' => [
+                    'total_usuarios',
+                    'total_productos',
+                    'total_pedidos',
+                    'ingresos_totales',
+                ],
             ]);
     }
 

@@ -17,9 +17,11 @@ class AuthTest extends TestCase
     public function test_register_successfully(): void
     {
         $response = $this->postJson('/api/register', [
-            'name' => 'Nuevo Usuario',
-            'email' => 'nuevo@geekzone.com',
-            'password' => 'test123',
+            'name'                  => 'Nuevo Usuario',
+            'surname'               => 'Apellido Nuevo',
+            'username'              => 'nuevo_usuario',
+            'email'                 => 'nuevo@geekzone.com',
+            'password'              => 'test123',
             'password_confirmation' => 'test123',
         ]);
 
@@ -30,7 +32,6 @@ class AuthTest extends TestCase
                     'id',
                     'name',
                     'email',
-                    'role',
                 ],
                 'token',
                 'type',
@@ -94,10 +95,8 @@ class AuthTest extends TestCase
                     'id',
                     'name',
                     'email',
-                    'role',
                 ],
                 'token',
-                'expires_in',
                 'type',
             ]);
     }
