@@ -40,7 +40,9 @@ class OrderTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'message',
-                'order' => ['id', 'user_id', 'status', 'total'],
+                'data' => [
+                    'order' => ['id', 'user_id', 'status', 'total'],
+                ],
             ]);
 
         // Verificar que el pedido está en la BD
@@ -94,13 +96,15 @@ class OrderTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'orders' => [
-                    '*' => ['id', 'user_id', 'status', 'total'],
+                'data' => [
+                    'orders' => [
+                        '*' => ['id', 'user_id', 'status', 'total'],
+                    ],
+                    'total',
                 ],
-                'total',
             ]);
 
-        $this->assertEquals(1, $response->json('total'));
+        $this->assertEquals(1, $response->json('data.total'));
     }
 
     // ══════════════════════════════════════════════════════════════════════════════════════════════════

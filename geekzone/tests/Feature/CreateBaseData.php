@@ -68,9 +68,11 @@ trait CreateBaseData
     {
         return User::create([
             'name'     => 'Usuario Test',
+            'surname'  => 'Apellido Test',
+            'username' => 'usuario_test',
             'email'    => 'test@geekzone.com',
             'password' => 'password123',
-            'role'      => 'user',
+            'role'     => 'user',
         ]);
     }
 
@@ -78,9 +80,11 @@ trait CreateBaseData
     {
         return User::create([
             'name'     => 'Admin Test',
+            'surname'  => 'Admin Apellido',
+            'username' => 'admin_test',
             'email'    => 'admin-test@geekzone.com',
             'password' => 'admin123',
-            'role'      => 'admin',
+            'role'     => 'admin',
         ]);
     }
 

@@ -24,36 +24,8 @@ class ProductTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'products' =>
-                    [
-                        '*' => [
-                        'id',
-                        'name',
-                        'description',
-                        'price',
-                        'stock',
-                        'image_url',
-                        'category_id',
-                        ],
-                    ],
-                'total',
-            ]);
-    }
-
-    // ———— Test para filtrar por categoría ——————————————————————————————————————————————————————————————————
-    public function test_filter_products_by_category(): void
-    {
-        [$marvel, $futbol] = 
-        $this->createCategoriesForTest();
-        $this->createProductsForTest($marvel->id);
-        $this->createProductsForTest($futbol->id);
-
-        $response = $this->getJson('/api/productos?category_id=' . $marvel->id);
-
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'products' =>
-                    [
+                'data' => [
+                    'items' => [
                         '*' => [
                             'id',
                             'name',
@@ -64,7 +36,37 @@ class ProductTest extends TestCase
                             'category_id',
                         ],
                     ],
-                'total',
+                    'total',
+                ],
+            ]);
+    }
+
+    // ———— Test para filtrar por categoría ——————————————————————————————————————————————————————————————————
+    public function test_filter_products_by_category(): void
+    {
+        [$marvel, $futbol] =
+        $this->createCategoriesForTest();
+        $this->createProductsForTest($marvel->id);
+        $this->createProductsForTest($futbol->id);
+
+        $response = $this->getJson('/api/productos?category_id=' . $marvel->id);
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    'items' => [
+                        '*' => [
+                            'id',
+                            'name',
+                            'description',
+                            'price',
+                            'stock',
+                            'image_url',
+                            'category_id',
+                        ],
+                    ],
+                    'total',
+                ],
             ]);
     }
 
@@ -83,8 +85,8 @@ class ProductTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'product' =>
-                    [
+                'data' => [
+                    'product' => [
                         'id',
                         'name',
                         'description',
@@ -93,6 +95,7 @@ class ProductTest extends TestCase
                         'image_url',
                         'category_id',
                     ],
+                ],
             ]);
     }
 
@@ -115,7 +118,7 @@ class ProductTest extends TestCase
     public function test_deleted_products_do_not_appear(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        [$product1, $product2, $product3] = $this->createProductsForTest($marvel->id);
+        [$product1] = $this->createProductsForTest($marvel->id);
 
         $product1->delete();
 
@@ -123,7 +126,8 @@ class ProductTest extends TestCase
         $response = $this->getJson('/api/productos');
 
         $response->assertStatus(200);
-        $this->assertEquals(2, $response->json('total'));
+        $this->assertEquals(2, $response->json('data.total'));
+
 
         // Verificar que el producto eliminado sigue en la BD
         // pero con deleted_at marcado
