@@ -16,15 +16,15 @@ class CategorySeeder extends Seeder
                 'image_url' => 'img/categories/marvel.jpg',
             ],
             [
-                'name' => 'Stray Kids',
-                'description' => 'Merchandising oficial de Stray Kids: álbumes, lightsticks, photocards, camisetas y accesorios del grupo de K-pop más innovador del momento.',
-                'image_url' => 'img/categories/straykids.jpg',
+                'name' => 'K-Pop',
+                'description' => 'Merchandising oficial de K-Pop: álbumes, lightsticks, photocards, camisetas y accesorios del grupo de K-pop más innovador del momento.',
+                'image_url' => 'img/categories/kpop.jpg',
             ],
             [
                 'name' => 'Fútbol',
                 'description' => 'Equipamiento y merchandising de fútbol: camisetas oficiales, balones, bufandas, figuras de jugadores y accesorios de los mejores equipos del mundo.',
                 'image_url' => 'img/categories/futbol.jpg',
-            ],
+            ]
         ];
 
         foreach ($categories as $category) {

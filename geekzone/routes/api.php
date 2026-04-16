@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\AdminDashboardController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ImageController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\Api\ImageController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\JwtMiddleware;
 
@@ -15,9 +15,11 @@ use App\Http\Middleware\JwtMiddleware;
 // RUTAS PÚBLICAS (sin autenticación)
 // ———————————————————————————————————————————————————————————————————————————
 
-// ———— Registro de usuario —————————————————————————————————
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+// ———— Registro de usuario (límite anti fuerza bruta / abuso) —————————————————————————————————
+Route::post('/register', [AuthController::class, 'register'])
+    ->middleware('throttle:5,1');
+Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('throttle:10,1');
 
 // ———— Productos y categorías: acceso público —————————————————————————————————
 Route::get('/categorias', [CategoryController::class, 'index']);
@@ -45,6 +47,11 @@ Route::middleware(JwtMiddleware::class)->group(function () {
     // ———— Pedidos —————————————————————————————————
     Route::get('/pedidos', [OrderController::class, 'index']);
     Route::post('/pedidos', [OrderController::class, 'store']);
+
+    // ———— Favoritos —————————————————————————————————
+    Route::get('/favoritos', [FavoriteController::class, 'index']);
+    Route::post('/favoritos', [FavoriteController::class, 'store']);
+    Route::delete('/favoritos/{productId}', [FavoriteController::class, 'destroy']);
 
     // ———— Subir imagen —————————————————————————————————
     // Acepta archvos via multipart/form-data (no JSON)

@@ -17,6 +17,7 @@ class Product extends Model
         'description',
         'price',
         'stock',
+        'featured',
         'image_url',
         'category_id',
     ];
@@ -24,6 +25,7 @@ class Product extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'stock' => 'integer',
+        'featured' => 'boolean'
     ];
 
     // ——————————————————————————————————————————————————————————————————————————
@@ -33,5 +35,10 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
     }
 }

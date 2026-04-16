@@ -14,6 +14,8 @@ class User extends Authenticatable implements JWTSubject
 
     protected $fillable = [
         'name',
+        'surname',
+        'username',
         'email',
         'password',
         'role',
@@ -66,5 +68,10 @@ class User extends Authenticatable implements JWTSubject
     public function carts()
     {
         return $this->hasMany(Cart::class);
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
     }
 }

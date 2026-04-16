@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -120,5 +118,38 @@ class OrderController extends Controller
                 ['exception' => [$e->getMessage()]]
             );
         }
+
+        $total = 0;
+        foreach ($CartItems as $item) {
+            $total += $item->product->price * $item->quantity;
+        }
+
+        $order = Order::create([
+            'user_id' => $user->id,
+            'status' => 'pendiente',
+                'total' => round($total, 2),
+        ]);
+
+        $orderDetails = [];
+        foreach ($CartItems as $item) {
+            OrderDetail::create([
+                'order_id'   => $order->id,
+                'product_id' => $item->product_id,
+                'quantity'   => $item->quantity,
+                'price'      => $item->product->price,
+            ]);
+
+            $item->product->decrement('stock', $item->quantity);
+        }
+
+        Cart::where('user_id', $user->id)
+            ->delete();
+
+        $order->load('details.product');
+
+        return response()->json([
+            'message' => 'Pedido creado correctamente.',
+            'order' => $order,
+        ], 201);
     }
 }
