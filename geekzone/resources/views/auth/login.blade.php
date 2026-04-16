@@ -7,10 +7,18 @@
     <title>GeekZone — Iniciar Sesión</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/login.css') }}" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="{{ asset('js/auth.js') }}"></script>
 </head>
 
 <body>
+    <!-- Loader de página (mismo que el resto del sitio) -->
+    <div id="page-loader" role="status" aria-label="Cargando">
+        <div class="loader-logo">Geek<span>Zone</span></div>
+        <div class="loader-spinner" aria-hidden="true"></div>
+        <p class="loader-text">Cargando…</p>
+    </div>
+
     <div class="auth-page">
         <div class="auth-card">
             <div class="auth-card-header">
@@ -34,6 +42,9 @@
                         <input type="password" id="password" class="form-control" placeholder="••••••••" />
                         <span id="err-password" style="display:none;margin-top:.35rem;font-size:.8rem;color:#f87171;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;"></span>
                     </div>
+                    <div class="captcha" style="width:100%; display:flex; justify-content:center; margin:1.5rem 0;">
+                        <div class="g-recaptcha" data-sitekey="6LdKObcsAAAAAIhT2WoE0dKLNcU8uDHdq2GdGAHp"></div>
+                    </div>
                     <div class="remember-row">
                         <label class="checkbox-label">
                             <input type="checkbox" id="remember" /> Recordarme
@@ -51,6 +62,21 @@
 </body>
 
 <script>
+    // ─── Ocultar loader cuando la página está lista ───
+    const loginLoader = document.getElementById('page-loader');
+    if (loginLoader) {
+        function ocultarLoader() {
+            loginLoader.classList.add('loader-hidden');
+            setTimeout(() => loginLoader.style.display = 'none', 600);
+        }
+        if (document.readyState === 'complete') {
+            ocultarLoader();
+        } else {
+            window.addEventListener('load', ocultarLoader);
+        }
+    }
+
+    // ─── Lógica del formulario de login ───
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -65,6 +91,15 @@
         submitBtn.disabled = true;
         submitBtn.textContent = 'Iniciando sesión…';
 
+        if (typeof grecaptcha === "undefined" || !grecaptcha.getResponse()) {
+            const errorcaptcha = document.getElementById('err-general');
+            errorcaptcha.textContent = "Por favor, completa el captcha.";
+            errorcaptcha.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Iniciar sesión';
+            return;
+        }
+        
         const data = {
             email: document.getElementById('email').value,
             password: document.getElementById('password').value
