@@ -261,6 +261,14 @@ footer {
 }
 
 /* ══════════════════════════════════════
+   ÍTEMS MÓVIL (ocultos en escritorio)
+══════════════════════════════════════ */
+@media (min-width: 769px) {
+    .nav-mobile-auth,
+    .nav-divider { display: none !important; }
+}
+
+/* ══════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -275,6 +283,10 @@ footer {
     .nav-logo { order: 1; }
     .nav-right { order: 2; margin-left: auto; }
     .nav-hamburger { display: flex; }
+
+    /* Ocultar menús de usuario del nav-right en móvil */
+    .nav-right #user-menu,
+    .nav-right #guest-menu { display: none !important; }
 
     .nav-links {
         display: none;
@@ -294,13 +306,43 @@ footer {
         display: block;
         padding: .65rem 0;
         border-bottom: 1px solid rgba(255,255,255,.05);
+        color: var(--grey);
     }
 
+    .nav-links a:hover { color: var(--white); }
     .nav-links a::after { display: none; }
 
-    /* Ocultar textos del menú de usuario en tablet, dejar solo iconos */
-    #user-menu .nav-user span,
-    #guest-menu .nav-user span { display: none; }
+    /* Separador visual antes de los ítems de usuario */
+    .nav-divider {
+        display: block;
+        height: 1px;
+        background: rgba(255,255,255,.08);
+        margin: .4rem 0;
+        list-style: none;
+    }
+
+    /* Ítems de usuario en el hamburguesa */
+    .nav-mobile-auth a,
+    .nav-mobile-btn {
+        display: block;
+        width: 100%;
+        padding: .65rem 0;
+        border: none;
+        border-bottom: 1px solid rgba(255,255,255,.05);
+        background: none;
+        text-align: left;
+        cursor: pointer;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 600;
+        font-size: .95rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--grey);
+        transition: color .2s;
+    }
+
+    .nav-mobile-auth a:hover,
+    .nav-mobile-btn:hover { color: var(--white); }
 
     .footer-grid {
         grid-template-columns: 1fr 1fr;
@@ -311,13 +353,7 @@ footer {
 @media (max-width: 480px) {
     nav { padding: .7rem 4vw; }
 
-    /* En móvil solo mostrar el carrito y el hamburguesa, ocultar nav-user */
-    #user-menu,
-    #guest-menu { display: none !important; }
-
-    .footer-grid {
-        grid-template-columns: 1fr;
-    }
+    .footer-grid { grid-template-columns: 1fr; }
 
     footer { padding: 2.5rem 5vw 1.5rem; }
 }

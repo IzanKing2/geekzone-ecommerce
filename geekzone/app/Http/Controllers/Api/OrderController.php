@@ -60,26 +60,15 @@ class OrderController extends Controller
 
         $orderDetails = [];
         foreach ($CartItems as $item) {
-            $orderDetail = OrderDetail::create([
-                'order_id' => $order->id,
+            OrderDetail::create([
+                'order_id'   => $order->id,
                 'product_id' => $item->product_id,
-                'quantity' => $item->quantity,
-                'price' => $item->product->price,
+                'quantity'   => $item->quantity,
+                'price'      => $item->product->price,
             ]);
 
-            $orderDetails[] = $orderDetail;
+            $item->product->decrement('stock', $item->quantity);
         }
-
-        $product = Product::find($item->product_id);
-
-        if (!$product) {
-            return response()->json([
-                'message' => 'Producto no encontrado.',
-            ], 404);
-        }
-
-        $product->stock -= $item->quantity;
-        $product->save();
 
         Cart::where('user_id', $user->id)
             ->delete();

@@ -111,6 +111,29 @@
     box-shadow: 0 8px 24px rgba(0, 71, 171, .45);
 }
 
+.btn-secondary {
+    display: inline-block;
+    background: transparent;
+    color: var(--cobalt-light);
+    padding: .75rem 1.8rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: .95rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    border: 1px solid var(--cobalt);
+    transition: background .2s, color .2s, transform .15s, box-shadow .2s;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.btn-secondary:hover {
+    background: var(--cobalt);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 71, 171, .35);
+}
+
 .btn-outline {
     display: inline-block;
     border: 2px solid var(--gold);

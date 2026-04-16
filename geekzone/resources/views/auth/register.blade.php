@@ -7,6 +7,7 @@
     <title>GeekZone — Registrarse</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/register.css') }}" />
+    <script src="{{ asset('js/auth.js') }}"></script>
 </head>
 
 <body>
@@ -179,7 +180,7 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    localStorage.setItem('token', result.token);
+                    Auth.setToken(result.token, result.user?.role ?? 'user', false);
                     window.location.href = "{{ route('shop') }}";
                     return;
                 }

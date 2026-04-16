@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AplicationController::class, 'index'])->name('shop');
+Route::get('/catalogo', [AplicationController::class, 'catalog'])->name('catalog');
+Route::get('/producto/{id}', [AplicationController::class, 'show'])->name('product.show');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 
@@ -17,3 +19,7 @@ Route::get('/cart', function() {
 Route::get('/panel', function() {
     return view('userPanel');
 })->name('panel');
+
+Route::get('/favoritos', function() {
+    return view('favorites');
+})->name('favorites');

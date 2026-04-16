@@ -5,8 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>GeekZone — Iniciar Sesión</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/login.css" />
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}" />
+    <script src="{{ asset('js/auth.js') }}"></script>
 </head>
 
 <body>
@@ -82,9 +83,7 @@
 
         if (response.ok) {
             const remember = document.getElementById('remember').checked;
-            const storage  = remember ? localStorage : sessionStorage;
-            storage.setItem('token', result.token);
-            storage.setItem('role', result.user.role);
+            Auth.setToken(result.token, result.user.role, remember);
             window.location.href = "{{ route('shop') }}";
         } else {
             submitBtn.disabled = false;
