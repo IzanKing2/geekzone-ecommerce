@@ -223,7 +223,7 @@
             window.location.href = "{{ route('login') }}";
             return;
         }
-        const u = data.user;
+        const u = data.data?.user;
         originalData = { name: u.name, surname: u.surname ?? '', username: u.username ?? '', email: u.email };
 
         // Sidebar
@@ -254,7 +254,7 @@
             return;
         }
 
-        const orders = data.orders ?? [];
+        const orders = data.data?.orders ?? [];
 
         // Actualizar total comprado en el header
         const totalGastado = orders.reduce((sum, o) => sum + parseFloat(o.total), 0);

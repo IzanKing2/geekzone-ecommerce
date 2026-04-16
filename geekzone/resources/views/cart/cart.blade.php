@@ -281,7 +281,7 @@
         return;
       }
 
-      showOrderModal(data.order, currentCartItems);
+      showOrderModal(data.data?.order, currentCartItems);
     });
 
     function showOrderModal(order, items) {
