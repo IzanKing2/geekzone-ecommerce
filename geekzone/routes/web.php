@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AplicationController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,3 +24,7 @@ Route::get('/panel', function() {
 Route::get('/favoritos', function() {
     return view('favorites');
 })->name('favorites');
+
+Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+Route::get('/admin/categorias', [AdminDashboardController::class, 'categories'])->name('admin.categories');
+Route::get('/admin/productos', [AdminDashboardController::class, 'products'])->name('admin.products');

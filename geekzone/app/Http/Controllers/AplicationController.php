@@ -55,7 +55,7 @@ class AplicationController
             $query->where('stock', '>', 0);
         }
 
-        $products = $query->paginate(16);
+        $products = $query->paginate(12);
 
         $activeCategories = (array) $request->categories;
 

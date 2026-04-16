@@ -2,9 +2,9 @@
     <div class="pagination">
         {{-- Anterior --}}
         @if ($paginator->onFirstPage())
-            <button class="page-btn" disabled style="opacity:.4;cursor:default;">‹</button>
+            <button class="page-btn page-btn--nav" disabled style="opacity:.35;cursor:default;">‹</button>
         @else
-            <a href="{{ $paginator->previousPageUrl() }}" class="page-btn">‹</a>
+            <a href="{{ $paginator->previousPageUrl() }}" class="page-btn page-btn--nav">‹</a>
         @endif
 
         {{-- Páginas --}}
@@ -26,9 +26,9 @@
 
         {{-- Siguiente --}}
         @if ($paginator->hasMorePages())
-            <a href="{{ $paginator->nextPageUrl() }}" class="page-btn">›</a>
+            <a href="{{ $paginator->nextPageUrl() }}" class="page-btn page-btn--nav">›</a>
         @else
-            <button class="page-btn" disabled style="opacity:.4;cursor:default;">›</button>
+            <button class="page-btn page-btn--nav" disabled style="opacity:.35;cursor:default;">›</button>
         @endif
     </div>
 @endif

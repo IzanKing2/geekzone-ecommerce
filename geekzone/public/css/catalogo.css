@@ -323,3 +323,13 @@ select.form-control option{background:var(--mid)}
 .page-btn:hover,.page-btn.active{
   background:var(--cobalt);border-color:var(--cobalt);color:#fff;
 }
+.page-btn--nav{
+  width:36px;font-size:1.1rem;
+  background:var(--cobalt);border-color:var(--cobalt);color:#fff;
+}
+.page-btn--nav:hover{
+  background:var(--cobalt-light);border-color:var(--cobalt-light);
+}
+.page-btn--nav[disabled]{
+  background:var(--mid);border-color:var(--border);color:var(--grey);
+}

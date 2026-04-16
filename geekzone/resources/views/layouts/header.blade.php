@@ -10,7 +10,7 @@
       <li class="nav-divider" aria-hidden="true"></li>
 
       <li class="nav-mobile-auth" id="mobile-admin-li" style="display:none">
-        <a id="mobile-admin-btn" href="#">⚙️ Panel Admin</a>
+        <a id="mobile-admin-btn" href="{{ route('admin.dashboard') }}">⚙️ Panel Admin</a>
       </li>
       <li class="nav-mobile-auth" id="mobile-profile-li" style="display:none">
         <a href="{{ route('panel') }}">👤 Mi Perfil</a>
@@ -25,7 +25,7 @@
 
     <div class="nav-right">
       <div id="user-menu" style="display:none;">
-        <a id="admin-btn" href="#" class="nav-user" style="display:none;">⚙️ Panel Admin</a>
+        <a id="admin-btn" href="{{ route('admin.dashboard') }}" class="nav-user" style="display:none;">⚙️ Panel Admin</a>
         <a href="{{ route('panel') }}" class="nav-user">👤 Mi Perfil</a>
         <form id="logoutForm" style="display:inline;">
           <button type="submit" class="nav-user" style="background:none;border:none;cursor:pointer;">🚪 Cerrar Sesión</button>
