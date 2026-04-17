@@ -1,113 +1,217 @@
-# 🛒 GeekZone — Documentación Completa del Proyecto
+# GeekZone — Documentación Final del Proyecto
 
-*(Actualizado a la última versión con Frontend Integrado)*
+*(TFG — 2º DAW, IES Villa de Agüimes, Curso 2025/2026)*
+*(Actualizado — Abril 2026)*
 
 ---
 
 ## 1. Introducción y Objetivos
+
 **¿Qué es GeekZone?**
-GeekZone es una plataforma integral de e-commerce (tienda virtual) especializada en productos de cultura geek, abarcando franquicias como Marvel, grupos musicales como Stray Kids y equipos de Fútbol. Ha sido desarrollado como Proyecto Final (TFG) del ciclo de 2º DAW.
+GeekZone es una plataforma de e-commerce especializada en productos de cultura geek: franquicias de Marvel, grupos musicales como Stray Kids y equipos de fútbol. Ha sido desarrollado como Proyecto Final (TFG) del ciclo de 2º DAW.
 
 **¿Por qué se ha desarrollado?**
-El objetivo principal es demostrar la competencia técnica en el desarrollo de aplicaciones web "Full-Stack" (cliente y servidor) aplicando buenas prácticas, seguridad, arquitectura escalable y un diseño responsivo (adaptable a móviles).
+El objetivo es demostrar competencia técnica en el desarrollo de aplicaciones web **Full-Stack** aplicando buenas prácticas, seguridad, arquitectura escalable y diseño responsivo.
 
 **¿Para qué sirve?**
-Permite a **clientes** registrarse, explorar el catálogo, buscar productos, añadir favoritos, agregar al carrito, y tramitar pedidos. A su vez, ofrece a los **administradores** un panel de control para crear/editar productos, subir sus imágenes, manejar categorías y revisar las ventas.
+- Los **clientes** pueden registrarse, explorar el catálogo, filtrar por categorías, ver el detalle de cada producto, añadir al carrito, gestionar una lista de favoritos y realizar pedidos.
+- Los **administradores** disponen de un panel de control con métricas del negocio y herramientas para crear, editar y eliminar productos y categorías.
 
 ---
 
-## 2. Stack Tecnológico (Tecnologías Usadas)
-Se ha optado por una arquitectura moderna basada en contenedores para un despliegue seguro y reproducible.
+## 2. Stack Tecnológico
 
-*   **Backend (Servidor):** Laravel y PHP 8.2. 
-    *   *¿Por qué?* Laravel es un framework MVC (Modelo-Vista-Controlador) muy utilizado en el ámbito profesional, que provee herramientas para interactuar con bases de datos de forma fácil (Eloquent ORM), enrutamiento y seguridad incluida.
-*   **Frontend (Cliente):** HTML5, CSS3 Nativo, JavaScript (Vanilla JS) y plantillas Blade.
-    *   *¿Por qué?* Blade es el motor de plantillas de Laravel que junta HTML con datos del servidor sin esfuerzo. Se utiliza CSS y JS nativo en vez de librerías para tener un control total y demostrar las capacidades fundamentales de desarrollo sin dependencias innecesarias.
-*   **Base de Datos:** MySQL 8.0.
-    *   *¿Por qué?* Es un sistema de bases de datos relacional sólido y fiable para garantizar la coherencia de datos (ej. un pedido siempre debe pertenecer a un usuario que existe).
-*   **Autenticación:** JWT (JSON Web Tokens).
-    *   *¿Por qué?* En vez de usar sesiones tradicionales acopladas al servidor, un Token permite una comunicación segura a través de APIs de manera "stateless" (sin estado), la forma correcta para aplicaciones modernas.
-*   **Infraestructura:** Docker, Docker Compose y Nginx.
-    *   *¿Por qué?* Docker permite encapsular todo el entorno (servidor web Nginx, PHP y MySQL) en "contenedores", por lo cual el proyecto funcionará exactamente igual en cualquier ordenador (Windows, Mac o Linux) sin instalar los lenguajes en el propio sistema.
+| Capa | Tecnología | Justificación |
+|------|-----------|---------------|
+| **Backend** | Laravel (PHP 8.2) | Framework MVC profesional; Eloquent ORM, routing y seguridad integrados |
+| **Base de datos** | MySQL 8.0 | Relacional, garantiza integridad de datos entre pedidos, usuarios y productos |
+| **Autenticación** | JWT (`php-open-source-saver/jwt-auth`) | Stateless; adecuado para APIs REST sin sesiones en servidor |
+| **Frontend** | Blade + HTML5 + CSS nativo + JS (async/await) | Sin frameworks JS externos; demuestra dominio de las tecnologías base |
+| **Infraestructura** | Docker + Docker Compose + Nginx | Entorno reproducible en cualquier máquina (Windows, Mac, Linux) |
+| **Documentación API** | Swagger UI (`darkaonline/l5-swagger`) | Genera documentación interactiva OpenAPI 3 a partir de anotaciones PHP |
+| **Seguridad extra** | Google reCAPTCHA v2 | Protección anti-bot en el formulario de login |
 
 ---
 
 ## 3. Arquitectura y Estructura del Código
-El patrón principal en el que se basa Laravel es el **MVC (Modelo-Vista-Controlador)**.
-*   **Modelos (`app/Models`):** Representan las tablas de la base de datos (Usuario, Producto, Pedido).
-*   **Vistas (`resources/views`):** Las pantallas que ve el usuario (ej. `welcome.blade.php`, `userPanel.blade.php`).
-*   **Controladores (`app/Http/Controllers`):** El "cerebro" que une los Modelos y las Vistas.
 
-### Estructura de Directorios Clave:
-```text
-/geekzone
-  ├── app/
-  │   ├── Http/Controllers/    # La lógica de las distintas secciones (Products, Cart, Admin).
-  │   ├── Models/              # Lógica de datos (BD).
-  │   └── Middleware/          # Capas de seguridad intermedias (Ej: ¿Es este usuario Admin?).
-  ├── database/
-  │   ├── migrations/          # Archivos que crean las estructuras de la BD iterativamente.
-  │   └── seeders/             # "Semillas" para rellenar la BD con datos iniciales (productos y usuarios falsos).
-  ├── resources/
-  │   ├── views/               # Plantillas Blade (Frontend - userPanel, catalog, admin...).
-  │   └── css/                 # Hojas de estilo estructuradas.
-  ├── routes/
-  │   ├── api.php              # Rutas de backend (Endpoints para consumir datos).
-  │   └── web.php              # Rutas del entorno de las Vistas HTML.
-  └── piblic/                  # Assets (Javascript y subida de imágenes - /img).
+El patrón principal es **MVC (Modelo-Vista-Controlador)**:
+
+- **Modelos** (`app/Models`): representan las tablas de la BD.
+- **Vistas** (`resources/views`): plantillas Blade que el navegador renderiza.
+- **Controladores** (`app/Http/Controllers`): lógica que une modelos y vistas.
+
+### Estructura de directorios clave
+
+```
+geekzone/
+├── app/Http/Controllers/
+│   ├── Api/                    ← Controladores de la API REST
+│   ├── AdminDashboardController.php
+│   ├── AplicationController.php
+│   └── AuthController.php
+├── app/Models/                 ← User, Product, Category, Cart, Order, OrderDetail, Favorite
+├── app/Http/Middleware/        ← JwtMiddleware, CheckAdminRole
+├── database/migrations/        ← Historial de cambios de la BD
+├── database/seeders/           ← Datos de prueba (categorías, productos, usuarios)
+├── resources/views/
+│   ├── layouts/                ← Plantilla base, cabecera y pie de página
+│   ├── auth/                   ← Login (con reCAPTCHA), registro
+│   ├── admin/                  ← Dashboard, CRUD productos, CRUD categorías
+│   ├── cart/                   ← Carrito de compra
+│   ├── shop.blade.php          ← Tienda principal
+│   ├── catalog.blade.php       ← Catálogo con filtros
+│   ├── product.blade.php       ← Detalle de producto
+│   ├── favorites.blade.php     ← Lista de favoritos
+│   └── userPanel.blade.php     ← Panel de usuario (perfil, pedidos, favoritos)
+├── public/css/                 ← Hojas de estilo por sección
+├── public/js/auth.js           ← Gestión del token JWT en el cliente
+├── routes/api.php              ← Endpoints REST
+├── routes/web.php              ← Rutas de vistas
+└── storage/api-docs/           ← Documentación OpenAPI generada
 ```
 
 ---
 
 ## 4. Base de Datos y Modelos
-Se basa en un diseño relacional. Los modelos más importantes son:
 
-1.  **User (Usuario):** Puede ser de tipo `cliente` o `admin`.
-2.  **Category (Categoría):** Marvel, Fútbol, Stray Kids.
-3.  **Product (Producto):** Pertenece a una categoría y tiene atributos como nombre, precio, stock, y la ruta de la imagen (ej: `marvel_comic.jpg`).
-4.  **Cart (Carrito):** Relación temporal de qué tiene cada usuario preparado para comprar.
-5.  **Order y OrderDetail (Pedido y Detalle):** Cuando el carrito se paga, los datos del producto se "congelan" aquí, ya que el precio puede variar en el futuro, pero el pedido debe ser inmutable.
-6.  **Favorite (Favoritos):** Tabla pivote para guardar si un usuario ha dado *like* a un producto.
+Diseño relacional con siete entidades principales:
+
+| Modelo | Descripción |
+|--------|-------------|
+| `User` | Usuarios con campo `role` (cliente / admin) |
+| `Category` | Categorías de productos (Marvel, Fútbol, Stray Kids…) |
+| `Product` | Pertenece a una categoría; tiene nombre, precio, stock e imagen |
+| `Cart` | Ítems del carrito por usuario con cantidad |
+| `Order` | Pedido confirmado con estado: pendiente / procesando / enviado / entregado / cancelado |
+| `OrderDetail` | Línea de pedido; precio **congelado** en el momento de la compra |
+| `Favorite` | Relación usuario-producto para la lista de favoritos |
+
+El precio se almacena en `OrderDetail` en lugar de referenciarse desde `Product` para garantizar que el historial de pedidos sea inmutable ante futuros cambios de precio.
 
 ---
 
-## 5. Diseño del Frontend: UI y Responsive
-El Frontend es donde interactúa nuestro cliente, diseñado cuidando la experiencia de usuario (UX).
+## 5. Frontend — Experiencia de Usuario
 
-*   **Vistas Dinámicas (Blade):** Al utilizar Laravel, páginas como el catálogo (`shop.blade.php`) iteran sobre los productos y los muestran fácilmente.
-*   **Desarrollo Responsivo (`userPanel.css`):** Mediante `flexbox` y `media queries` (`@media screen and (max-width: 768px)`), interfaces complejas como el **Panel de Usuario** pasan de un diseño lateral en ordenador a un diseño apilado fácil de navegar en móvil.
-*   **Modales Globales Interactivos:** Se ha dejado atrás los obsoletos popups de "Aviso" del navegador (`alert()`) creando un sistema propio con ventanas emergentes elegantes gestionadas en JavaScript para los avisos y advertencias de la tienda.
-*   **Panel de Administración / CRUD:** El administrador tiene una zona propia (`admin`) para, a través de formularios, subir nuevos productos y editar los existentes. Aquí se integran validaciones de seguridad tanto en JS como en PHP para garantizar que las imágenes sean válidas.
+El frontend consume la API REST via JavaScript (fetch + async/await). El token JWT se almacena en el cliente (`auth.js`) y se adjunta automáticamente a cada petición protegida.
+
+### Páginas disponibles
+
+| Ruta | Descripción |
+|------|-------------|
+| `/` | Tienda principal |
+| `/catalogo` | Catálogo con filtros por categoría |
+| `/producto/{id}` | Detalle: imagen, precio, stock, añadir al carrito y a favoritos |
+| `/login` | Login con validación Google reCAPTCHA v2 |
+| `/register` | Registro de nuevo usuario |
+| `/cart` | Carrito: modificar cantidades, eliminar ítems, confirmar pedido |
+| `/panel` | Panel de usuario: perfil, historial de pedidos, favoritos, cambio de contraseña |
+| `/favoritos` | Lista de productos guardados |
+| `/admin` | Dashboard admin con métricas de negocio |
+| `/admin/productos` | CRUD completo de productos |
+| `/admin/categorias` | CRUD completo de categorías |
+
+### Diseño responsivo
+
+Las interfaces se adaptan a móvil mediante **Flexbox** y **media queries**. El panel de usuario pasa de un sidebar lateral en escritorio a una barra de navegación horizontal en tablet/móvil.
 
 ---
 
 ## 6. Seguridad y Autenticación
-**¿Cómo nos aseguramos de que cada uno hace lo que debe?**
 
-1.  **Protección de Rutas (Middleware):** El archivo de rutas tiene definidas barreras. Por ejemplo, el `CheckAdminRole` detendrá cualquier acción sobre un producto a menos que el usuario sea Admin.
-2.  **JWT en la API:** Todas las comunicaciones de datos sensibles mediante JS van firmadas con un pequeño criptograma (Token). Así el servidor distingue y verifica quién solicita cada cosa (añadir al carrito, ver pedido...).
-3.  **Protección CSRF y Sanitización:** Al renderizar formularios con Blade, siempre se utiliza la directiva `@csrf` para evitar que bots manden datos falsificados desde otras webs, y Eloquent de forma nativa filtra todo código malicioso escrito (previene "Inyecciones SQL").
+| Capa | Mecanismo |
+|------|-----------|
+| **Autenticación** | JWT stateless; token invalidado en logout |
+| **Autorización** | Middleware `CheckAdminRole` — rutas admin requieren `role = admin` |
+| **Rate limiting** | 5 req/min en `/register`, 10 req/min en `/login` |
+| **Anti-bot** | Google reCAPTCHA v2 en el login |
+| **CSRF** | Directiva `@csrf` en todos los formularios Blade |
+| **SQL injection** | Eloquent ORM y query builder parametrizado |
+| **Validación** | Doble validación: servidor (Laravel) + cliente (JavaScript) |
 
 ---
 
-## 7. Despliegue y Puesta en Marcha
-Todo el proyecto está altamente automatizado para su instalación en pocos comandos gracias a **Docker**:
+## 7. Documentación Swagger / OpenAPI
+
+Todos los controladores de la API tienen **anotaciones PHP 8 (`#[OA\...]`)** que generan automáticamente una especificación OpenAPI 3.
+
+- **UI accesible en**: `http://localhost:8080/api/documentation`
+- **JSON generado en**: `storage/api-docs/api-docs.json`
+- **Paquete**: `darkaonline/l5-swagger ^11.0`
+
+Regenerar documentación:
+```bash
+docker-compose exec app php artisan l5-swagger:generate
+```
+
+---
+
+## 8. Despliegue y Puesta en Marcha
 
 ```bash
-# 1. Copiar las variables de entorno de prueba a un archivo local
+# 1. Clonar el repositorio
+git clone <url-del-repositorio>
+cd geekzone-ecommerce
+
+# 2. Configurar variables de entorno
 cp .env.example geekzone/.env
 
-# 2. Compilar e iniciar los contenedores
+# 3. Levantar los contenedores Docker
 docker-compose up -d --build
 
-# 3. Instalar librerías PHP e inicializar bases de datos dentro de la máquina
+# 4. Instalar dependencias y configurar Laravel
 docker-compose exec app composer install
 docker-compose exec app php artisan key:generate
 docker-compose exec app php artisan jwt:secret
+
+# 5. Base de datos
 docker-compose exec app php artisan migrate --seed
+
+# 6. Swagger UI
+docker-compose exec app php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider" --tag=config
+docker-compose exec app php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider" --tag=swagger-ui-assets
+docker-compose exec app php artisan l5-swagger:generate
 ```
 
-Tras esto, la web se visualiza en `http://localhost:8080` de manera fluida y con toda la información de prueba cargada (Usuarios Administradores y Productos de muestra).
+### Accesos tras la instalación
+
+| Servicio | URL |
+|----------|-----|
+| Tienda GeekZone | <http://localhost:8080> |
+| phpMyAdmin | <http://localhost:8081> |
+| Swagger UI | <http://localhost:8080/api/documentation> |
+
+### Usuarios de prueba
+
+| Rol | Email | Contraseña |
+|-----|-------|-----------|
+| Admin | admin@geekzone.com | admin123 |
+| Cliente | user@geekzone.com | user123 |
 
 ---
-*Este documento conforma un resumen técnico final de la infraestructura completa del proyecto.*
+
+## 9. Tests Automatizados
+
+```bash
+docker-compose exec app php artisan test --testdox
+```
+
+- **Motor**: PHPUnit vía Laravel
+- **BD de prueba**: SQLite en memoria (`DB_DATABASE=:memory:`)
+- **Suites**: `tests/Unit` y `tests/Feature`
+- Los tests de Feature cubren los flujos completos de auth, catálogo, carrito, pedidos, favoritos y administración.
+
+---
+
+## 10. Posibles Mejoras Futuras
+
+- Paginación y filtros avanzados en el catálogo (precio, valoraciones)
+- Sistema de cupones y descuentos
+- Notificaciones por email al crear o actualizar pedidos
+- Logs estructurados y monitorización
+- Caché de listados de productos (Redis)
+- Optimización de consultas en el dashboard de administración
+
+---
+
+*Proyecto académico — IES Villa de Agüimes © 2025-2026*
