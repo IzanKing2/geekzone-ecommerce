@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DTOs\CategoryDTO;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -34,8 +35,13 @@ class CategoryController extends Controller
                 ORDER BY c.name ASC
             ');
 
+            $dtos = array_map(
+                fn(object $row) => CategoryDTO::fromRow($row)->toArray(),
+                $categories
+            );
+
             return $this->successResponse([
-                'categories' => $categories,
+                'categories' => $dtos,
             ]);
         } catch (\Exception $e) {
             return $this->errorResponse(
@@ -120,7 +126,7 @@ class CategoryController extends Controller
         );
 
         return $this->successResponse(
-            ['category' => $category[0]],
+            ['category' => CategoryDTO::fromRow($category[0])->toArray()],
             'Categoría creada correctamente.',
             201
         );
@@ -209,7 +215,7 @@ class CategoryController extends Controller
             );
 
             return $this->successResponse(
-                ['category' => $updated[0]],
+                ['category' => CategoryDTO::fromRow($updated[0])->toArray()],
                 'Categoría actualizada correctamente.'
             );
         } catch (\Exception $e) {
