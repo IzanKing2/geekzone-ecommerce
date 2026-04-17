@@ -131,7 +131,7 @@
                 @forelse($products as $product)
                 <a href="{{ route('product.show', $product->id) }}" class="prod-card{{ $product->stock <= 0 ? ' out-of-stock' : '' }}" style="text-decoration:none">
                     <div class="prod-img">
-                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy"
+                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy" decoding="async"
                             style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
                         @if($product->featured)
                             <div class="prod-badge new">Destacado</div>

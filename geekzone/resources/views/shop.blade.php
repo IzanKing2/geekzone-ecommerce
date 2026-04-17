@@ -45,7 +45,7 @@
         <div class="cat-grid">
             @foreach ($categories as $category)
                 <div class="cat-card">
-                    <img src="{{ $category->image_url }}" alt="{{ $category->name }}" loading="lazy">
+                    <img src="{{ $category->image_url }}" alt="{{ $category->name }}" loading="lazy" decoding="async">
                     <div class="cat-bg"></div>
                     <div class="cat-pattern"></div>
                     <div class="cat-content">
@@ -71,7 +71,7 @@
             @foreach ($products as $product)
                 <a href="{{ route('product.show', $product->id) }}" class="prod-card{{ $product->stock <= 0 ? ' out-of-stock' : '' }}" style="text-decoration:none">
                     <div class="prod-img">
-                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
                         <div class="prod-badge new">Destacado</div>
                         @if($product->stock <= 0)
                             <div class="prod-badge out-of-stock" style="top:.7rem;left:auto;right:.7rem">Sin stock</div>

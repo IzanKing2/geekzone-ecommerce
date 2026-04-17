@@ -108,7 +108,7 @@
         @foreach($related as $rel)
         <a href="{{ route('product.show', $rel->id) }}" class="prod-card" style="text-decoration:none">
             <div class="prod-img">
-                <img src="{{ $rel->image_url }}" alt="{{ $rel->name }}" loading="lazy"
+                <img src="{{ $rel->image_url }}" alt="{{ $rel->name }}" loading="lazy" decoding="async"
                      style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
                 @if($rel->featured)
                     <div class="prod-badge new">Destacado</div>

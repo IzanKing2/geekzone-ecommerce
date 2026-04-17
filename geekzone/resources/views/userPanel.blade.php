@@ -463,7 +463,7 @@
                 : `<span class="wish-stock-tag" style="background:rgba(34,197,94,.2);color:var(--green);border:1px solid rgba(34,197,94,.3)">En stock</span>`)
             : `<span class="wish-stock-tag" style="background:rgba(224,16,32,.2);color:var(--red);border:1px solid rgba(224,16,32,.3)">Sin stock</span>`;
         const imgContent = p.image_url
-            ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`
+            ? `<img src="${p.image_url}" alt="${p.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`
             : `<span style="font-size:3.5rem;z-index:1">🛍️</span>`;
         const actions = inStock
             ? `<button class="btn btn-primary btn-sm btn-add-cart" style="flex:1;justify-content:center" data-product-id="${p.id}">🛒 Añadir</button>
@@ -527,9 +527,6 @@
 
             allTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === target));
             allPanes.forEach(p => p.classList.toggle('active', p.id === `tab-${target}`));
-
-            if (target === 'pedidos')   loadOrders();
-            if (target === 'favoritos' && !favLoaded) loadFavorites();
         });
     });
 
@@ -543,6 +540,9 @@
 
     // ── Inicializar ───────────────────────────────────────────────────────────
     loadProfile();
+    // Cargas de datos asíncronas en segundo plano
+    loadOrders();
+    loadFavorites();
 
     // Abrir tab pedidos si viene desde el carrito (?tab=pedidos)
     const urlTab = new URLSearchParams(window.location.search).get('tab');

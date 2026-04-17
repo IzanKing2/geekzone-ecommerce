@@ -235,7 +235,7 @@
                <a href="${productBaseUrl}/${p.id}" class="btn btn-secondary btn-sm">👁</a>`;
 
         const imgContent = p.image_url
-            ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`
+            ? `<img src="${p.image_url}" alt="${p.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`
             : `<span style="font-size:3.5rem;z-index:1">🛍️</span>`;
 
         return `
