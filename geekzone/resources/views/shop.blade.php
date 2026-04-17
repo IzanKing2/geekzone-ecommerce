@@ -51,7 +51,7 @@
                     <div class="cat-content">
                         <h3 class="cat-name">{{ $category->name }}</h3>
                         <p class="cat-desc">{{ $category->description }}</p>
-                        <a href="{{ route('shop', ['category' => $category->id]) }}#productos" class="cat-btn">Explorar</a>
+                        <a href="{{ route('catalog') }}?categories[]={{ $category->id }}" class="cat-btn">Explorar</a>
                     </div>
                 </div>
             @endforeach

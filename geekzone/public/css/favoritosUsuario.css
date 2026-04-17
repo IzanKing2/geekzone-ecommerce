@@ -105,13 +105,14 @@
   box-shadow: 0 14px 36px rgba(0,71,171,.22);
 }
 .wish-img {
-  aspect-ratio: 4/3;
+  aspect-ratio: 1/1; /* En vez de 4/3 para no cortar la cabeza de productos altos */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 4rem;
   position: relative;
   overflow: hidden;
+  background: rgba(255, 255, 255, 0.03); /* Fondo sutil por si alguna imagen es transparente o no carga recta */
 }
 .wish-img::after {
   content: '';
@@ -265,7 +266,7 @@
 /* Móviles */
 @media (max-width: 500px) {
   .wishlist-grid { grid-template-columns: 1fr; gap: .75rem }
-  .wish-img { aspect-ratio: 16/9; font-size: 3rem }
+  .wish-img { aspect-ratio: 4/5; font-size: 3rem } /* Cambiado de 16/9 a 4/5 para que las figuras verticales encajen divinamente en móvil */
   .wish-actions { flex-wrap: wrap }
   .wish-actions .btn-sm { flex: 1 1 calc(50% - .3rem); justify-content: center }
   .collection-bar { padding: .85rem 1rem; gap: .6rem }

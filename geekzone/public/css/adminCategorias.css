@@ -212,4 +212,91 @@ select.form-control option{background:var(--mid)}
   flex-shrink: 0;
 }
 .color-option.selected,
-.color-option:hover { border-color: var(--white); transform: scale(1.15); } 
+.color-option:hover { border-color: var(--white); transform: scale(1.15); }
+
+/* ══════════════════════════════════════
+   ALINEACIÓN RESPONSIVE DE TÍTULOS (CRUD)
+══════════════════════════════════════ */
+.crud-header-wrap {
+  display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2rem; gap: 1rem;
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — TABLET GRANDES (≤ 1200px)
+══════════════════════════════════════ */
+@media (max-width: 1200px) {
+  .cat-overview-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — TABLET (≤ 900px)
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* Layout a columna y barra pegajosa */
+  .layout-sidebar { flex-direction: column; }
+  .sidebar {
+    width: 100%; height: auto; min-height: unset;
+    position: sticky; top: 68px; z-index: 10;
+    background: var(--mid);
+    border-right: none; border-bottom: 1px solid var(--border);
+    padding: 0;
+    display: flex; flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sidebar::-webkit-scrollbar { height: 3px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--cobalt); border-radius: 3px; }
+
+  /* Info admin oculta en tablet para ganar espacio */
+  .sidebar-user { display: none; }
+  
+  /* Secciones a fila */
+  .sidebar-section {
+    display: flex; flex-direction: row; flex-wrap: nowrap;
+    gap: 0; margin-bottom: 0; flex: 0 0 auto;
+  }
+  .sidebar-label { display: none; }
+
+  /* Enlaces apaisados */
+  .sidebar-link {
+    border-left: none !important;
+    border-bottom: 3px solid transparent !important;
+    padding: 0 .9rem;
+    min-height: 48px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .sidebar-link:hover { border-bottom-color: var(--cobalt-light) !important; }
+  .sidebar-link.active { border-bottom-color: var(--cobalt) !important; }
+  .sidebar-divider { display: none; }
+  
+  /* Ajuste de padding de contenido principal */
+  .main-content { padding: 1.5rem; }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — NAV CAMBIA DE ALTURA (≤ 768px)
+══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .layout-sidebar { padding-top: 56px; }
+  .sidebar { top: 56px; }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — MÓVIL (≤ 600px)
+══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .main-content { padding: 1rem; }
+  .page-eyebrow { font-size: .7rem; letter-spacing: 3px; }
+  .panel-title { font-size: 2rem !important; }
+  
+  /* Cuadrícula a 1 columna */
+  .cat-overview-grid { grid-template-columns: 1fr; }
+  /* Formularios 1 columna */
+  .form-row { grid-template-columns: 1fr; }
+  
+  .crud-header-wrap { flex-direction: column; align-items: flex-start; }
+} 

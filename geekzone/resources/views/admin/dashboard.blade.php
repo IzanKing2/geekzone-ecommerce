@@ -42,7 +42,7 @@
         </div>
 
         {{-- ══ STATS ══ --}}
-        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="dashboard-grid-4">
             <div class="stat-card">
                 <div>
                     <p class="stat-label">Pedidos</p>
@@ -74,7 +74,7 @@
         </div>
 
         {{-- ══ ROW: VENTAS POR CATEGORÍA + INGRESOS MENSUALES ══ --}}
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+        <div class="dashboard-row-equal">
 
             {{-- Ventas por categoría --}}
             <div class="card">
@@ -125,7 +125,7 @@
         </div>
 
         {{-- ══ ROW: TOP PRODUCTOS + PEDIDOS RECIENTES ══ --}}
-        <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:1.5rem;margin-bottom:1.5rem">
+        <div class="dashboard-row-unequal">
 
             {{-- Top 5 productos --}}
             <div class="card">

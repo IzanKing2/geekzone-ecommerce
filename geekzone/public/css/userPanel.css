@@ -145,7 +145,9 @@ select.form-control option{background:var(--mid)}
 }
 .sidebar-name{font-weight:600;font-size:.95rem;color:var(--white)}
 .sidebar-role{font-size:.78rem;color:var(--grey);margin-top:.15rem}
-.sidebar-nav{padding:0 0 .5rem}
+/* Ocultamos las pestañas duplicadas y el divisor divisor en escritorio, ya que se ven en el área central */
+.sidebar-nav{display:none; padding:0 0 .5rem}
+.sidebar-divider{display:none; border:none; border-top:1px solid var(--border); margin:.8rem 1.5rem}
 .sidebar-logout{color:var(--red) !important}
 .sidebar-logout:hover{background:rgba(224,16,32,.1) !important;border-left-color:var(--red) !important}
 
@@ -248,10 +250,11 @@ select.form-control option{background:var(--mid)}
   /* Layout: cambia de fila a columna */
   .layout-sidebar { flex-direction: column }
 
-  /* Sidebar como barra horizontal con scroll si se necesita */
+  /* Sidebar como barra horizontal con scroll si se necesita, pegajosa para UX responsivo y mejor usabilidad */
   .sidebar {
     width: 100%; height: auto; min-height: unset;
-    position: static;
+    position: sticky; top: 68px; z-index: 10;
+    background: var(--mid);
     border-right: none; border-bottom: 1px solid var(--border);
     padding: 0;
     display: flex; flex-direction: row;
@@ -274,17 +277,22 @@ select.form-control option{background:var(--mid)}
     margin-bottom: 0;
     flex-shrink: 0;
     gap: .6rem;
+    max-width: 180px; 
+    overflow: hidden;
   }
-  .sidebar-name { font-size: .88rem }
-  .sidebar-role { font-size: .72rem }
+  .sidebar-user > div {
+    min-width: 0; /* Para permitir que el texto se trunque */
+  }
+  .sidebar-name { font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-role { font-size: .72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* Nav ocupa el espacio sobrante en fila */
+  /* Nav ocupa solo su espacio, previene el solapamiento de hijos flex */
   .sidebar-nav {
-    flex: 1;
-    display: flex; flex-direction: row;
+    display: flex; /* Vuelve a mostrarse en tablet/móvil para ser accesible */
+    flex: 0 0 auto;
+    flex-direction: row;
     flex-wrap: nowrap; /* Una sola fila, scroll horizontal si es necesario */
     gap: 0; padding: 0;
-    min-width: 0; /* Permite que se encoja correctamente */
   }
   .sidebar-label { display: none }
 
@@ -328,6 +336,9 @@ select.form-control option{background:var(--mid)}
 @media (max-width: 768px) {
   .layout-sidebar {
     padding-top: 56px; /* Aproxima la nueva altura mínima del nav */
+  }
+  .sidebar {
+    top: 56px; /* Acomoda la barra superior en modo pegajoso */
   }
 }
 

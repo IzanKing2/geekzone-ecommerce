@@ -64,10 +64,10 @@
     {{-- ══ MAIN ══ --}}
     <main class="main-content">
 
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem">
+        <div class="crud-header-wrap">
             <div>
-                <p class="page-eyebrow" style="padding-top:0">Gestión de inventario</p>
-                <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:2px">Productos <span style="color:var(--cobalt-light)">CRUD</span></h2>
+                <p class="page-eyebrow" style="padding-top:0;margin-bottom:0">Gestión de inventario</p>
+                <h2 class="panel-title" style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:2px;margin:0">Productos <span style="color:var(--cobalt-light)">CRUD</span></h2>
             </div>
             <button class="btn btn-primary" id="btn-add-product">+ Añadir producto</button>
         </div>
