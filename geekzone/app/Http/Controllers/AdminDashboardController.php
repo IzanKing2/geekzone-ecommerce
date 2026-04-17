@@ -9,23 +9,24 @@ use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
 class AdminDashboardController extends Controller
 {
     public function index()
     {
         // ── Stats ──────────────────────────────────────────────────
-        $totalUsuarios  = User::count();
+        $totalUsuarios = User::count();
         $totalProductos = Product::count();
-        $totalPedidos   = Order::count();
+        $totalPedidos = Order::count();
         $ingresosTotales = round(Order::sum('total'), 2);
 
         // ── Ventas por categoría ───────────────────────────────────
         $ventasPorCategoria = OrderDetail::select(
-                'categories.id',
-                'categories.name',
-                DB::raw('SUM(order_details.quantity * order_details.price) as total_ventas')
-            )
+            'categories.id',
+            'categories.name',
+            DB::raw('SUM(order_details.quantity * order_details.price) as total_ventas')
+        )
             ->join('products', 'order_details.product_id', '=', 'products.id')
             ->join('categories', 'products.category_id', '=', 'categories.id')
             ->groupBy('categories.id', 'categories.name')
@@ -36,10 +37,10 @@ class AdminDashboardController extends Controller
 
         // ── Ingresos últimos 6 meses ───────────────────────────────
         $ingresosMensuales = Order::select(
-                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as mes"),
-                DB::raw("DATE_FORMAT(created_at, '%b %Y') as mes_label"),
-                DB::raw('SUM(total) as ingresos')
-            )
+            DB::raw("DATE_FORMAT(created_at, '%Y-%m') as mes"),
+            DB::raw("DATE_FORMAT(created_at, '%b %Y') as mes_label"),
+            DB::raw('SUM(total) as ingresos')
+        )
             ->where('created_at', '>=', now()->subMonths(6))
             ->groupBy('mes', 'mes_label')
             ->orderBy('mes')
@@ -49,10 +50,10 @@ class AdminDashboardController extends Controller
 
         // ── Top 5 productos más vendidos ───────────────────────────
         $topProductos = OrderDetail::select(
-                'product_id',
-                DB::raw('SUM(quantity) as total_vendido'),
-                DB::raw('SUM(price * quantity) as ingresos_generados')
-            )
+            'product_id',
+            DB::raw('SUM(quantity) as total_vendido'),
+            DB::raw('SUM(price * quantity) as ingresos_generados')
+        )
             ->groupBy('product_id')
             ->orderByDesc('total_vendido')
             ->limit(5)
@@ -96,15 +97,15 @@ class AdminDashboardController extends Controller
             $query->where('featured', true);
         }
 
-        $sort = match($request->input('sort', 'recent')) {
-            'price_asc'  => ['price', 'asc'],
+        $sort = match ($request->input('sort', 'recent')) {
+            'price_asc' => ['price', 'asc'],
             'price_desc' => ['price', 'desc'],
-            'name_asc'   => ['name', 'asc'],
-            default      => ['created_at', 'desc'],
+            'name_asc' => ['name', 'asc'],
+            default => ['created_at', 'desc'],
         };
         $query->orderBy($sort[0], $sort[1]);
 
-        $products   = $query->paginate(15)->appends($request->query());
+        $products = $query->paginate(15)->appends($request->query());
         $categories = Category::orderBy('name')->get();
         $totalSinStock = Product::where('stock', 0)->count();
 
@@ -119,9 +120,9 @@ class AdminDashboardController extends Controller
 
         // Añadir ventas totales por categoría
         $ventasPorCategoria = OrderDetail::select(
-                'products.category_id',
-                DB::raw('SUM(order_details.quantity * order_details.price) as total_ventas')
-            )
+            'products.category_id',
+            DB::raw('SUM(order_details.quantity * order_details.price) as total_ventas')
+        )
             ->join('products', 'order_details.product_id', '=', 'products.id')
             ->groupBy('products.category_id')
             ->pluck('total_ventas', 'category_id');
@@ -135,22 +136,42 @@ class AdminDashboardController extends Controller
 
     // ── API endpoints ──────────────────────────────────────────────
 
+    #[OA\Get(
+        path: "/api/admin/dashboard/resumen",
+        summary: "Resumen del dashboard (Administrador)",
+        description: "Devuelve estadísticas generales: total de usuarios, productos, pedidos e ingresos. Requiere token JWT con rol de administrador.",
+        tags: ["Dashboard (Administrador)"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\Response(response: 200, description: "Resumen obtenido correctamente")]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 403, description: "No tienes permisos de administrador")]
     public function resumen()
     {
         return $this->successResponse([
-            'total_usuarios'   => User::count(),
-            'total_productos'  => Product::count(),
-            'total_pedidos'    => Order::count(),
+            'total_usuarios' => User::count(),
+            'total_productos' => Product::count(),
+            'total_pedidos' => Order::count(),
             'ingresos_totales' => round(Order::sum('total'), 2),
         ]);
     }
 
+    #[OA\Get(
+        path: "/api/admin/dashboard/ingresos",
+        summary: "Ingresos mensuales (Administrador)",
+        description: "Devuelve los ingresos agrupados por mes de los últimos 12 meses. Requiere token JWT con rol de administrador.",
+        tags: ["Dashboard (Administrador)"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\Response(response: 200, description: "Ingresos mensuales obtenidos correctamente")]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 403, description: "No tienes permisos de administrador")]
     public function ingresos()
     {
         $ingresos = Order::select(
-                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as mes"),
-                DB::raw('SUM(total) as ingresos')
-            )
+            DB::raw("DATE_FORMAT(created_at, '%Y-%m') as mes"),
+            DB::raw('SUM(total) as ingresos')
+        )
             ->where('created_at', '>=', now()->subMonths(12))
             ->groupBy('mes')
             ->orderBy('mes')
@@ -161,13 +182,23 @@ class AdminDashboardController extends Controller
         ]);
     }
 
+    #[OA\Get(
+        path: "/api/admin/dashboard/top-productos",
+        summary: "Top 5 productos más vendidos (Administrador)",
+        description: "Devuelve los 5 productos más vendidos con sus ingresos generados. Requiere token JWT con rol de administrador.",
+        tags: ["Dashboard (Administrador)"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\Response(response: 200, description: "Top productos obtenidos correctamente")]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 403, description: "No tienes permisos de administrador")]
     public function topProductos()
     {
         $topProductos = OrderDetail::select(
-                'product_id',
-                DB::raw('SUM(quantity) as total_vendido'),
-                DB::raw('SUM(price * quantity) as ingresos_generados')
-            )
+            'product_id',
+            DB::raw('SUM(quantity) as total_vendido'),
+            DB::raw('SUM(price * quantity) as ingresos_generados')
+        )
             ->groupBy('product_id')
             ->orderByDesc('total_vendido')
             ->limit(5)
@@ -179,13 +210,23 @@ class AdminDashboardController extends Controller
         ]);
     }
 
+    #[OA\Get(
+        path: "/api/admin/dashboard/pedidos-por-cliente",
+        summary: "Pedidos por cliente (Administrador)",
+        description: "Devuelve un ranking de clientes ordenado por gasto total. Requiere token JWT con rol de administrador.",
+        tags: ["Dashboard (Administrador)"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\Response(response: 200, description: "Pedidos por cliente obtenidos correctamente")]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 403, description: "No tienes permisos de administrador")]
     public function pedidosPorCliente()
     {
         $pedidosPorCliente = Order::select(
-                'user_id',
-                DB::raw('COUNT(*) as numero_pedidos'),
-                DB::raw('SUM(total) as total_gastado')
-            )
+            'user_id',
+            DB::raw('COUNT(*) as numero_pedidos'),
+            DB::raw('SUM(total) as total_gastado')
+        )
             ->groupBy('user_id')
             ->orderByDesc('total_gastado')
             ->with('user:id,name,email')

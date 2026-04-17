@@ -6,9 +6,28 @@ use App\Models\Favorite;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Attributes as OA;
 
 class FavoriteController extends Controller
 {
+    #[OA\Get(
+        path: "/api/favoritos",
+        summary: "Ver favoritos del usuario",
+        description: "Devuelve todos los productos marcados como favoritos por el usuario. Requiere token JWT.",
+        tags: ["Favoritos"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\Response(
+        response: 200,
+        description: "Favoritos obtenidos correctamente",
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: "favorites", type: "array", items: new OA\Items(type: "object")),
+                new OA\Property(property: "count", type: "integer", example: 5)
+            ]
+        )
+    )]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
     public function index()
     {
         $favorites = Favorite::with('product.category')
@@ -22,6 +41,25 @@ class FavoriteController extends Controller
         ]);
     }
 
+    #[OA\Post(
+        path: "/api/favoritos",
+        summary: "Añadir producto a favoritos",
+        description: "Marca un producto como favorito. Requiere token JWT.",
+        tags: ["Favoritos"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["product_id"],
+            properties: [
+                new OA\Property(property: "product_id", type: "integer", example: 1)
+            ]
+        )
+    )]
+    #[OA\Response(response: 201, description: "Producto añadido a favoritos correctamente")]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 409, description: "El producto ya está en favoritos")]
     public function store(Request $request)
     {
         $request->validate([
@@ -52,6 +90,23 @@ class FavoriteController extends Controller
         ], 201);
     }
 
+    #[OA\Delete(
+        path: "/api/favoritos/{productId}",
+        summary: "Eliminar producto de favoritos",
+        description: "Elimina un producto de los favoritos del usuario. Requiere token JWT",
+        tags: ["Favoritos"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\Parameter(
+        name: "productId",
+        in: "path",
+        required: true,
+        description: "ID del producto",
+        schema: new OA\Schema(type: "integer")
+    )]
+    #[OA\Response(response: 201, description: "Producto eliminado de favoritos correctamente")]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 404, description: "Favorito no encontrado")]
     public function destroy($productId)
     {
         $favorite = Favorite::where('user_id', Auth::id())
