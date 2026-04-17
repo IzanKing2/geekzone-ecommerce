@@ -43,7 +43,7 @@
                         <span id="err-password" style="display:none;margin-top:.35rem;font-size:.8rem;color:#f87171;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;"></span>
                     </div>
                     <div class="captcha" style="width:100%; display:flex; justify-content:center; margin:1.5rem 0;">
-                        <div class="g-recaptcha" data-sitekey="6LdKObcsAAAAAIhT2WoE0dKLNcU8uDHdq2GdGAHp"></div>
+                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
                     </div>
                     <div class="remember-row">
                         <label class="checkbox-label">

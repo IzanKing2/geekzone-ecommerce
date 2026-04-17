@@ -245,10 +245,11 @@
       const data = await res.json().catch(() => ({}));
 
       if (res.ok) {
+        const order = data.data?.order ?? data.order ?? {};
         // Ocultar todo el layout y mostrar confirmación
         document.getElementById('cart-layout').style.display = 'none';
-        document.getElementById('success-order-id').textContent = `#${String(data.order.id).padStart(4, '0')}`;
-        document.getElementById('success-order-total').textContent = fmt(parseFloat(data.order.total));
+        document.getElementById('success-order-id').textContent = order.id ? `#${String(order.id).padStart(4, '0')}` : '';
+        document.getElementById('success-order-total').textContent = order.total ? fmt(parseFloat(order.total)) : '';
         document.getElementById('cart-success').style.display = 'block';
 
         // Resetear contador del header

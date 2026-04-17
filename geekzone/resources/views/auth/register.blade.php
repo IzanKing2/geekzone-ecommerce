@@ -71,7 +71,7 @@
                         </div>
                     </div>
                     <div class="captcha" style="width:100%; display:flex; justify-content:center; margin:1.5rem 0;">
-                        <div class="g-recaptcha" data-sitekey="6LdKObcsAAAAAIhT2WoE0dKLNcU8uDHdq2GdGAHp"></div>
+                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
                     </div>
                     <div class="form-group">
                         <label class="checkbox-label" style="margin-bottom:.8rem">
