@@ -10,6 +10,7 @@ Proyecto intermodular de **2º DAW** — IES Villa de Agüimes (Curso 2025/2026)
 
 ## Documentación del proyecto
 
+- **Memoria TFG (documento principal)**: [`docs/Memoria_TFG_GeekZone.md`](docs/Memoria_TFG_GeekZone.md)
 - **Documentación técnica completa**: [`docs/proyecto-geekzone.md`](docs/proyecto-geekzone.md)
 - **Documentación final (TFG)**: [`docs/Documentacion_Final.md`](docs/Documentacion_Final.md)
 - **Diagrama E/R**: [`docs/diagrama_er.md`](docs/diagrama_er.md)
