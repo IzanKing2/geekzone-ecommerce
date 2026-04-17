@@ -12,6 +12,9 @@ Proyecto intermodular de **2º DAW** — IES Villa de Agüimes (Curso 2025/2026)
 
 - **Documentación técnica completa**: [`docs/proyecto-geekzone.md`](docs/proyecto-geekzone.md)
 - **Documentación final (TFG)**: [`docs/Documentacion_Final.md`](docs/Documentacion_Final.md)
+- **Diagrama E/R**: [`docs/diagrama_er.md`](docs/diagrama_er.md)
+- **Diagrama UML de clases**: [`docs/diagrama_uml_clases.md`](docs/diagrama_uml_clases.md)
+- **Script SQL completo**: [`docs/geekzone_database.sql`](docs/geekzone_database.sql)
 - **Documentación API interactiva**: `http://localhost:8080/api/documentation` (Swagger UI)
 
 ---
