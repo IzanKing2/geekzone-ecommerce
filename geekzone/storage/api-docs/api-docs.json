@@ -1,0 +1,1305 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "GeekZone API",
+        "description": "GeekZone API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ],
+    "paths": {
+        "/api/admin/dashboard/resumen": {
+            "get": {
+                "tags": [
+                    "Dashboard (Administrador)"
+                ],
+                "summary": "Resumen del dashboard (Administrador)",
+                "description": "Devuelve estadísticas generales: total de usuarios, productos, pedidos e ingresos. Requiere token JWT con rol de administrador.",
+                "operationId": "0d2cb52a63cf00d69b594293d2145a05",
+                "responses": {
+                    "200": {
+                        "description": "Resumen obtenido correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "No tienes permisos de administrador"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/dashboard/ingresos": {
+            "get": {
+                "tags": [
+                    "Dashboard (Administrador)"
+                ],
+                "summary": "Ingresos mensuales (Administrador)",
+                "description": "Devuelve los ingresos agrupados por mes de los últimos 12 meses. Requiere token JWT con rol de administrador.",
+                "operationId": "cc1815c2fc5f3462a4b2e350e883a95e",
+                "responses": {
+                    "200": {
+                        "description": "Ingresos mensuales obtenidos correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "No tienes permisos de administrador"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/dashboard/top-productos": {
+            "get": {
+                "tags": [
+                    "Dashboard (Administrador)"
+                ],
+                "summary": "Top 5 productos más vendidos (Administrador)",
+                "description": "Devuelve los 5 productos más vendidos con sus ingresos generados. Requiere token JWT con rol de administrador.",
+                "operationId": "ffb1fe2a180f17c62eb1b54c3f73b32c",
+                "responses": {
+                    "200": {
+                        "description": "Top productos obtenidos correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "No tienes permisos de administrador"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/dashboard/pedidos-por-cliente": {
+            "get": {
+                "tags": [
+                    "Dashboard (Administrador)"
+                ],
+                "summary": "Pedidos por cliente (Administrador)",
+                "description": "Devuelve un ranking de clientes ordenado por gasto total. Requiere token JWT con rol de administrador.",
+                "operationId": "18a9cc68b427abf376acd031542a0267",
+                "responses": {
+                    "200": {
+                        "description": "Pedidos por cliente obtenidos correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "No tienes permisos de administrador"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registrar un usuario",
+                "operationId": "8e4e3cb7b46126f4696379d3c7eeb4ad",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "surname",
+                                    "username",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Prueba"
+                                    },
+                                    "surname": {
+                                        "type": "string",
+                                        "example": "Prueba"
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "example": "Prueba"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "prueba@prueba.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "prueba123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "prueba123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuario registrado correctamente"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Iniciar sesión",
+                "description": "Devuelve un token JWT para usar en rutas protegidas. Usar en el botón Authorize",
+                "operationId": "222b2625838e3c57e017987f73598fda",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "admin@geekzone.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "admin123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login exitoso. Copia el token y úsalo en Authorize",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "¡Inicio de sesión exitoso!"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGci.."
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de Validación"
+                    },
+                    "401": {
+                        "description": "Credenciales incorrectas"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Cerrar sesión",
+                "description": "Invalida el token JWT del usuario.",
+                "operationId": "ad65cbbd4e9f201619eae184a5961a98",
+                "responses": {
+                    "200": {
+                        "description": "Sesión cerrada correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/carrito": {
+            "get": {
+                "tags": [
+                    "Carrito"
+                ],
+                "summary": "Ver carrito del usuario",
+                "description": "Devuelve todos los items del carrito del usuario autenticado. Requiere token JWT",
+                "operationId": "272518f50d3748e311553af7a8afab7c",
+                "responses": {
+                    "200": {
+                        "description": "Carrito obtenido correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "cart": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "number",
+                                            "example": 59.99
+                                        },
+                                        "items_count": {
+                                            "type": "integer",
+                                            "example": 3
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Carrito"
+                ],
+                "summary": "Añadir producto al carrito",
+                "description": "Añade un producto al carrito del usuario. Requiere token JWT",
+                "operationId": "2790b91a96094e8e7712d8af6f71c814",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Producto añadido al carrito correctamente"
+                    },
+                    "400": {
+                        "description": "Stock insuficiente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/carrito/{id}": {
+            "put": {
+                "tags": [
+                    "Carrito"
+                ],
+                "summary": "Actualizar cantidad de un item del carrito",
+                "description": "Modifica la cantidad de un item en el carrito. Requiere token JWT",
+                "operationId": "d0bfa00a203acdd778f5e650c2e7faf7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del item",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cantidad actualizada correctamente"
+                    },
+                    "400": {
+                        "description": "Stock insuficiente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "404": {
+                        "description": "Item no encontrado en el carrito"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Carrito"
+                ],
+                "summary": "Eliminar item del carrito",
+                "description": "Elimina un producto del carrito del usuario. Requiere token JWT",
+                "operationId": "3fd49092413653244ea5112aa8e94f85",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del item",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item eliminado del carrito correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "404": {
+                        "description": "Item no encontrado en el carrito"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categorias": {
+            "get": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Obtener lista de categorías",
+                "description": "Devuelve todas las categorías disponibles",
+                "operationId": "05296a0be702181399ad8c435ded282a",
+                "responses": {
+                    "200": {
+                        "description": "Lista de categorías devuelta"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Categorías (Administrador)"
+                ],
+                "summary": "Crear una nueva categoría",
+                "description": "Crea una nueva categoría. Requiere token JWT con rol de administrador",
+                "operationId": "b40e21b97a4a91e3458595c6e6b0f9d6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Categoria ejemplo"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Descripcion categoria ejemplo"
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://categoria.com/imagen.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Categoría creada exitosamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "Error. No tiene permisos de administrador"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categorias/{id}": {
+            "put": {
+                "tags": [
+                    "Categorías (Administrador)"
+                ],
+                "summary": "Actualizar categoría",
+                "description": "Actualiza los datos de una categoría existente. Requiere token JWT con rol de administrador",
+                "operationId": "76a62b248a8b5b20c2f5b54bfcdc0369",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Ejemplo Nombre"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Ejemplo Descripcion"
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://foto.com/foto.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Categoría actualizada correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Categorías (Administrador)"
+                ],
+                "summary": "Eliminar categoría (Admin)",
+                "description": "Elimina una categoría. No se puede eliminar si tiene productos asociados. Requiere token JWT con rol de administrador.",
+                "operationId": "759e24e4fa1dd8c0d46c33d70e0a6e0c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoría",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoría eliminada correctamente"
+                    },
+                    "400": {
+                        "description": "No se puede eliminar: tiene productos asociados"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "No tienes permisos de administrador"
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/favoritos": {
+            "get": {
+                "tags": [
+                    "Favoritos"
+                ],
+                "summary": "Ver favoritos del usuario",
+                "description": "Devuelve todos los productos marcados como favoritos por el usuario. Requiere token JWT.",
+                "operationId": "a5dda80c02ded2dced9ea28f60422fc6",
+                "responses": {
+                    "200": {
+                        "description": "Favoritos obtenidos correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "favorites": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "count": {
+                                            "type": "integer",
+                                            "example": 5
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Favoritos"
+                ],
+                "summary": "Añadir producto a favoritos",
+                "description": "Marca un producto como favorito. Requiere token JWT.",
+                "operationId": "fba32ebfac00536b2fbc8e1ab64f83ca",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Producto añadido a favoritos correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "409": {
+                        "description": "El producto ya está en favoritos"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/favoritos/{productId}": {
+            "delete": {
+                "tags": [
+                    "Favoritos"
+                ],
+                "summary": "Eliminar producto de favoritos",
+                "description": "Elimina un producto de los favoritos del usuario. Requiere token JWT",
+                "operationId": "ddac36154e33cb3104701a5aeec59bc2",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "ID del producto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Producto eliminado de favoritos correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "404": {
+                        "description": "Favorito no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/imagenes": {
+            "post": {
+                "tags": [
+                    "Imágenes"
+                ],
+                "summary": "Subir imagen",
+                "description": "Sube una imagen al servidor y devuelve la URL pública. Requiere token JWT.",
+                "operationId": "9989b3de9d998fc535f86f1ddef79c1f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "image"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "description": "Archivo de imagen (jpeg, png, jpg, gif, svg)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Imagen subida correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Imagen subida correctamente."
+                                        },
+                                        "image": {
+                                            "type": "string",
+                                            "example": "/storage/images/1713100000.jpg"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "422": {
+                        "description": "Error de validación. Archivo inválido o grande"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/pedidos": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Ver pedidos del usuario",
+                "description": "Devuelve todos los pedidos realizados por el usuario autenticado. Requiere token JWT.",
+                "operationId": "773601c910e6b7b5c62132161bc5af54",
+                "responses": {
+                    "200": {
+                        "description": "Pedidos obtenidos correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "orders": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Crear pedido desde el carrito",
+                "description": "Crea un pedido con los productos del carrito. Vacía el carrito automáticamente. Requiere token JWT",
+                "operationId": "2f8aabffee3c8e91f454ad091b1df0db",
+                "responses": {
+                    "201": {
+                        "description": "Pedido creado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pedido creado correctamente."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "order": {
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Stock insuficiente o carrito vacío"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "404": {
+                        "description": "No hay items en el carrito"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/productos": {
+            "get": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Obtener lista de productos",
+                "description": "Devuelve todos los productos del catálogo",
+                "operationId": "4e4449ab4d1ee46da324b3e126dd4ee5",
+                "responses": {
+                    "200": {
+                        "description": "Lista de productos devuelta correctamente"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Productos (Administrador)"
+                ],
+                "summary": "Crear producto (Administrador)",
+                "description": "Crea un nuevo producto en el catálogo. Requiere token JWT con rol de administrador.",
+                "operationId": "987796ea47f2722ecc5595bcd7a75a6f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "price",
+                                    "stock",
+                                    "category_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Producto de prueba"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Producto ejemplo"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 79.99
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 50
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://ejemplo.com/ejemplo.jpg"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Producto creado correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "No tienes permisos de administrador"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error al crear el producto"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/productos/{id}": {
+            "get": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Ver detalles de un producto",
+                "operationId": "94d1865c6f0778d7908b1c035dc4b293",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del producto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles del producto"
+                    },
+                    "404": {
+                        "description": "Producto no encontrado"
+                    },
+                    "500": {
+                        "description": "Error al obtener el producto"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Productos (Administrador)"
+                ],
+                "summary": "Actualizar producto (Administrador)",
+                "description": "Actualiza los datos de un producto existente. Requiere token JWT con rol de administrador.",
+                "operationId": "59696bf648ec33920230843d13e4edcb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del producto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Producto actualizado"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Producto actualizado"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 89.99
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 30
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://ejemplo.com/actualizado.jpg"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Producto actualizado correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "No tienes permisos de administrador"
+                    },
+                    "404": {
+                        "description": "Producto no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Productos (Administrador)"
+                ],
+                "summary": "Eliminar producto (Administrador)",
+                "description": "Elimina un producto del catálogo. Requiere token JWT con rol de administrador.",
+                "operationId": "fa732e424c52cc8f0be3d05752bdf18c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del producto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Producto eliminado correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "No tienes permisos de administrador"
+                    },
+                    "404": {
+                        "description": "Producto no encontrado"
+                    },
+                    "500": {
+                        "description": "Error al eliminar el producto"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/perfil": {
+            "get": {
+                "tags": [
+                    "Perfil"
+                ],
+                "summary": "Obtener perfil del usuario",
+                "description": "Devuelve los datos del usuario actualmente logueado. Requiere token JWT.",
+                "operationId": "e8eccce5edbd42442b56bb6aa60f9496",
+                "responses": {
+                    "200": {
+                        "description": "Datos del perfil obtenidos"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Perfil"
+                ],
+                "summary": "Actualizar perfil del usuario",
+                "description": "Actualiza los datos del usuario autenticado. Requiere token JWT.",
+                "operationId": "546648d7f241aae9919740e9e1ed6d04",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Prueba234"
+                                    },
+                                    "surname": {
+                                        "type": "string",
+                                        "example": "Prueba"
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "example": "prueba3424"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "prueba@ejemplo.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "prueba244"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "prueba244"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Perfil actualizado correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "500": {
+                        "description": "Error al actualizar el perfil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Introduce el token JWT",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Dashboard (Administrador)",
+            "description": "Dashboard (Administrador)"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Carrito",
+            "description": "Carrito"
+        },
+        {
+            "name": "Categorías",
+            "description": "Categorías"
+        },
+        {
+            "name": "Categorías (Administrador)",
+            "description": "Categorías (Administrador)"
+        },
+        {
+            "name": "Favoritos",
+            "description": "Favoritos"
+        },
+        {
+            "name": "Imágenes",
+            "description": "Imágenes"
+        },
+        {
+            "name": "Pedidos",
+            "description": "Pedidos"
+        },
+        {
+            "name": "Productos",
+            "description": "Productos"
+        },
+        {
+            "name": "Productos (Administrador)",
+            "description": "Productos (Administrador)"
+        },
+        {
+            "name": "Perfil",
+            "description": "Perfil"
+        }
+    ]
+}
