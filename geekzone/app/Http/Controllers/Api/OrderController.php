@@ -9,9 +9,35 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use OpenApi\Attributes as OA;
 
 class OrderController extends Controller
 {
+    #[OA\Get(
+        path: "/api/pedidos",
+        summary: "Ver pedidos del usuario",
+        description: "Devuelve todos los pedidos realizados por el usuario autenticado. Requiere token JWT.",
+        tags: ["Pedidos"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\Response(
+        response: 200,
+        description: "Pedidos obtenidos correctamente",
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: "success", type: "boolean", example: true),
+                new OA\Property(
+                    property: "data",
+                    type: "object",
+                    properties: [
+                        new OA\Property(property: "orders", type: "array", items: new OA\Items(type: "object")),
+                        new OA\Property(property: "total", type: "integer", example: 3)
+                    ]
+                )
+            ]
+        )
+    )]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
     public function index()
     {
         try {
@@ -24,7 +50,7 @@ class OrderController extends Controller
 
             return $this->successResponse([
                 'orders' => $orders,
-                'total'  => $orders->count(),
+                'total' => $orders->count(),
             ]);
         } catch (\Exception $e) {
             return $this->errorResponse(
@@ -35,6 +61,33 @@ class OrderController extends Controller
         }
     }
 
+    #[OA\Post(
+        path: "/api/pedidos",
+        summary: "Crear pedido desde el carrito",
+        description: "Crea un pedido con los productos del carrito. Vacía el carrito automáticamente. Requiere token JWT",
+        tags: ["Pedidos"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\Response(
+        response: 201,
+        description: "Pedido creado correctamente",
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: "success", type: "boolean", example: true),
+                new OA\Property(property: "message", type: "string", example: "Pedido creado correctamente."),
+                new OA\Property(
+                    property: "data",
+                    type: "object",
+                    properties: [
+                        new OA\Property(property: "order", type: "object")
+                    ]
+                )
+            ]
+        )
+    )]
+    #[OA\Response(response: 400, description: "Stock insuficiente o carrito vacío")]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 404, description: "No hay items en el carrito")]
     public function store()
     {
         try {
@@ -68,16 +121,16 @@ class OrderController extends Controller
             $order = DB::transaction(function () use ($user, $cartItems, $total) {
                 $order = Order::create([
                     'user_id' => $user->id,
-                    'status'  => 'pendiente',
-                    'total'   => round($total, 2),
+                    'status' => 'pendiente',
+                    'total' => round($total, 2),
                 ]);
 
                 foreach ($cartItems as $item) {
                     OrderDetail::create([
-                        'order_id'   => $order->id,
+                        'order_id' => $order->id,
                         'product_id' => $item->product_id,
-                        'quantity'   => $item->quantity,
-                        'price'      => $item->product->price,
+                        'quantity' => $item->quantity,
+                        'price' => $item->product->price,
                     ]);
 
                     $product = Product::lockForUpdate()->find($item->product_id);

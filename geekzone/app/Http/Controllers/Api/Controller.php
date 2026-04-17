@@ -1,7 +1,23 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+use OpenApi\Attributes as OA;
 
+#[OA\Info(
+    version: "1.0.0",
+    description: "GeekZone API",
+    title: "GeekZone API"
+)]
+#[OA\Server(
+    url: "/",
+)]
+#[OA\SecurityScheme(
+    securityScheme: "bearerAuth",
+    type: "http",
+    scheme: "bearer",
+    bearerFormat: "JWT",
+    description: "Introduce el token JWT"
+)]
 abstract class Controller
 {
     /**
@@ -17,8 +33,8 @@ abstract class Controller
         return response()->json([
             'success' => true,
             'message' => $message,
-            'data'    => $data,
-            'errors'  => null,
+            'data' => $data,
+            'errors' => null,
         ], $status);
     }
 
@@ -35,8 +51,8 @@ abstract class Controller
         return response()->json([
             'success' => false,
             'message' => $message,
-            'data'    => null,
-            'errors'  => $errors,
+            'data' => null,
+            'errors' => $errors,
         ], $status);
     }
 

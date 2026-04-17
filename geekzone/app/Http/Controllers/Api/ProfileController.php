@@ -8,9 +8,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
-
+use OpenApi\Attributes as OA;
 class ProfileController extends Controller
 {
+    #[OA\Get(
+        path: "/api/perfil",
+        summary: "Obtener perfil del usuario",
+        description: "Devuelve los datos del usuario actualmente logueado. Requiere token JWT.",
+        tags: ["Perfil"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\Response(response: 200, description: "Datos del perfil obtenidos")]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
     public function show()
     {
         try {
@@ -34,6 +43,30 @@ class ProfileController extends Controller
         }
     }
 
+    #[OA\Put(
+        path: "/api/perfil",
+        summary: "Actualizar perfil del usuario",
+        description: "Actualiza los datos del usuario autenticado. Requiere token JWT.",
+        tags: ["Perfil"],
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\RequestBody(
+        required: false,
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: "name", type: "string", example: "Prueba234"),
+                new OA\Property(property: "surname", type: "string", example: "Prueba"),
+                new OA\Property(property: "username", type: "string", example: "prueba3424"),
+                new OA\Property(property: "email", type: "string", format: "email", example: "prueba@ejemplo.com"),
+                new OA\Property(property: "password", type: "string", format: "password", example: "prueba244"),
+                new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "prueba244")
+            ]
+        )
+    )]
+    #[OA\Response(response: 200, description: "Perfil actualizado correctamente")]
+    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 422, description: "Error de validación")]
+    #[OA\Response(response: 500, description: "Error al actualizar el perfil")]
     public function update(Request $request)
     {
         try {
@@ -50,10 +83,10 @@ class ProfileController extends Controller
             }
 
             $reglas = [
-                'name'     => 'sometimes|string|max:255',
-                'surname'  => 'sometimes|string|max:255',
+                'name' => 'sometimes|string|max:255',
+                'surname' => 'sometimes|string|max:255',
                 'username' => 'sometimes|string|max:255|unique:users,username,' . $user->id,
-                'email'    => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+                'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
             ];
 
             if ($request->filled('password')) {
@@ -61,9 +94,9 @@ class ProfileController extends Controller
             }
 
             $validator = Validator::make($request->all(), $reglas, [
-                'username.unique'    => 'Ese nombre de usuario ya está en uso.',
-                'email.unique'       => 'El email ya está registrado.',
-                'password.min'       => 'La contraseña debe tener al menos 6 caracteres.',
+                'username.unique' => 'Ese nombre de usuario ya está en uso.',
+                'email.unique' => 'El email ya está registrado.',
+                'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
                 'password.confirmed' => 'Las contraseñas no coinciden.',
             ]);
 
