@@ -186,7 +186,7 @@
       document.getElementById('cart-items').innerHTML = items.map(item => `
         <div class="cart-item" id="item-${item.id}">
           <div class="cart-thumb" style="background:var(--mid2);overflow:hidden;">
-            <img src="${item.product.image_url || ''}" alt=""
+            <img src="${item.product.image_url || ''}" alt="" loading="lazy" decoding="async"
               style="width:100%;height:100%;object-fit:cover;"
               onerror="this.style.display='none';this.parentElement.textContent='📦'">
           </div>
