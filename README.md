@@ -27,7 +27,7 @@ Proyecto intermodular de **2º DAW** — IES Villa de Agüimes (Curso 2025/2026)
 | **Servidor web** | Nginx |
 | **Contenedores** | Docker + Docker Compose |
 | **Documentación API** | Swagger UI (`darkaonline/l5-swagger`) |
-| **Seguridad extra** | Google reCAPTCHA v2 en login |
+| **Seguridad extra** | Google reCAPTCHA v2 en login y registro |
 
 ---
 
@@ -136,8 +136,8 @@ geekzone-ecommerce/
 | `/` | `shop.blade.php` | Tienda principal |
 | `/catalogo` | `catalog.blade.php` | Catálogo con filtros |
 | `/producto/{id}` | `product.blade.php` | Detalle de producto |
-| `/login` | `auth/login.blade.php` | Login con reCAPTCHA |
-| `/register` | `auth/register.blade.php` | Registro |
+| `/login` | `auth/login.blade.php` | Login con reCAPTCHA v2 |
+| `/register` | `auth/register.blade.php` | Registro con reCAPTCHA v2 |
 | `/cart` | `cart/cart.blade.php` | Carrito de compra |
 | `/panel` | `userPanel.blade.php` | Perfil, pedidos y favoritos |
 | `/favoritos` | `favorites.blade.php` | Lista de favoritos |
@@ -216,6 +216,40 @@ Para regenerar automáticamente en cada request (solo desarrollo):
 ```env
 L5_SWAGGER_GENERATE_ALWAYS=true
 ```
+
+---
+
+## Configuración de producción
+
+Variables clave a ajustar en `geekzone/.env` antes de desplegar:
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://tu-dominio.com
+LOG_LEVEL=error
+L5_SWAGGER_GENERATE_ALWAYS=false
+
+RECAPTCHA_SITE_KEY=<tu-site-key>
+RECAPTCHA_SECRET_KEY=<tu-secret-key>
+```
+
+Comandos adicionales tras el despliegue:
+
+```bash
+# Optimizar para producción
+docker-compose exec app php artisan config:cache
+docker-compose exec app php artisan route:cache
+docker-compose exec app php artisan view:cache
+
+# Enlace simbólico para imágenes de productos
+docker-compose exec app php artisan storage:link
+
+# Si cambias .env, limpiar la caché antes de regenerarla
+docker-compose exec app php artisan config:clear
+```
+
+> Las claves de reCAPTCHA se leen mediante `config('services.recaptcha.site_key')` desde `config/services.php`, compatible con la caché de configuración de Laravel.
 
 ---
 

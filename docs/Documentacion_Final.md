@@ -29,7 +29,7 @@ El objetivo es demostrar competencia técnica en el desarrollo de aplicaciones w
 | **Frontend** | Blade + HTML5 + CSS nativo + JS (async/await) | Sin frameworks JS externos; demuestra dominio de las tecnologías base |
 | **Infraestructura** | Docker + Docker Compose + Nginx | Entorno reproducible en cualquier máquina (Windows, Mac, Linux) |
 | **Documentación API** | Swagger UI (`darkaonline/l5-swagger`) | Genera documentación interactiva OpenAPI 3 a partir de anotaciones PHP |
-| **Seguridad extra** | Google reCAPTCHA v2 | Protección anti-bot en el formulario de login |
+| **Seguridad extra** | Google reCAPTCHA v2 | Protección anti-bot en los formularios de login y registro |
 
 ---
 
@@ -124,7 +124,7 @@ Las interfaces se adaptan a móvil mediante **Flexbox** y **media queries**. El 
 | **Autenticación** | JWT stateless; token invalidado en logout |
 | **Autorización** | Middleware `CheckAdminRole` — rutas admin requieren `role = admin` |
 | **Rate limiting** | 5 req/min en `/register`, 10 req/min en `/login` |
-| **Anti-bot** | Google reCAPTCHA v2 en el login |
+| **Anti-bot** | Google reCAPTCHA v2 en login y registro |
 | **CSRF** | Directiva `@csrf` en todos los formularios Blade |
 | **SQL injection** | Eloquent ORM y query builder parametrizado |
 | **Validación** | Doble validación: servidor (Laravel) + cliente (JavaScript) |
@@ -143,6 +143,8 @@ Regenerar documentación:
 ```bash
 docker-compose exec app php artisan l5-swagger:generate
 ```
+
+> En producción `L5_SWAGGER_GENERATE_ALWAYS=false` para que no se regenere en cada request.
 
 ---
 
@@ -171,6 +173,26 @@ docker-compose exec app php artisan migrate --seed
 docker-compose exec app php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider" --tag=config
 docker-compose exec app php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider" --tag=swagger-ui-assets
 docker-compose exec app php artisan l5-swagger:generate
+```
+
+### Variables clave para producción
+
+Ajustar en `geekzone/.env` antes de desplegar en producción:
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://tu-dominio.com
+LOG_LEVEL=error
+L5_SWAGGER_GENERATE_ALWAYS=false
+RECAPTCHA_SITE_KEY=<clave-pública-de-google>
+RECAPTCHA_SECRET_KEY=<clave-secreta-de-google>
+```
+
+Tras cualquier cambio en `.env` limpiar la caché:
+```bash
+docker-compose exec app php artisan config:clear
+docker-compose exec app php artisan config:cache
 ```
 
 ### Accesos tras la instalación
@@ -203,7 +225,18 @@ docker-compose exec app php artisan test --testdox
 
 ---
 
-## 10. Posibles Mejoras Futuras
+## 10. Decisiones técnicas destacadas
+
+| Decisión | Motivo |
+|----------|--------|
+| `config('services.recaptcha.site_key')` en Blade | `env()` directo devuelve `null` con `config:cache` activo en producción |
+| Precio congelado en `OrderDetail` | El historial de pedidos debe ser inmutable ante cambios de precio futuros |
+| `display:contents` en `.sidebar-bottom` (responsive) | Permite que los hijos participen directamente en el flex-row del sidebar sin crear un nivel extra que rompa el layout horizontal |
+| `data.data.order` en el checkout JS | La API envuelve todas las respuestas en `{ success, data, errors }`; acceder a `data.order` directamente devuelve `undefined` |
+
+---
+
+## 11. Posibles Mejoras Futuras
 
 - Paginación y filtros avanzados en el catálogo (precio, valoraciones)
 - Sistema de cupones y descuentos
