@@ -130,8 +130,12 @@
                     <div id="alert-seguridad"></div>
                     <form id="form-password" novalidate>
                         <div class="form-group">
+                            <label class="form-label" for="input-current-password">Contraseña actual</label>
+                            <input type="password" class="form-control" id="input-current-password" name="current_password" autocomplete="current-password" placeholder="Tu contraseña actual">
+                        </div>
+                        <div class="form-group">
                             <label class="form-label" for="input-password">Nueva contraseña</label>
-                            <input type="password" class="form-control" id="input-password" name="password" minlength="6" placeholder="Mínimo 6 caracteres">
+                            <input type="password" class="form-control" id="input-password" name="password" minlength="8" autocomplete="new-password" placeholder="Mínimo 8 caracteres">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="input-password-confirmation">Confirmar contraseña</label>
@@ -337,11 +341,16 @@
 
     // ── Cambiar contraseña ────────────────────────────────────────────────────
     document.getElementById('btn-cambiar-password').addEventListener('click', async () => {
+        const currentPassword = document.getElementById('input-current-password').value;
         const password = document.getElementById('input-password').value;
         const confirmation = document.getElementById('input-password-confirmation').value;
 
-        if (!password || password.length < 6) {
-            showAlert('alert-seguridad', 'La contraseña debe tener al menos 6 caracteres.', 'error');
+        if (!currentPassword) {
+            showAlert('alert-seguridad', 'Indica tu contraseña actual.', 'error');
+            return;
+        }
+        if (!password || password.length < 8) {
+            showAlert('alert-seguridad', 'La contraseña debe tener al menos 8 caracteres.', 'error');
             return;
         }
         if (password !== confirmation) {
@@ -351,10 +360,12 @@
 
         const { ok, data } = await api('/api/perfil', {
             method: 'PUT',
-            body: JSON.stringify({ password, password_confirmation: confirmation }),
+            body: JSON.stringify({ current_password: currentPassword, password, password_confirmation: confirmation }),
         });
 
         if (ok) {
+            // El token anterior queda invalidado: se guarda el nuevo para no perder la sesión
+            if (data.data?.token) Auth.replaceToken(data.data.token);
             showAlert('alert-seguridad', 'Contraseña actualizada correctamente.');
             document.getElementById('form-password').reset();
         } else {

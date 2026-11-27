@@ -31,6 +31,15 @@ const Auth = (() => {
         if (role != null) storage.setItem(ROLE_KEY, role);
     }
 
+    /**
+     * Sustituye el token por uno nuevo en el MISMO storage donde estaba
+     * (conserva la elección de "recordarme"). Mantiene el rol.
+     */
+    function replaceToken(token) {
+        const storage = localStorage.getItem(TOKEN_KEY) ? localStorage : sessionStorage;
+        storage.setItem(TOKEN_KEY, token);
+    }
+
     /** Elimina token y rol de ambos storages. */
     function clear() {
         localStorage.removeItem(TOKEN_KEY);
@@ -44,5 +53,5 @@ const Auth = (() => {
         return getToken() !== null;
     }
 
-    return { getToken, getRole, setToken, clear, isLoggedIn };
+    return { getToken, getRole, setToken, replaceToken, clear, isLoggedIn };
 })();

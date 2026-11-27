@@ -18,7 +18,8 @@ class User extends Authenticatable implements JWTSubject
         'username',
         'email',
         'password',
-        'role',
+        // 'role' NO es asignable en masa: evita escalar privilegios con un
+        // User::create($request->all()) futuro. Se asigna explícitamente ($user->role = …).
     ];
 
     protected $hidden = [

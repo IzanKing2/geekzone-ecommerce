@@ -72,20 +72,23 @@ trait CreateBaseData
             'username' => 'usuario_test',
             'email'    => 'test@geekzone.com',
             'password' => 'password123',
-            'role'     => 'user',
         ]);
     }
 
     protected function createAdminUser(): User
     {
-        return User::create([
+        $admin = User::create([
             'name'     => 'Admin Test',
             'surname'  => 'Admin Apellido',
             'username' => 'admin_test',
             'email'    => 'admin-test@geekzone.com',
             'password' => 'admin123',
-            'role'     => 'admin',
         ]);
+
+        // El rol no es asignable en masa: se fuerza explícitamente
+        $admin->forceFill(['role' => 'admin'])->save();
+
+        return $admin;
     }
 
     // ——————————————————————————————————————————————————————————————————————————

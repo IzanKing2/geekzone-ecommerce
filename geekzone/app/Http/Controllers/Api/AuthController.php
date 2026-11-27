@@ -40,20 +40,21 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
-            'username' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:8|confirmed',
             'recaptcha_token' => ['bail', new Recaptcha],
         ], [
             // Mensajes de error personalizados en español
             'name.required' => 'El nombre es obligatorio.',
             'surname.required' => 'El apellido es obligatorio.',
             'username.required' => 'El nombre de usuario es obligatorio.',
+            'username.unique' => 'Ese nombre de usuario ya está en uso.',
             'email.required' => 'El email es obligatorio.',
             'email.email' => 'El formato del email no es válido.',
             'email.unique' => 'Este email ya está registrado.',
             'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
@@ -64,13 +65,13 @@ class AuthController extends Controller
             ], 422);
         }
 
+        // El rol no es asignable en masa: el valor por defecto de la BD es 'user' (cliente)
         $user = User::create([
             'name' => $request->name,
             'surname' => $request->surname,
             'username' => $request->username,
             'email' => $request->email,
             'password' => $request->password,
-            'rol' => 'user', // Por defecto, todos son clientes
         ]);
 
         // Generar token JWT para el usuario recién creado

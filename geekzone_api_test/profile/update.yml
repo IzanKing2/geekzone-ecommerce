@@ -15,8 +15,9 @@ http:
     type: json
     data: |-
       {
-        "password": "user123",
-        "password_confirmation": "user123"
+        "current_password": "user123",
+        "password": "user12345",
+        "password_confirmation": "user12345"
       }
   auth: inherit
 

@@ -21,8 +21,8 @@ class AuthTest extends TestCase
             'surname'               => 'Apellido Nuevo',
             'username'              => 'nuevo_usuario',
             'email'                 => 'nuevo@geekzone.com',
-            'password'              => 'test123',
-            'password_confirmation' => 'test123',
+            'password'              => 'test12345',
+            'password_confirmation' => 'test12345',
         ]);
 
         $response->assertStatus(201)
@@ -52,7 +52,7 @@ class AuthTest extends TestCase
             'name' => 'Otro Usuario',
             'email' => 'test@geekzone.com',
             'password' => 'test123',
-            'password_confirmation' => 'test123',
+            'password_confirmation' => 'test12345',
         ]);
 
         $response->assertStatus(422)

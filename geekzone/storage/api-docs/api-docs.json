@@ -1265,7 +1265,7 @@
                     "Perfil"
                 ],
                 "summary": "Actualizar perfil del usuario",
-                "description": "Actualiza los datos del usuario autenticado. Requiere token JWT.",
+                "description": "Actualiza los datos del usuario autenticado. Requiere token JWT. Para cambiar la contraseña hay que enviar también `current_password`; en ese caso la respuesta incluye un token nuevo en `data.token` y el anterior deja de ser válido.",
                 "operationId": "546648d7f241aae9919740e9e1ed6d04",
                 "requestBody": {
                     "required": false,
@@ -1290,10 +1290,16 @@
                                         "format": "email",
                                         "example": "prueba@ejemplo.com"
                                     },
+                                    "current_password": {
+                                        "description": "Obligatoria si se envía `password`",
+                                        "type": "string",
+                                        "format": "password"
+                                    },
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "prueba244"
+                                        "example": "prueba244",
+                                        "minLength": 8
                                     },
                                     "password_confirmation": {
                                         "type": "string",

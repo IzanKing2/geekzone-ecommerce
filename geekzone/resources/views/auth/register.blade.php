@@ -61,7 +61,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Contraseña</label>
-                            <input id="password" type="password" class="form-control" placeholder="Mín. 6 caracteres" autocomplete="new-password" />
+                            <input id="password" type="password" class="form-control" placeholder="Mín. 8 caracteres" autocomplete="new-password" />
                             <span class="field-error" id="err-password"></span>
                         </div>
                         <div class="form-group">
@@ -161,8 +161,8 @@
             const pwd  = document.getElementById('password').value;
             const pwd2 = document.getElementById('passwordConfirm').value;
 
-            if (pwd && pwd.length < 6) {
-                showFieldError('password', 'La contraseña debe tener al menos 6 caracteres.');
+            if (pwd && pwd.length < 8) {
+                showFieldError('password', 'La contraseña debe tener al menos 8 caracteres.');
                 valid = false;
             }
 
