@@ -1,0 +1,13 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    # Nivel 5 de 10: tipos de argumentos y métodos/propiedades inexistentes.
+    # Sin baseline: el código actual pasa limpio. Súbelo (6, 7…) cuando quieras más rigor.
+    level: 5
+
+    paths:
+        - app
+        - database/factories
+        - database/seeders
+        - routes
