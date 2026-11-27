@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ asset('css/shop.css') }}">
     @stack('styles')
     <script src="{{ asset('js/auth.js') }}"></script>
+    <script src="{{ asset('js/utils.js') }}"></script>
 </head>
 <body>
 

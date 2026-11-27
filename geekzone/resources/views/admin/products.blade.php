@@ -248,17 +248,17 @@
                                         <button class="btn btn-secondary btn-sm"
                                             onclick="openEditModal(
                                                 {{ $product->id }},
-                                                '{{ addslashes($product->name) }}',
+                                                @js($product->name),
                                                 {{ $product->category_id }},
-                                                '{{ $product->price }}',
+                                                @js((string) $product->price),
                                                 {{ $product->stock }},
                                                 {{ $product->featured ? 'true' : 'false' }},
-                                                '{{ addslashes($product->image_url ?? '') }}',
-                                                '{{ addslashes($product->description ?? '') }}'
+                                                @js($product->image_url ?? ''),
+                                                @js($product->description ?? '')
                                             )"
                                             title="Editar">✏️</button>
                                         <button class="btn btn-danger btn-sm"
-                                            onclick="deleteProduct({{ $product->id }}, '{{ addslashes($product->name) }}')"
+                                            onclick="deleteProduct({{ $product->id }}, @js($product->name))"
                                             title="Eliminar">🗑️</button>
                                     </div>
                                 </td>
@@ -728,7 +728,11 @@
     function setPickerImage(prefix, url, filename) {
         document.getElementById(`${prefix}-image`).value = url;
         const preview = document.getElementById(`${prefix}-img-preview`);
-        preview.innerHTML = `<img src="${url}" onerror="this.parentElement.textContent='📦'">`;
+        // DOM en lugar de innerHTML: la URL nunca se interpreta como HTML
+        const img = document.createElement('img');
+        img.addEventListener('error', () => { preview.textContent = '📦'; });
+        img.src = url;
+        preview.replaceChildren(img);
         document.getElementById(`${prefix}-img-name`).textContent = filename || url.split('/').pop();
         document.getElementById(`${prefix}-img-hint`).textContent = 'Imagen cargada · Haz clic para cambiar';
         const area = document.getElementById(`${prefix}-picker-area`);

@@ -208,7 +208,7 @@
         const el = document.getElementById(containerId);
         if (!el) return;
         el.innerHTML = `<div class="alert alert-${type}">
-            <span>${type === 'success' ? '✅' : '❌'}</span> ${msg}
+            <span>${type === 'success' ? '✅' : '❌'}</span> ${Utils.esc(msg)}
         </div>`;
         setTimeout(() => el.innerHTML = '', 4000);
     };
@@ -288,7 +288,7 @@
             const date = new Date(order.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
             const items = (order.details ?? []).map(d =>
                 `<div class="order-item">
-                    <span class="order-item-name">${d.product?.name ?? 'Producto eliminado'}</span>
+                    <span class="order-item-name">${Utils.esc(d.product?.name ?? 'Producto eliminado')}</span>
                     <span class="order-item-qty">× ${d.quantity}</span>
                     <span class="order-item-price">${parseFloat(d.price).toFixed(2)}€</span>
                 </div>`
@@ -301,7 +301,7 @@
                         <span class="order-date">${date}</span>
                     </div>
                     <div class="order-right">
-                        <span class="order-status ${s.cls}">${s.text}</span>
+                        <span class="order-status ${s.cls}">${Utils.esc(s.text)}</span>
                         <span class="order-total">${parseFloat(order.total).toFixed(2)}€</span>
                     </div>
                 </div>
@@ -474,7 +474,7 @@
                 : `<span class="wish-stock-tag" style="background:rgba(34,197,94,.2);color:var(--green);border:1px solid rgba(34,197,94,.3)">En stock</span>`)
             : `<span class="wish-stock-tag" style="background:rgba(224,16,32,.2);color:var(--red);border:1px solid rgba(224,16,32,.3)">Sin stock</span>`;
         const imgContent = p.image_url
-            ? `<img src="${p.image_url}" alt="${p.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`
+            ? `<img src="${Utils.safeUrl(p.image_url)}" alt="${Utils.esc(p.name)}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`
             : `<span style="font-size:3.5rem;z-index:1">🛍️</span>`;
         const actions = inStock
             ? `<button class="btn btn-primary btn-sm btn-add-cart" style="flex:1;justify-content:center" data-product-id="${p.id}">🛒 Añadir</button>
@@ -488,8 +488,8 @@
                 ${stockTag}
             </div>
             <div class="wish-info">
-                <p class="wish-cat">${catName}</p>
-                <p class="wish-name">${p.name}</p>
+                <p class="wish-cat">${Utils.esc(catName)}</p>
+                <p class="wish-name">${Utils.esc(p.name)}</p>
                 <div class="wish-price-row"><p class="wish-price">${parseFloat(p.price).toFixed(2)}€</p></div>
                 <div class="wish-actions">${actions}</div>
             </div>

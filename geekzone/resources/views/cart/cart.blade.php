@@ -186,13 +186,13 @@
       document.getElementById('cart-items').innerHTML = items.map(item => `
         <div class="cart-item" id="item-${item.id}">
           <div class="cart-thumb" style="background:var(--mid2);overflow:hidden;">
-            <img src="${item.product.image_url || ''}" alt="" loading="lazy" decoding="async"
+            <img src="${Utils.safeUrl(item.product.image_url)}" alt="" loading="lazy" decoding="async"
               style="width:100%;height:100%;object-fit:cover;"
               onerror="this.style.display='none';this.parentElement.textContent='📦'">
           </div>
           <div>
-            <p class="cart-item-cat">${item.product.category?.name ?? ''}</p>
-            <p class="cart-item-name">${item.product.name}</p>
+            <p class="cart-item-cat">${Utils.esc(item.product.category?.name)}</p>
+            <p class="cart-item-name">${Utils.esc(item.product.name)}</p>
             <div class="qty-control">
               <button class="qty-btn" onclick="changeQty(${item.id}, ${item.quantity - 1})">−</button>
               <span class="qty-num">${item.quantity}</span>

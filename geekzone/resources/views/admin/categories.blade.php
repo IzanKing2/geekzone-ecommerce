@@ -115,7 +115,7 @@
                     </div>
                     <div class="cat-overview-actions">
                         <button class="btn btn-secondary btn-sm" style="flex:1;justify-content:center"
-                            onclick="openEditModal({{ $cat->id }}, '{{ addslashes($cat->name) }}', '{{ addslashes($cat->description ?? '') }}', '{{ addslashes($cat->image_url ?? '') }}')">
+                            onclick="openEditModal({{ $cat->id }}, @js($cat->name), @js($cat->description ?? ''), @js($cat->image_url ?? ''))">
                             ✏️ Editar
                         </button>
                     </div>
@@ -301,7 +301,11 @@
     function setPickerImage(prefix, url, filename) {
         document.getElementById(`${prefix}-image`).value = url;
         const preview = document.getElementById(`${prefix}-img-preview`);
-        preview.innerHTML = `<img src="${url}" onerror="this.parentElement.textContent='🏷️'">`;
+        // DOM en lugar de innerHTML: la URL nunca se interpreta como HTML
+        const img = document.createElement('img');
+        img.addEventListener('error', () => { preview.textContent = '🏷️'; });
+        img.src = url;
+        preview.replaceChildren(img);
         document.getElementById(`${prefix}-img-name`).textContent = filename || url.split('/').pop();
         document.getElementById(`${prefix}-img-hint`).textContent  = 'Imagen cargada · Haz clic para cambiar';
         const area = document.getElementById(`${prefix}-picker-area`);
