@@ -1,0 +1,67 @@
+name: CI
+
+# Se ejecuta en cada PR y al subir a las ramas del flujo del proyecto
+# (feature → develop → production → master).
+on:
+  pull_request:
+  push:
+    branches: [develop, production, master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  calidad:
+    name: Tests, estilo y análisis estático
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: geekzone
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_sqlite, bcmath, gd, xml, fileinfo
+          coverage: none
+
+      - name: Caché de Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ hashFiles('geekzone/composer.lock') }}
+          restore-keys: composer-
+
+      - name: Instalar dependencias
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Preparar entorno
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan jwt:secret --force
+
+      - name: Auditoría de seguridad de dependencias
+        run: composer audit
+
+      - name: Estilo (Pint)
+        run: ./vendor/bin/pint --test
+
+      - name: Análisis estático (Larastan)
+        run: ./vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+
+      - name: Tests
+        run: php artisan test
+
+      - name: La documentación Swagger está al día
+        run: |
+          php artisan l5-swagger:generate
+          git diff --exit-code -- storage/api-docs/api-docs.json
