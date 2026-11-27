@@ -28,9 +28,18 @@ class CartController extends Controller
         description: 'Carrito obtenido correctamente',
         content: new OA\JsonContent(
             properties: [
-                new OA\Property(property: 'cart', type: 'array', items: new OA\Items(type: 'object')),
-                new OA\Property(property: 'total', type: 'number', example: 59.99),
-                new OA\Property(property: 'items_count', type: 'integer', example: 3),
+                new OA\Property(property: 'success', type: 'boolean', example: true),
+                new OA\Property(property: 'message', type: 'string', nullable: true, example: null),
+                new OA\Property(
+                    property: 'data',
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'cart', type: 'array', items: new OA\Items(type: 'object')),
+                        new OA\Property(property: 'total', type: 'number', example: 59.99),
+                        new OA\Property(property: 'items_count', type: 'integer', example: 3),
+                    ]
+                ),
+                new OA\Property(property: 'errors', type: 'object', nullable: true, example: null),
             ]
         )
     )]
@@ -52,11 +61,11 @@ class CartController extends Controller
             $total += $item->product->price * $item->quantity;
         }
 
-        return response()->json([
+        return $this->successResponse([
             'cart' => $items,
             'total' => round($total, 2),
             'items_count' => $items->count(),
-        ], 200);
+        ]);
     }
 
     #[OA\Post(
@@ -94,10 +103,7 @@ class CartController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Error de validación.',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->validationErrorResponse($validator->errors());
         }
 
         $user = Auth::user();
@@ -148,16 +154,13 @@ class CartController extends Controller
         });
 
         if (isset($resultado['error'])) {
-            return response()->json(['message' => $resultado['error']], $resultado['status']);
+            return $this->errorResponse($resultado['error'], $resultado['status']);
         }
 
         $item = $resultado['item'];
         $item->load('product');
 
-        return response()->json([
-            'message' => 'Producto agregado al carrito correctamente.',
-            'cart_item' => $item,
-        ], 201);
+        return $this->successResponse(['cart_item' => $item], 'Producto agregado al carrito correctamente.', 201);
     }
 
     #[OA\Put(
@@ -195,10 +198,7 @@ class CartController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Error de validación.',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->validationErrorResponse($validator->errors());
         }
 
         $user = Auth::user();
@@ -208,9 +208,7 @@ class CartController extends Controller
             ->first();
 
         if (! $item) {
-            return response()->json([
-                'message' => 'Item no encontrado en el carrito.',
-            ], 404);
+            return $this->errorResponse('Item no encontrado en el carrito.', 404);
         }
 
         $product = Product::find($item->product_id);
@@ -219,25 +217,18 @@ class CartController extends Controller
         if (! $product) {
             $item->delete();
 
-            return response()->json([
-                'message' => 'El producto ya no está disponible y se ha quitado del carrito.',
-            ], 404);
+            return $this->errorResponse('El producto ya no está disponible y se ha quitado del carrito.', 404);
         }
 
         if ($product->stock < $request->quantity) {
-            return response()->json([
-                'message' => 'No hay suficiente stock. Disponible: '.$product->stock,
-            ], 400);
+            return $this->errorResponse('No hay suficiente stock. Disponible: '.$product->stock, 400);
         }
 
         $item->quantity = $request->quantity;
         $item->save();
         $item->load('product');
 
-        return response()->json([
-            'message' => 'Cantidad actualizada correctamente.',
-            'cart_item' => $item,
-        ], 200);
+        return $this->successResponse(['cart_item' => $item], 'Cantidad actualizada correctamente.');
     }
 
     #[OA\Delete(
@@ -266,15 +257,11 @@ class CartController extends Controller
             ->first();
 
         if (! $item) {
-            return response()->json([
-                'message' => 'Item no encontrado en el carrito.',
-            ], 404);
+            return $this->errorResponse('Item no encontrado en el carrito.', 404);
         }
 
         $item->delete();
 
-        return response()->json([
-            'message' => 'Item eliminado del carrito correctamente.',
-        ], 200);
+        return $this->successResponse(null, 'Item eliminado del carrito correctamente.');
     }
 }

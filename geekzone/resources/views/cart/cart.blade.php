@@ -212,7 +212,7 @@
     async function loadCart() {
       const res = await apiFetch('/api/carrito');
       if (!res.ok) { showToast('Error al cargar el carrito', '#c0392b'); return; }
-      const data = await res.json();
+      const { data } = await res.json();
       currentCartItems = data.cart;
       renderCart(data.cart);
     }

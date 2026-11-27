@@ -56,8 +56,8 @@ class CartOrderRobustnessTest extends TestCase
 
         $response = $this->withHeaders($this->headers)->getJson('/api/carrito')->assertStatus(200);
 
-        $this->assertSame(1, $response->json('items_count'));
-        $this->assertEquals(19.99, $response->json('total'));
+        $this->assertSame(1, $response->json('data.items_count'));
+        $this->assertEquals(19.99, $response->json('data.total'));
     }
 
     public function test_cannot_add_deleted_product_to_cart(): void

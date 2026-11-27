@@ -360,19 +360,38 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "cart": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         },
-                                        "total": {
-                                            "type": "number",
-                                            "example": 59.99
+                                        "message": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
                                         },
-                                        "items_count": {
-                                            "type": "integer",
-                                            "example": 3
+                                        "data": {
+                                            "properties": {
+                                                "cart": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total": {
+                                                    "type": "number",
+                                                    "example": 59.99
+                                                },
+                                                "items_count": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
                                         }
                                     },
                                     "type": "object"

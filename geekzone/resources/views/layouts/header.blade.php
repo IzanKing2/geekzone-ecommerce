@@ -80,8 +80,8 @@
           })
           .then(r => r.ok ? r.json() : null)
           .then(data => {
-            if (data) {
-              const total = data.cart.reduce((sum, i) => sum + i.quantity, 0);
+            if (data?.data) {
+              const total = data.data.cart.reduce((sum, i) => sum + i.quantity, 0);
               document.getElementById('cartCount').textContent = total;
             }
           })
