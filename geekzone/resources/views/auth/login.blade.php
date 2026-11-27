@@ -119,7 +119,7 @@
 
         if (response.ok) {
             const remember = document.getElementById('remember').checked;
-            Auth.setToken(result.token, result.user.role, remember);
+            Auth.setToken(result.data.token, result.data.user.role, remember);
             window.location.href = "{{ route('shop') }}";
         } else {
             submitBtn.disabled = false;

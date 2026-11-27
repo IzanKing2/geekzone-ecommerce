@@ -290,22 +290,39 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Login exitoso. Copia el token y úsalo en Authorize",
+                        "description": "Login exitoso. Copia `data.token` y úsalo en Authorize",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "¡Inicio de sesión exitoso!"
                                         },
-                                        "token": {
-                                            "type": "string",
-                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGci.."
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "type": "object"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGci.."
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "Bearer"
+                                                }
+                                            },
+                                            "type": "object"
                                         },
-                                        "type": {
-                                            "type": "string",
-                                            "example": "Bearer"
+                                        "errors": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
                                         }
                                     },
                                     "type": "object"

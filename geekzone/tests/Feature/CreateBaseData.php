@@ -101,7 +101,7 @@ trait CreateBaseData
             'password' => $password,
         ]);
 
-        return $response->json('token');
+        return $response->json('data.token');
     }
 
     protected function getHeadersWithToken(string $token): array

@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
+use RuntimeException;
 use Tests\TestCase;
 
 class ApiHardeningTest extends TestCase
@@ -28,7 +30,29 @@ class ApiHardeningTest extends TestCase
     {
         $this->get('/api/no-existe')
             ->assertStatus(404)
-            ->assertHeader('Content-Type', 'application/json');
+            ->assertHeader('Content-Type', 'application/json')
+            ->assertJson(['success' => false, 'message' => 'Recurso no encontrado.', 'data' => null])
+            ->assertJsonStructure(['success', 'message', 'data', 'errors']);
+    }
+
+    public function test_wrong_http_method_returns_standard_405(): void
+    {
+        $this->getJson('/api/login')
+            ->assertStatus(405)
+            ->assertJson(['success' => false, 'message' => 'Método no permitido.', 'data' => null])
+            ->assertJsonStructure(['success', 'message', 'data', 'errors']);
+    }
+
+    public function test_unexpected_errors_do_not_leak_details_when_not_in_debug(): void
+    {
+        config(['app.debug' => false]);
+        Route::get('/api/_prueba-error', fn () => throw new RuntimeException('detalle-interno-secreto'));
+
+        $response = $this->getJson('/api/_prueba-error')
+            ->assertStatus(500)
+            ->assertJson(['success' => false, 'message' => 'Error interno del servidor.', 'data' => null]);
+
+        $this->assertStringNotContainsString('detalle-interno-secreto', $response->getContent());
     }
 
     public function test_validation_errors_are_json_even_without_accept_header(): void
@@ -59,7 +83,11 @@ class ApiHardeningTest extends TestCase
             $this->postJson('/api/login', ['email' => 'nadie@geekzone.com', 'password' => 'incorrecta'])->assertStatus(401);
         }
 
-        $this->postJson('/api/login', ['email' => 'nadie@geekzone.com', 'password' => 'incorrecta'])->assertStatus(429);
+        $this->postJson('/api/login', ['email' => 'nadie@geekzone.com', 'password' => 'incorrecta'])
+            ->assertStatus(429)
+            ->assertHeader('Retry-After')
+            ->assertJson(['success' => false, 'data' => null])
+            ->assertJsonStructure(['success', 'message', 'data', 'errors']);
     }
 
     public function test_register_is_rate_limited(): void

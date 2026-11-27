@@ -26,15 +26,16 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(201)
+            ->assertJson(['success' => true, 'errors' => null])
             ->assertJsonStructure([
+                'success',
                 'message',
-                'user' => [
-                    'id',
-                    'name',
-                    'email',
+                'data' => [
+                    'user' => ['id', 'name', 'email'],
+                    'token',
+                    'type',
                 ],
-                'token',
-                'type',
+                'errors',
             ]);
 
         $this->assertDatabaseHas('users', [
@@ -56,8 +57,11 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(422)
+            ->assertJson(['success' => false, 'data' => null])
             ->assertJsonStructure([
+                'success',
                 'message',
+                'data',
                 'errors',
             ]);
     }
@@ -68,9 +72,12 @@ class AuthTest extends TestCase
         $response = $this->postJson('/api/register', []);
 
         $response->assertStatus(422)
+            ->assertJson(['success' => false, 'data' => null])
             ->assertJsonStructure([
+                'success',
                 'message',
-                'errors',
+                'data',
+                'errors' => ['name', 'surname', 'username', 'email', 'password'],
             ]);
     }
 
@@ -89,15 +96,16 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(200)
+            ->assertJson(['success' => true, 'errors' => null])
             ->assertJsonStructure([
+                'success',
                 'message',
-                'user' => [
-                    'id',
-                    'name',
-                    'email',
+                'data' => [
+                    'user' => ['id', 'name', 'email', 'role'],
+                    'token',
+                    'type',
                 ],
-                'token',
-                'type',
+                'errors',
             ]);
     }
 
@@ -113,8 +121,11 @@ class AuthTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
+                'success' => false,
                 'message' => 'Credenciales incorrectas. Verifica tu email y contraseña.',
-            ]);
+                'data' => null,
+            ])
+            ->assertJsonStructure(['success', 'message', 'data', 'errors']);
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -130,7 +141,9 @@ class AuthTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
+                'success' => true,
                 'message' => 'Sesión cerrada correctamente.',
+                'data' => null,
             ]);
     }
 
@@ -143,7 +156,26 @@ class AuthTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
+                'success' => false,
                 'message' => 'Token inválido',
-            ]);
+                'data' => null,
+            ])
+            ->assertJsonStructure(['success', 'message', 'data', 'errors']);
+    }
+
+    // ———— Los errores de autenticación y de rol usan el formato estándar ——————————————————————————————————————
+    public function test_auth_middleware_errors_use_the_standard_envelope(): void
+    {
+        $this->getJson('/api/perfil')
+            ->assertStatus(401)
+            ->assertJson(['success' => false, 'data' => null])
+            ->assertJsonStructure(['success', 'message', 'data', 'errors']);
+
+        $headers = $this->loginAsUser();
+
+        $this->getJson('/api/admin/dashboard/resumen', $headers)
+            ->assertStatus(403)
+            ->assertJson(['success' => false, 'data' => null])
+            ->assertJsonStructure(['success', 'message', 'data', 'errors']);
     }
 }

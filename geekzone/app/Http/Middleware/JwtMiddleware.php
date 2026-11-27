@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Concerns\ApiResponses;
 use Closure;
 use Illuminate\Http\Request;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
@@ -12,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class JwtMiddleware
 {
+    use ApiResponses;
+
     /**
      * Handle an incoming request.
      *
@@ -24,23 +27,15 @@ class JwtMiddleware
             $user = JWTAuth::parseToken()->authenticate();
 
             if (! $user) {
-                return response()->json([
-                    'message' => 'Usuario no encontrado',
-                ], 401);
+                return $this->errorResponse('Usuario no encontrado', 401);
             }
         } catch (TokenExpiredException $e) {
-            return response()->json([
-                'message' => 'Token expirado',
-            ], 401);
+            return $this->errorResponse('Token expirado', 401);
         } catch (TokenInvalidException $e) {
             // Incluye tokens en la lista negra (sesión cerrada)
-            return response()->json([
-                'message' => 'Token inválido',
-            ], 401);
+            return $this->errorResponse('Token inválido', 401);
         } catch (JWTException $e) {
-            return response()->json([
-                'message' => 'Token no encontrado',
-            ], 401);
+            return $this->errorResponse('Token no encontrado', 401);
         }
 
         return $next($request);

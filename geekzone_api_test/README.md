@@ -5,7 +5,7 @@ Pruebas **manuales** de la API (no son tests automáticos; esos están en `geekz
 ## Configuración
 
 1. En Bruno: **Environments → Configure → New** y crea el entorno `local` con la variable `token` (vacía).
-2. Ejecuta `auth/login` y copia el `token` de la respuesta en la variable `token` del entorno.
+2. Ejecuta `auth/login` y copia `data.token` de la respuesta en la variable `token` del entorno.
    Las demás peticiones usan `Authorization: Bearer {{token}}`. **No pegues tokens en los `.yml`**: se versionan.
 3. Los endpoints de administración (`admin/*`, `images/*`, escritura de productos y categorías) necesitan el token de un usuario con rol `admin`.
 

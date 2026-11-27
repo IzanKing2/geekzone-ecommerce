@@ -214,7 +214,7 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    Auth.setToken(result.token, result.user?.role ?? 'user', false);
+                    Auth.setToken(result.data.token, result.data.user?.role ?? 'user', false);
                     window.location.href = "{{ route('shop') }}";
                     return;
                 }

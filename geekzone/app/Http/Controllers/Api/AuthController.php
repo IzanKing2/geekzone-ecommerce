@@ -58,10 +58,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Error de validación.',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->validationErrorResponse($validator->errors());
         }
 
         // El rol no es asignable en masa: el valor por defecto de la BD es 'user' (cliente)
@@ -76,12 +73,11 @@ class AuthController extends Controller
         // Generar token JWT para el usuario recién creado
         $token = JWTAuth::fromUser($user);
 
-        return response()->json([
-            'message' => '¡Usuario registrado correctamente!',
+        return $this->successResponse([
             'user' => $user,
             'token' => $token,
             'type' => 'Bearer',
-        ], 201);
+        ], '¡Usuario registrado correctamente!', 201);
     }
 
     #[OA\Post(
@@ -103,12 +99,21 @@ class AuthController extends Controller
     )]
     #[OA\Response(
         response: 200,
-        description: 'Login exitoso. Copia el token y úsalo en Authorize',
+        description: 'Login exitoso. Copia `data.token` y úsalo en Authorize',
         content: new OA\JsonContent(
             properties: [
+                new OA\Property(property: 'success', type: 'boolean', example: true),
                 new OA\Property(property: 'message', type: 'string', example: '¡Inicio de sesión exitoso!'),
-                new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGci..'),
-                new OA\Property(property: 'type', type: 'string', example: 'Bearer'),
+                new OA\Property(
+                    property: 'data',
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'user', type: 'object'),
+                        new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGci..'),
+                        new OA\Property(property: 'type', type: 'string', example: 'Bearer'),
+                    ]
+                ),
+                new OA\Property(property: 'errors', type: 'object', nullable: true, example: null),
             ]
         )
     )]
@@ -127,10 +132,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Error de validación.',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->validationErrorResponse($validator->errors());
         }
 
         // Intentar autenticar con email y password
@@ -138,19 +140,16 @@ class AuthController extends Controller
         $token = Auth::attempt($credentials);
 
         if (! $token) {
-            return response()->json([
-                'message' => 'Credenciales incorrectas. Verifica tu email y contraseña.',
-            ], 401);
+            return $this->errorResponse('Credenciales incorrectas. Verifica tu email y contraseña.', 401);
         }
 
         $token = JWTAuth::fromUser(Auth::user());
 
-        return response()->json([
-            'message' => '¡Inicio de sesión exitoso!',
+        return $this->successResponse([
             'user' => Auth::user(),
             'token' => $token,
             'type' => 'Bearer',
-        ]);
+        ], '¡Inicio de sesión exitoso!');
     }
 
     #[OA\Post(
@@ -169,8 +168,6 @@ class AuthController extends Controller
         // la petición (ya leído por JwtMiddleware) hasta su fecha de caducidad.
         JWTAuth::invalidate();
 
-        return response()->json([
-            'message' => 'Sesión cerrada correctamente.',
-        ]);
+        return $this->successResponse(null, 'Sesión cerrada correctamente.');
     }
 }

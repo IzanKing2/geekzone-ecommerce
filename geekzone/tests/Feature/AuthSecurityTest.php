@@ -69,7 +69,7 @@ class AuthSecurityTest extends TestCase
 
         $this->postJson('/api/login', $this->credentials(['recaptcha_token' => 'bueno']))
             ->assertStatus(200)
-            ->assertJsonStructure(['token']);
+            ->assertJsonStructure(['data' => ['token']]);
 
         Http::assertSent(fn ($request) => $request['secret'] === 'secreto' && $request['response'] === 'bueno');
     }
