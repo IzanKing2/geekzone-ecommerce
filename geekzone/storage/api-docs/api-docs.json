@@ -425,10 +425,13 @@
                         "description": "Producto añadido al carrito correctamente"
                     },
                     "400": {
-                        "description": "Stock insuficiente"
+                        "description": "Stock insuficiente (se compara con la cantidad total que habría en el carrito) o cantidad máxima superada (99)"
                     },
                     "401": {
                         "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "404": {
+                        "description": "El producto ya no está disponible"
                     },
                     "422": {
                         "description": "Error de validación"
@@ -811,7 +814,7 @@
                     }
                 ],
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "Producto eliminado de favoritos correctamente"
                     },
                     "401": {

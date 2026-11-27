@@ -6,8 +6,9 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use OpenApi\Attributes as OA;
 
@@ -53,11 +54,9 @@ class OrderController extends Controller
                 'total' => $orders->count(),
             ]);
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al obtener los pedidos.',
-                500,
-                ['exception' => [$e->getMessage()]]
-            );
+            Log::error('Error al obtener los pedidos', ['exception' => $e]);
+
+            return $this->errorResponse('Error al obtener los pedidos.', 500);
         }
     }
 
@@ -93,51 +92,39 @@ class OrderController extends Controller
         try {
             $user = JWTAuth::user();
 
-            $cartItems = Cart::with('product')
-                ->where('user_id', $user->id)
-                ->get();
+            // Todo ocurre dentro de la transacción: leer el carrito, comprobar stock,
+            // calcular precios y total, descontar stock y vaciar el carrito.
+            // Así un doble clic o dos peticiones simultáneas no pueden crear dos pedidos
+            // ni vender stock que no existe.
+            $resultado = DB::transaction(function () use ($user) {
+                // Mutex por usuario: serializa los pedidos del mismo usuario
+                User::lockForUpdate()->find($user->id);
 
-            if ($cartItems->isEmpty()) {
-                return $this->errorResponse(
-                    'No hay items en el carrito. Añade productos para crear un pedido.',
-                    404
-                );
-            }
+                $cartItems = Cart::where('user_id', $user->id)->orderBy('product_id')->get();
 
-            foreach ($cartItems as $item) {
-                if ($item->product->stock < $item->quantity) {
-                    return $this->errorResponse(
-                        'No hay suficiente stock para el producto ' . $item->product->name . '. Disponible: ' . $item->product->stock,
-                        400
-                    );
+                // Productos bloqueados en orden de id (evita interbloqueos entre pedidos).
+                // Los productos eliminados (soft delete) no aparecen aquí.
+                $products = Product::whereIn('id', $cartItems->pluck('product_id'))
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('id');
+
+                // Ítems cuyo producto ya no existe: se quitan del carrito, el usuario no los ve
+                $huerfanos = $cartItems->reject(fn ($item) => $products->has($item->product_id));
+                if ($huerfanos->isNotEmpty()) {
+                    Cart::whereIn('id', $huerfanos->pluck('id'))->delete();
+                    $cartItems = $cartItems->reject(fn ($item) => $huerfanos->contains('id', $item->id));
                 }
-            }
 
-            $total = 0;
-            foreach ($cartItems as $item) {
-                $total += $item->product->price * $item->quantity;
-            }
+                if ($cartItems->isEmpty()) {
+                    return ['error' => 'No hay items en el carrito. Añade productos para crear un pedido.', 'status' => 404];
+                }
 
-            $order = DB::transaction(function () use ($user, $cartItems, $total) {
-                $order = Order::create([
-                    'user_id' => $user->id,
-                    'status' => 'pendiente',
-                    'total' => round($total, 2),
-                ]);
-
+                // Total en céntimos (enteros): sin errores de redondeo de decimales
+                $totalCentimos = 0;
                 foreach ($cartItems as $item) {
-                    OrderDetail::create([
-                        'order_id' => $order->id,
-                        'product_id' => $item->product_id,
-                        'quantity' => $item->quantity,
-                        'price' => $item->product->price,
-                    ]);
-
-                    $product = Product::lockForUpdate()->find($item->product_id);
-
-                    if (!$product) {
-                        throw new \RuntimeException('Producto no encontrado.');
-                    }
+                    $product = $products[$item->product_id];
 
                     if ($product->stock < $item->quantity) {
                         throw new \RuntimeException(
@@ -145,15 +132,39 @@ class OrderController extends Controller
                         );
                     }
 
+                    $totalCentimos += (int) round(((float) $product->price) * 100) * $item->quantity;
+                }
+
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'status' => 'pendiente',
+                    'total' => $totalCentimos / 100,
+                ]);
+
+                foreach ($cartItems as $item) {
+                    $product = $products[$item->product_id];
+
+                    OrderDetail::create([
+                        'order_id' => $order->id,
+                        'product_id' => $product->id,
+                        'quantity' => $item->quantity,
+                        'price' => $product->price,
+                    ]);
+
                     $product->stock -= $item->quantity;
                     $product->save();
                 }
 
                 Cart::where('user_id', $user->id)->delete();
 
-                return $order;
+                return ['order' => $order];
             });
 
+            if (isset($resultado['error'])) {
+                return $this->errorResponse($resultado['error'], $resultado['status']);
+            }
+
+            $order = $resultado['order'];
             $order->load('details.product');
 
             return $this->successResponse(
@@ -167,11 +178,9 @@ class OrderController extends Controller
                 400
             );
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al crear el pedido.',
-                500,
-                ['exception' => [$e->getMessage()]]
-            );
+            Log::error('Error al crear el pedido', ['exception' => $e]);
+
+            return $this->errorResponse('Error al crear el pedido.', 500);
         }
     }
 }

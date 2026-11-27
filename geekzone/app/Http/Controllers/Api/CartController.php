@@ -6,11 +6,16 @@ use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use OpenApi\Attributes as OA;
 
 class CartController extends Controller
 {
+    /** Máximo de unidades de un mismo producto en el carrito. */
+    private const MAX_QUANTITY = 99;
+
     #[OA\Get(
         path: "/api/carrito",
         summary: "Ver carrito del usuario",
@@ -34,8 +39,10 @@ class CartController extends Controller
     {
         $user = Auth::user();
 
-        // Obtener items del carrito con la info del producto
+        // Obtener items del carrito con la info del producto.
+        // whereHas('product') excluye los productos eliminados (soft delete).
         $items = Cart::with('product.category')
+            ->whereHas('product')
             ->where('user_id', $user->id)
             ->get();
 
@@ -70,18 +77,20 @@ class CartController extends Controller
         )
     )]
     #[OA\Response(response: 201, description: "Producto añadido al carrito correctamente")]
-    #[OA\Response(response: 400, description: "Stock insuficiente")]
+    #[OA\Response(response: 400, description: "Stock insuficiente (se compara con la cantidad total que habría en el carrito) o cantidad máxima superada (99)")]
     #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 404, description: "El producto ya no está disponible")]
     #[OA\Response(response: 422, description: "Error de validación")]
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'product_id' => 'required|integer|exists:products,id',
-            'quantity' => 'integer|min:1',
+            'product_id' => ['required', 'integer', Rule::exists('products', 'id')->whereNull('deleted_at')],
+            'quantity' => 'integer|min:1|max:' . self::MAX_QUANTITY,
         ], [
             'product_id.required' => 'El producto es requerido.',
             'product_id.exists' => 'El producto no existe.',
             'quantity.min' => 'La cantidad debe ser mayor a 0.',
+            'quantity.max' => 'La cantidad máxima por producto es ' . self::MAX_QUANTITY . '.',
         ]);
 
         if ($validator->fails()) {
@@ -94,30 +103,55 @@ class CartController extends Controller
         $user = Auth::user();
         $quantity = $request->input('quantity', 1); // Por defecto, 1 item
 
-        // Varificar que hay suficiente stock
-        $product = Product::find($request->product_id);
+        // Bloqueamos la fila del producto: dos peticiones simultáneas para el mismo
+        // producto se serializan y no pueden duplicar el ítem ni saltarse el stock.
+        $resultado = DB::transaction(function () use ($user, $quantity, $request) {
+            $product = Product::lockForUpdate()->find($request->product_id);
 
-        if ($product->stock < $quantity) {
-            return response()->json([
-                'message' => 'No hay suficiente stock. Disponible: ' . $product->stock,
-            ], 400);
+            if (! $product) {
+                return ['error' => 'El producto ya no está disponible.', 'status' => 404];
+            }
+
+            $item = Cart::where('user_id', $user->id)
+                ->where('product_id', $product->id)
+                ->first();
+
+            // El stock se compara con lo que habría en total en el carrito, no solo con lo que se añade
+            $total = ($item?->quantity ?? 0) + $quantity;
+
+            if ($product->stock < $total) {
+                return [
+                    'error' => 'No hay suficiente stock. Disponible: ' . $product->stock,
+                    'status' => 400,
+                ];
+            }
+
+            if ($total > self::MAX_QUANTITY) {
+                return [
+                    'error' => 'La cantidad máxima por producto es ' . self::MAX_QUANTITY . '.',
+                    'status' => 400,
+                ];
+            }
+
+            if ($item) {
+                $item->quantity = $total;
+                $item->save();
+            } else {
+                $item = Cart::create([
+                    'user_id' => $user->id,
+                    'product_id' => $product->id,
+                    'quantity' => $quantity,
+                ]);
+            }
+
+            return ['item' => $item];
+        });
+
+        if (isset($resultado['error'])) {
+            return response()->json(['message' => $resultado['error']], $resultado['status']);
         }
 
-        $item = Cart::where('user_id', $user->id)
-            ->where('product_id', $request->product_id)
-            ->first();
-
-        if ($item) {
-            $item->quantity += $quantity;
-            $item->save();
-        } else {
-            $item = Cart::create([
-                'user_id' => $user->id,
-                'product_id' => $request->product_id,
-                'quantity' => $quantity,
-            ]);
-        }
-
+        $item = $resultado['item'];
         $item->load('product');
 
         return response()->json([
@@ -157,7 +191,7 @@ class CartController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'quantity' => 'required|integer|min:1',
+            'quantity' => 'required|integer|min:1|max:' . self::MAX_QUANTITY,
         ]);
 
         if ($validator->fails()) {
@@ -180,6 +214,15 @@ class CartController extends Controller
         }
 
         $product = Product::find($item->product_id);
+
+        // El producto se eliminó del catálogo después de añadirlo: se quita del carrito
+        if (! $product) {
+            $item->delete();
+
+            return response()->json([
+                'message' => 'El producto ya no está disponible y se ha quitado del carrito.',
+            ], 404);
+        }
 
         if ($product->stock < $request->quantity) {
             return response()->json([

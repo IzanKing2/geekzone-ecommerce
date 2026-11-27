@@ -32,8 +32,9 @@ class OrderDetail extends Model
         return $this->belongsTo(Order::class);
     }
 
+    /** Incluye productos eliminados (soft delete): el historial de pedidos no debe perderlos. */
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class)->withTrashed();
     }
 }

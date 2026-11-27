@@ -6,6 +6,7 @@ use App\Models\Favorite;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use OpenApi\Attributes as OA;
 
 class FavoriteController extends Controller
@@ -30,7 +31,9 @@ class FavoriteController extends Controller
     #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
     public function index()
     {
+        // whereHas('product') excluye los productos eliminados (soft delete)
         $favorites = Favorite::with('product.category')
+            ->whereHas('product')
             ->where('user_id', Auth::id())
             ->latest()
             ->get();
@@ -63,7 +66,7 @@ class FavoriteController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
+            'product_id' => ['required', 'integer', Rule::exists('products', 'id')->whereNull('deleted_at')],
         ], [
             'product_id.required' => 'El producto es requerido.',
             'product_id.exists' => 'El producto no existe.',
@@ -104,7 +107,7 @@ class FavoriteController extends Controller
         description: "ID del producto",
         schema: new OA\Schema(type: "integer")
     )]
-    #[OA\Response(response: 201, description: "Producto eliminado de favoritos correctamente")]
+    #[OA\Response(response: 200, description: "Producto eliminado de favoritos correctamente")]
     #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
     #[OA\Response(response: 404, description: "Favorito no encontrado")]
     public function destroy($productId)
