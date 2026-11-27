@@ -123,4 +123,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Administrador inicial (fuera de local)
+    |--------------------------------------------------------------------------
+    |
+    | En local/testing el UserSeeder crea usuarios de prueba conocidos. En
+    | cualquier otro entorno solo crea un administrador si se definen estas
+    | variables (con una contraseña propia, nunca la de desarrollo).
+    |
+    */
+
+    'admin_email' => env('ADMIN_EMAIL'),
+    'admin_password' => env('ADMIN_PASSWORD'),
+
 ];

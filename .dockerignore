@@ -1,0 +1,11 @@
+.git
+.github
+.claude
+.agents
+docs
+geekzone_api_test
+geekzone/vendor
+geekzone/node_modules
+geekzone/.env
+geekzone/storage/logs
+.env

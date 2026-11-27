@@ -23,7 +23,7 @@ RUN docker-php-ext-install \
     gd \
     xml
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 EXPOSE 9000

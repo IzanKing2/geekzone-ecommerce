@@ -11,9 +11,12 @@ http:
     data: |-
       {
         "name": "Prueba",
+        "surname": "Prueba",
+        "username": "prueba",
         "email": "prueba@geekzone.com",
         "password": "prueba123",
-        "password_confirmation": "prueba123"
+        "password_confirmation": "prueba123",
+        "recaptcha_token": "test-token"
       }
   auth: inherit
 

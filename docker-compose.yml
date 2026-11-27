@@ -39,31 +39,35 @@ services:
     image: mysql:8.0
     container_name: geekzone_db
     restart: unless-stopped
+    # Solo accesible desde la propia máquina (clientes SQL locales), nunca desde la red.
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
+    # Credenciales por variables (fichero .env en la raíz, ver .env.example).
+    # Los valores por defecto son SOLO para desarrollo local.
     environment:
-      MYSQL_DATABASE: geekzone
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: geekzone_user
-      MYSQL_PASSWORD: geekzone_pass
+      MYSQL_DATABASE: ${DB_DATABASE:-geekzone}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      MYSQL_USER: ${DB_USERNAME:-geekzone_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-geekzone_pass}
     volumes:
       - geekzone-db-data:/var/lib/mysql
     networks:
       - geekzone_network
   
   # ——————————————————————————————————————————————————————————————————————
-  # SERVICIO 4: phpMyAdmin (Gestor visual de BD)
+  # SERVICIO 4: phpMyAdmin (Gestor visual de BD) — SOLO DESARROLLO
+  # No desplegar en producción: da acceso total a la base de datos.
   # ——————————————————————————————————————————————————————————————————————
   phpmyadmin:
-    image: phpmyadmin:latest
+    image: phpmyadmin:5.2
     container_name: geekzone_phpmyadmin
     restart: unless-stopped
     ports:
-      - "8081:80"
+      - "127.0.0.1:8081:80"
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
     networks:
       - geekzone_network
     depends_on:
