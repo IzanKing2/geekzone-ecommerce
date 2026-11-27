@@ -361,13 +361,13 @@
             <div class="form-group">
                 <label class="form-label">Imagen del producto</label>
                 <input type="hidden" id="add-image" />
-                <input type="file" id="add-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml" style="display:none" onchange="handleImageSelect('add')" />
+                <input type="file" id="add-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none" onchange="handleImageSelect('add')" />
                 <div class="img-picker">
                     <div class="img-picker-area" id="add-picker-area" onclick="document.getElementById('add-image-file').click()">
                         <div class="img-preview" id="add-img-preview">📦</div>
                         <div class="img-picker-info">
                             <p class="img-picker-name" id="add-img-name">Sin imagen seleccionada</p>
-                            <p class="img-picker-hint" id="add-img-hint">Haz clic para seleccionar · JPG, PNG, GIF, SVG · Máx. 2MB</p>
+                            <p class="img-picker-hint" id="add-img-hint">Haz clic para seleccionar · JPG, PNG, GIF, WebP · Máx. 2MB</p>
                         </div>
                         <div class="img-picker-btns" onclick="event.stopPropagation()">
                             <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('add-image-file').click()">
@@ -439,13 +439,13 @@
             <div class="form-group">
                 <label class="form-label">Imagen del producto</label>
                 <input type="hidden" id="edit-image" />
-                <input type="file" id="edit-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml" style="display:none" onchange="handleImageSelect('edit')" />
+                <input type="file" id="edit-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none" onchange="handleImageSelect('edit')" />
                 <div class="img-picker">
                     <div class="img-picker-area" id="edit-picker-area" onclick="document.getElementById('edit-image-file').click()">
                         <div class="img-preview" id="edit-img-preview">📦</div>
                         <div class="img-picker-info">
                             <p class="img-picker-name" id="edit-img-name">Sin imagen</p>
-                            <p class="img-picker-hint" id="edit-img-hint">Haz clic para cambiar · JPG, PNG, GIF, SVG · Máx. 2MB</p>
+                            <p class="img-picker-hint" id="edit-img-hint">Haz clic para cambiar · JPG, PNG, GIF, WebP · Máx. 2MB</p>
                         </div>
                         <div class="img-picker-btns" onclick="event.stopPropagation()">
                             <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('edit-image-file').click()">
@@ -744,7 +744,7 @@
         document.getElementById(`${prefix}-image-file`).value = '';
         document.getElementById(`${prefix}-img-preview`).innerHTML = '📦';
         document.getElementById(`${prefix}-img-name`).textContent = prefix === 'add' ? 'Sin imagen seleccionada' : 'Sin imagen';
-        document.getElementById(`${prefix}-img-hint`).textContent = 'Haz clic para seleccionar · JPG, PNG, GIF, SVG · Máx. 2MB';
+        document.getElementById(`${prefix}-img-hint`).textContent = 'Haz clic para seleccionar · JPG, PNG, GIF, WebP · Máx. 2MB';
         const area = document.getElementById(`${prefix}-picker-area`);
         area.classList.remove('has-image', 'uploading', 'error');
         document.getElementById(`${prefix}-img-remove`).style.display = 'none';
@@ -766,9 +766,9 @@
         if (errEl) errEl.style.display = 'none';
 
         // Validación local
-        const allowed = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
+        const allowed = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
         if (!allowed.includes(file.type)) {
-            pickerError(prefix, 'Tipo no válido. Usa JPG, PNG, GIF o SVG.');
+            pickerError(prefix, 'Tipo no válido. Usa JPG, PNG, GIF o WebP.');
             fileInput.value = '';
             return;
         }
@@ -806,7 +806,7 @@
                 return;
             }
 
-            setPickerImage(prefix, json.image, file.name);
+            setPickerImage(prefix, json.data.image, file.name);
         } catch (e) {
             area.classList.remove('uploading');
             pickerError(prefix, 'Error de red. Comprueba la conexión e inténtalo de nuevo.');

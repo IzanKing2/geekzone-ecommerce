@@ -38,8 +38,16 @@ class ImageController extends Controller
         description: 'Imagen subida correctamente',
         content: new OA\JsonContent(
             properties: [
+                new OA\Property(property: 'success', type: 'boolean', example: true),
                 new OA\Property(property: 'message', type: 'string', example: 'Imagen subida correctamente.'),
-                new OA\Property(property: 'image', type: 'string', example: '/storage/images/Qx3b9kLmN0pZ.jpg'),
+                new OA\Property(
+                    property: 'data',
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'image', type: 'string', example: '/storage/images/Qx3b9kLmN0pZ.jpg'),
+                    ]
+                ),
+                new OA\Property(property: 'errors', type: 'object', nullable: true, example: null),
             ]
         )
     )]
@@ -58,10 +66,7 @@ class ImageController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Error de validación.',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->validationErrorResponse($validator->errors());
         }
 
         // El nombre y la extensión los decide el servidor (a partir del contenido),
@@ -71,9 +76,6 @@ class ImageController extends Controller
 
         $publicPath = Storage::url($ruta);
 
-        return response()->json([
-            'message' => 'Imagen subida correctamente.',
-            'image' => $publicPath,
-        ], 200);
+        return $this->successResponse(['image' => $publicPath], 'Imagen subida correctamente.');
     }
 }

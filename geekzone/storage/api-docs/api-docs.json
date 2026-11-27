@@ -866,13 +866,27 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "Imagen subida correctamente."
                                         },
-                                        "image": {
-                                            "type": "string",
-                                            "example": "/storage/images/Qx3b9kLmN0pZ.jpg"
+                                        "data": {
+                                            "properties": {
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "/storage/images/Qx3b9kLmN0pZ.jpg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
                                         }
                                     },
                                     "type": "object"

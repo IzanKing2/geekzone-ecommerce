@@ -26,8 +26,10 @@ class ImageTest extends TestCase
             'image' => UploadedFile::fake()->image('foto.png'),
         ]);
 
-        $response->assertStatus(200)->assertJsonStructure(['message', 'image']);
-        Storage::disk('public')->assertExists('images/'.basename($response->json('image')));
+        $response->assertStatus(200)
+            ->assertJson(['success' => true, 'errors' => null])
+            ->assertJsonStructure(['success', 'message', 'data' => ['image'], 'errors']);
+        Storage::disk('public')->assertExists('images/'.basename($response->json('data.image')));
     }
 
     public function test_uploaded_file_name_is_generated_by_server(): void
@@ -39,7 +41,17 @@ class ImageTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertStringNotContainsString('nombre-del-cliente', $response->json('image'));
+        $this->assertStringNotContainsString('nombre-del-cliente', $response->json('data.image'));
+    }
+
+    public function test_validation_error_uses_the_standard_envelope(): void
+    {
+        $headers = $this->loginAsAdmin();
+
+        $this->withHeaders($headers)->postJson('/api/imagenes', [])
+            ->assertStatus(422)
+            ->assertJson(['success' => false, 'data' => null])
+            ->assertJsonStructure(['success', 'message', 'data', 'errors' => ['image']]);
     }
 
     public function test_file_with_php_extension_is_rejected(): void
