@@ -25,18 +25,18 @@
             @if($hasFilters)
             <div class="active-filters">
                 @foreach($categories->whereIn('id', $activeCategories) as $cat)
-                <span class="active-chip">{{ $cat->name }} <span class="x" onclick="removeFilter('categories[]', '{{ $cat->id }}')">✕</span></span>
+                <span class="active-chip">{{ $cat->name }} <span class="x" data-action="removeFilter" data-args='["categories[]","{{ $cat->id }}"]'>✕</span></span>
                 @endforeach
                 @if(request()->boolean('featured'))
-                <span class="active-chip">Destacados <span class="x" onclick="removeCheckFilter('featured')">✕</span></span>
+                <span class="active-chip">Destacados <span class="x" data-action="removeCheckFilter" data-args='["featured"]'>✕</span></span>
                 @endif
                 @if(request()->boolean('in_stock'))
-                <span class="active-chip">En stock <span class="x" onclick="removeCheckFilter('in_stock')">✕</span></span>
+                <span class="active-chip">En stock <span class="x" data-action="removeCheckFilter" data-args='["in_stock"]'>✕</span></span>
                 @endif
                 @if(request()->filled('min_price') || request()->filled('max_price'))
                 <span class="active-chip">
                     {{ request('min_price', '0') }}€ — {{ request('max_price', '∞') }}€
-                    <span class="x" onclick="removePriceFilter()">✕</span>
+                    <span class="x" data-action="removePriceFilter">✕</span>
                 </span>
                 @endif
             </div>
@@ -69,13 +69,13 @@
                 </div>
                 <div style="display:flex;justify-content:space-between;margin-top:.8rem;gap:.4rem;flex-wrap:wrap">
                     <button type="button" class="filter-pill price-preset" style="font-size:.68rem;padding:.3rem .7rem"
-                        onclick="setPriceRange(0,25)">-25€</button>
+                        data-action="setPriceRange" data-args='[0,25]'>-25€</button>
                     <button type="button" class="filter-pill price-preset" style="font-size:.68rem;padding:.3rem .7rem"
-                        onclick="setPriceRange(25,50)">25-50€</button>
+                        data-action="setPriceRange" data-args='[25,50]'>25-50€</button>
                     <button type="button" class="filter-pill price-preset" style="font-size:.68rem;padding:.3rem .7rem"
-                        onclick="setPriceRange(50,100)">50-100€</button>
+                        data-action="setPriceRange" data-args='[50,100]'>50-100€</button>
                     <button type="button" class="filter-pill price-preset" style="font-size:.68rem;padding:.3rem .7rem"
-                        onclick="setPriceRange(100,9999)">+100€</button>
+                        data-action="setPriceRange" data-args='[100,9999]'>+100€</button>
                 </div>
             </div>
 
@@ -116,7 +116,7 @@
                         placeholder="Buscar producto, marca, personaje…"
                         style="width:100%;padding:.6rem 1rem .6rem 2.4rem;font-size:.95rem"
                         value="{{ request('search') }}"
-                        oninput="clearTimeout(this.delay); this.delay = setTimeout(() => { document.getElementById('catalog-form').submit(); }, 700);" />
+                        data-autosubmit-delay="700" />
                 </div>
             </div>
 
@@ -147,7 +147,7 @@
                 <div class="prod-footer">
                     <p class="prod-price">{{ $product->price }}€</p>
                     <button type="button" class="add-btn" data-product-id="{{ $product->id }}"
-                        onclick="event.preventDefault()"
+                        data-prevent-default
                         {{ $product->stock <= 0 ? 'disabled' : '' }}
                         title="{{ $product->stock <= 0 ? 'Sin stock' : 'Añadir al carrito' }}">+</button>
                 </div>
@@ -200,7 +200,8 @@
         document.querySelector('input[name="max_price"]').value = max === 9999 ? '' : max;
         // Highlight active preset pill
         document.querySelectorAll('.price-preset').forEach(b => b.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        // "this" es el botón pulsado (utils.js llama a la función con el elemento como this)
+        this.classList.add('active');
     }
 
     function removeFilter(name, value) {

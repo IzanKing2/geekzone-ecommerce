@@ -83,7 +83,7 @@
                         <div class="prod-footer">
                             <p class="prod-price">{{ $product->price }}€</p>
                             <button class="add-btn" data-product-id="{{ $product->id }}"
-                                    onclick="event.preventDefault()"
+                                    data-prevent-default
                                     {{ $product->stock <= 0 ? 'disabled' : '' }}
                                     title="{{ $product->stock <= 0 ? 'Sin stock' : 'Añadir al carrito' }}">+</button>
                         </div>

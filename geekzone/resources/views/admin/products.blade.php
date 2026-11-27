@@ -167,9 +167,9 @@
                             placeholder="Buscar producto…"
                             style="width:200px;padding:.45rem 1rem .45rem 2.2rem"
                             value="{{ request('q') }}"
-                            oninput="clearTimeout(this.delay); this.delay = setTimeout(() => { this.form.submit(); }, 700);" />
+                            data-autosubmit-delay="700" />
                     </div>
-                    <select name="sort" class="filter-select" onchange="this.form.submit()">
+                    <select name="sort" class="filter-select" data-autosubmit>
                         <option value="recent" {{ request('sort','recent') === 'recent'     ? 'selected' : '' }}>Recientes</option>
                         <option value="price_asc" {{ request('sort') === 'price_asc'           ? 'selected' : '' }}>Precio ↑</option>
                         <option value="price_desc" {{ request('sort') === 'price_desc'          ? 'selected' : '' }}>Precio ↓</option>
@@ -205,7 +205,7 @@
                                     <div style="display:flex;align-items:center;gap:.8rem">
                                         <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
                                             style="width:50px;height:50px;object-fit:cover;border-radius:6px;border:1px solid var(--border);flex-shrink:0"
-                                            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                            data-fallback="hide-sibling">
                                         <div class="product-thumb-cell" style="display:none;background:rgba(0,71,171,.15)">📦</div>
                                         <div>
                                             <strong>{{ $product->name }}</strong>
@@ -246,19 +246,12 @@
                                 <td>
                                     <div class="td-actions">
                                         <button class="btn btn-secondary btn-sm"
-                                            onclick="openEditModal(
-                                                {{ $product->id }},
-                                                @js($product->name),
-                                                {{ $product->category_id }},
-                                                @js((string) $product->price),
-                                                {{ $product->stock }},
-                                                {{ $product->featured ? 'true' : 'false' }},
-                                                @js($product->image_url ?? ''),
-                                                @js($product->description ?? '')
-                                            )"
+                                            data-action="openEditModal"
+                                            data-args="{{ json_encode([$product->id, $product->name, $product->category_id, (string) $product->price, $product->stock, (bool) $product->featured, $product->image_url ?? '', $product->description ?? '']) }}"
                                             title="Editar">✏️</button>
                                         <button class="btn btn-danger btn-sm"
-                                            onclick="deleteProduct({{ $product->id }}, @js($product->name))"
+                                            data-action="deleteProduct"
+                                            data-args="{{ json_encode([$product->id, $product->name]) }}"
                                             title="Eliminar">🗑️</button>
                                     </div>
                                 </td>
@@ -317,11 +310,11 @@
 </div>
 
 {{-- ══ MODAL: NUEVO PRODUCTO ══ --}}
-<div class="modal-overlay" id="modal-add" style="display:none" onclick="if(event.target===this)closeModal('modal-add')">
+<div class="modal-overlay" id="modal-add" style="display:none" data-overlay-close="modal-add">
     <div class="modal">
         <div class="modal-header">
             <h3>➕ Nuevo Producto</h3>
-            <button class="modal-close" onclick="closeModal('modal-add')">✕</button>
+            <button class="modal-close" data-action="closeModal" data-args='["modal-add"]'>✕</button>
         </div>
         <div class="modal-body" style="max-height:70vh;overflow-y:auto">
             <div class="form-group">
@@ -361,19 +354,19 @@
             <div class="form-group">
                 <label class="form-label">Imagen del producto</label>
                 <input type="hidden" id="add-image" />
-                <input type="file" id="add-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none" onchange="handleImageSelect('add')" />
+                <input type="file" id="add-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none" data-change="handleImageSelect" data-args='["add"]' />
                 <div class="img-picker">
-                    <div class="img-picker-area" id="add-picker-area" onclick="document.getElementById('add-image-file').click()">
+                    <div class="img-picker-area" id="add-picker-area" data-click-target="add-image-file">
                         <div class="img-preview" id="add-img-preview">📦</div>
                         <div class="img-picker-info">
                             <p class="img-picker-name" id="add-img-name">Sin imagen seleccionada</p>
                             <p class="img-picker-hint" id="add-img-hint">Haz clic para seleccionar · JPG, PNG, GIF, WebP · Máx. 2MB</p>
                         </div>
-                        <div class="img-picker-btns" onclick="event.stopPropagation()">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('add-image-file').click()">
+                        <div class="img-picker-btns" data-stop>
+                            <button type="button" class="btn btn-secondary btn-sm" data-click-target="add-image-file">
                                 📁 Seleccionar
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm" id="add-img-remove" style="display:none" onclick="removeImage('add')">
+                            <button type="button" class="btn btn-danger btn-sm" id="add-img-remove" style="display:none" data-action="removeImage" data-args='["add"]'>
                                 ✕
                             </button>
                         </div>
@@ -387,18 +380,18 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal('modal-add')">Cancelar</button>
-            <button class="btn btn-primary" id="btn-create-prod" onclick="createProduct()">Crear producto</button>
+            <button class="btn btn-secondary" data-action="closeModal" data-args='["modal-add"]'>Cancelar</button>
+            <button class="btn btn-primary" id="btn-create-prod" data-action="createProduct">Crear producto</button>
         </div>
     </div>
 </div>
 
 {{-- ══ MODAL: EDITAR PRODUCTO ══ --}}
-<div class="modal-overlay" id="modal-edit" style="display:none" onclick="if(event.target===this)closeModal('modal-edit')">
+<div class="modal-overlay" id="modal-edit" style="display:none" data-overlay-close="modal-edit">
     <div class="modal">
         <div class="modal-header">
             <h3>✏️ Editar Producto</h3>
-            <button class="modal-close" onclick="closeModal('modal-edit')">✕</button>
+            <button class="modal-close" data-action="closeModal" data-args='["modal-edit"]'>✕</button>
         </div>
         <div class="modal-body" style="max-height:70vh;overflow-y:auto">
             <input type="hidden" id="edit-id" />
@@ -439,19 +432,19 @@
             <div class="form-group">
                 <label class="form-label">Imagen del producto</label>
                 <input type="hidden" id="edit-image" />
-                <input type="file" id="edit-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none" onchange="handleImageSelect('edit')" />
+                <input type="file" id="edit-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none" data-change="handleImageSelect" data-args='["edit"]' />
                 <div class="img-picker">
-                    <div class="img-picker-area" id="edit-picker-area" onclick="document.getElementById('edit-image-file').click()">
+                    <div class="img-picker-area" id="edit-picker-area" data-click-target="edit-image-file">
                         <div class="img-preview" id="edit-img-preview">📦</div>
                         <div class="img-picker-info">
                             <p class="img-picker-name" id="edit-img-name">Sin imagen</p>
                             <p class="img-picker-hint" id="edit-img-hint">Haz clic para cambiar · JPG, PNG, GIF, WebP · Máx. 2MB</p>
                         </div>
-                        <div class="img-picker-btns" onclick="event.stopPropagation()">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('edit-image-file').click()">
+                        <div class="img-picker-btns" data-stop>
+                            <button type="button" class="btn btn-secondary btn-sm" data-click-target="edit-image-file">
                                 📁 Cambiar
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm" id="edit-img-remove" style="display:none" onclick="removeImage('edit')">
+                            <button type="button" class="btn btn-danger btn-sm" id="edit-img-remove" style="display:none" data-action="removeImage" data-args='["edit"]'>
                                 ✕
                             </button>
                         </div>
@@ -466,9 +459,9 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-danger btn-sm" id="btn-delete-prod" style="margin-right:auto"
-                onclick="deleteProductFromModal()">🗑️ Eliminar</button>
-            <button class="btn btn-secondary" onclick="closeModal('modal-edit')">Cancelar</button>
-            <button class="btn btn-primary" id="btn-save-prod" onclick="saveProduct()">Guardar cambios</button>
+                data-action="deleteProductFromModal">🗑️ Eliminar</button>
+            <button class="btn btn-secondary" data-action="closeModal" data-args='["modal-edit"]'>Cancelar</button>
+            <button class="btn btn-primary" id="btn-save-prod" data-action="saveProduct">Guardar cambios</button>
         </div>
     </div>
 </div>

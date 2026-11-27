@@ -115,7 +115,7 @@
                     </div>
                     <div class="cat-overview-actions">
                         <button class="btn btn-secondary btn-sm" style="flex:1;justify-content:center"
-                            onclick="openEditModal({{ $cat->id }}, @js($cat->name), @js($cat->description ?? ''), @js($cat->image_url ?? ''))">
+                            data-action="openEditModal" data-args="{{ json_encode([$cat->id, $cat->name, $cat->description ?? '', $cat->image_url ?? '']) }}">
                             ✏️ Editar
                         </button>
                     </div>
@@ -132,11 +132,11 @@
 </div>
 
 {{-- ══ MODAL: NUEVA CATEGORÍA ══ --}}
-<div class="modal-overlay" id="modal-new" style="display:none" onclick="if(event.target===this)closeModal('modal-new')">
+<div class="modal-overlay" id="modal-new" style="display:none" data-overlay-close="modal-new">
     <div class="modal">
         <div class="modal-header">
             <h3>➕ Nueva Categoría</h3>
-            <button class="modal-close" onclick="closeModal('modal-new')">✕</button>
+            <button class="modal-close" data-action="closeModal" data-args='["modal-new"]'>✕</button>
         </div>
         <div class="modal-body">
             <div class="form-group">
@@ -151,17 +151,17 @@
             <div class="form-group">
                 <label class="form-label">Imagen (opcional)</label>
                 <input type="hidden" id="new-image"/>
-                <input type="file" id="new-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none" onchange="handleImageSelect('new')"/>
+                <input type="file" id="new-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none" data-change="handleImageSelect" data-args='["new"]'/>
                 <div class="img-picker">
-                    <div class="img-picker-area" id="new-picker-area" onclick="document.getElementById('new-image-file').click()">
+                    <div class="img-picker-area" id="new-picker-area" data-click-target="new-image-file">
                         <div class="img-preview" id="new-img-preview">🏷️</div>
                         <div class="img-picker-info">
                             <p class="img-picker-name" id="new-img-name">Sin imagen seleccionada</p>
                             <p class="img-picker-hint" id="new-img-hint">Haz clic para seleccionar · JPG, PNG, GIF, WebP · Máx. 2MB</p>
                         </div>
-                        <div class="img-picker-btns" onclick="event.stopPropagation()">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('new-image-file').click()">📁 Seleccionar</button>
-                            <button type="button" class="btn btn-danger btn-sm" id="new-img-remove" style="display:none" onclick="removeImage('new')">✕</button>
+                        <div class="img-picker-btns" data-stop>
+                            <button type="button" class="btn btn-secondary btn-sm" data-click-target="new-image-file">📁 Seleccionar</button>
+                            <button type="button" class="btn btn-danger btn-sm" id="new-img-remove" style="display:none" data-action="removeImage" data-args='["new"]'>✕</button>
                         </div>
                     </div>
                     <p class="img-picker-error" id="new-img-error"></p>
@@ -169,18 +169,18 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal('modal-new')">Cancelar</button>
-            <button class="btn btn-primary" id="btn-create" onclick="createCategory()">Crear categoría</button>
+            <button class="btn btn-secondary" data-action="closeModal" data-args='["modal-new"]'>Cancelar</button>
+            <button class="btn btn-primary" id="btn-create" data-action="createCategory">Crear categoría</button>
         </div>
     </div>
 </div>
 
 {{-- ══ MODAL: EDITAR CATEGORÍA ══ --}}
-<div class="modal-overlay" id="modal-edit" style="display:none" onclick="if(event.target===this)closeModal('modal-edit')">
+<div class="modal-overlay" id="modal-edit" style="display:none" data-overlay-close="modal-edit">
     <div class="modal">
         <div class="modal-header">
             <h3>✏️ Editar Categoría</h3>
-            <button class="modal-close" onclick="closeModal('modal-edit')">✕</button>
+            <button class="modal-close" data-action="closeModal" data-args='["modal-edit"]'>✕</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="edit-id"/>
@@ -199,17 +199,17 @@
             <div class="form-group">
                 <label class="form-label">Imagen</label>
                 <input type="hidden" id="edit-image"/>
-                <input type="file" id="edit-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none" onchange="handleImageSelect('edit')"/>
+                <input type="file" id="edit-image-file" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none" data-change="handleImageSelect" data-args='["edit"]'/>
                 <div class="img-picker">
-                    <div class="img-picker-area" id="edit-picker-area" onclick="document.getElementById('edit-image-file').click()">
+                    <div class="img-picker-area" id="edit-picker-area" data-click-target="edit-image-file">
                         <div class="img-preview" id="edit-img-preview">🏷️</div>
                         <div class="img-picker-info">
                             <p class="img-picker-name" id="edit-img-name">Sin imagen</p>
                             <p class="img-picker-hint" id="edit-img-hint">Haz clic para cambiar · JPG, PNG, GIF, WebP · Máx. 2MB</p>
                         </div>
-                        <div class="img-picker-btns" onclick="event.stopPropagation()">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('edit-image-file').click()">📁 Cambiar</button>
-                            <button type="button" class="btn btn-danger btn-sm" id="edit-img-remove" style="display:none" onclick="removeImage('edit')">✕</button>
+                        <div class="img-picker-btns" data-stop>
+                            <button type="button" class="btn btn-secondary btn-sm" data-click-target="edit-image-file">📁 Cambiar</button>
+                            <button type="button" class="btn btn-danger btn-sm" id="edit-img-remove" style="display:none" data-action="removeImage" data-args='["edit"]'>✕</button>
                         </div>
                     </div>
                     <p class="img-picker-error" id="edit-img-error"></p>
@@ -217,9 +217,9 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-danger btn-sm" style="margin-right:auto" id="btn-delete" onclick="deleteCategory()">🗑️ Eliminar</button>
-            <button class="btn btn-secondary" onclick="closeModal('modal-edit')">Cancelar</button>
-            <button class="btn btn-primary" id="btn-save" onclick="saveCategory()">Guardar cambios</button>
+            <button class="btn btn-danger btn-sm" style="margin-right:auto" id="btn-delete" data-action="deleteCategory">🗑️ Eliminar</button>
+            <button class="btn btn-secondary" data-action="closeModal" data-args='["modal-edit"]'>Cancelar</button>
+            <button class="btn btn-primary" id="btn-save" data-action="saveCategory">Guardar cambios</button>
         </div>
     </div>
 </div>

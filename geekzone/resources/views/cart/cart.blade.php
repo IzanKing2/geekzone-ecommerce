@@ -179,20 +179,20 @@
           <div class="cart-thumb" style="background:var(--mid2);overflow:hidden;">
             <img src="${Utils.safeUrl(item.product.image_url)}" alt="" loading="lazy" decoding="async"
               style="width:100%;height:100%;object-fit:cover;"
-              onerror="this.style.display='none';this.parentElement.textContent='📦'">
+              data-fallback="emoji" data-fallback-text="📦">
           </div>
           <div>
             <p class="cart-item-cat">${Utils.esc(item.product.category?.name)}</p>
             <p class="cart-item-name">${Utils.esc(item.product.name)}</p>
             <div class="qty-control">
-              <button class="qty-btn" onclick="changeQty(${item.id}, ${item.quantity - 1})">−</button>
+              <button class="qty-btn" data-action="changeQty" data-args="[${item.id}, ${item.quantity - 1}]">−</button>
               <span class="qty-num">${item.quantity}</span>
-              <button class="qty-btn" onclick="changeQty(${item.id}, ${item.quantity + 1})">+</button>
+              <button class="qty-btn" data-action="changeQty" data-args="[${item.id}, ${item.quantity + 1}]">+</button>
             </div>
           </div>
           <div class="cart-item-right">
             <p class="cart-item-price">${fmt(item.product.price * item.quantity)}</p>
-            <button class="cart-remove" onclick="removeItem(${item.id})">✕ Eliminar</button>
+            <button class="cart-remove" data-action="removeItem" data-args="[${item.id}]">✕ Eliminar</button>
           </div>
         </div>
       `).join('');

@@ -432,11 +432,7 @@
             return;
         }
         grid.innerHTML = list.map(favCardHTML).join('') + `
-        <div style="background:transparent;border:2px dashed rgba(0,71,171,.3);border-radius:10px;
-            display:flex;flex-direction:column;align-items:center;justify-content:center;
-            gap:.8rem;padding:2rem;cursor:pointer;transition:all .25s;min-height:250px"
-            onmouseover="this.style.borderColor='var(--cobalt)';this.style.background='rgba(0,71,171,.05)'"
-            onmouseout="this.style.borderColor='rgba(0,71,171,.3)';this.style.background='transparent'">
+        <div class="wish-add-more">
             <span style="font-size:2.5rem;opacity:.35">＋</span>
             <p style="font-family:'Barlow Condensed',sans-serif;font-size:.82rem;letter-spacing:3px;
                 text-transform:uppercase;color:rgba(156,163,175,.45);text-align:center">

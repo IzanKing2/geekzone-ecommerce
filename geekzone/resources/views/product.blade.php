@@ -121,7 +121,7 @@
                     <p class="prod-price">{{ number_format($rel->price, 2, ',', '.') }}€</p>
                     <button type="button" class="add-btn related-add-btn"
                             data-product-id="{{ $rel->id }}"
-                            onclick="event.preventDefault()">+</button>
+                            data-prevent-default>+</button>
                 </div>
             </div>
         </a>
