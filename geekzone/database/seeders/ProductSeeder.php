@@ -222,8 +222,12 @@ class ProductSeeder extends Seeder
             ],
         ];
 
+        // Idempotente: se identifica cada producto por su nombre y categoría
         foreach (array_merge($MarvelProducts, $kpopProducts, $FutbolProducts) as $producto) {
-            Product::create($producto);
+            Product::updateOrCreate(
+                ['name' => $producto['name'], 'category_id' => $producto['category_id']],
+                $producto
+            );
         }
     }
 }

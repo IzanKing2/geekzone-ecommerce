@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\Concerns\HasImageUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, HasImageUrl;
 
     protected $table = 'categories';
 
@@ -18,19 +18,6 @@ class Category extends Model
         'description',
         'image_url',
     ];
-
-    // ——————————————————————————————————————————————————————————————————————————
-    // ACCESSORS
-    // ——————————————————————————————————————————————————————————————————————————
-
-    protected function imageUrl(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $value && ! str_starts_with($value, 'http')
-                ? asset($value)
-                : $value
-        );
-    }
 
     // ——————————————————————————————————————————————————————————————————————————
     // RELACIONES
