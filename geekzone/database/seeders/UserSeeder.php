@@ -27,7 +27,10 @@ class UserSeeder extends Seeder
         $password = config('app.admin_password');
 
         if (! $email || ! $password) {
-            $this->command?->warn('UserSeeder: entorno "'.app()->environment().'" sin ADMIN_EMAIL/ADMIN_PASSWORD; no se crea ningún usuario.');
+            // $command no existe si el seeder se ejecuta directamente (sin `db:seed`)
+            if (isset($this->command)) { // @phpstan-ignore isset.property
+                $this->command->warn('UserSeeder: entorno "'.app()->environment().'" sin ADMIN_EMAIL/ADMIN_PASSWORD; no se crea ningún usuario.');
+            }
 
             return;
         }

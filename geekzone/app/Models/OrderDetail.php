@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderDetail extends Model
 {
@@ -27,13 +28,18 @@ class OrderDetail extends Model
     // RELACIONES
     // ——————————————————————————————————————————————————————————————————————————
 
-    public function order()
+    /** @return BelongsTo<Order, $this> */
+    public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
     }
 
-    /** Incluye productos eliminados (soft delete): el historial de pedidos no debe perderlos. */
-    public function product()
+    /**
+     * Incluye productos eliminados (soft delete): el historial de pedidos no debe perderlos.
+     *
+     * @return BelongsTo<Product, $this>
+     */
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class)->withTrashed();
     }

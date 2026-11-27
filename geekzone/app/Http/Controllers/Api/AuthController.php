@@ -7,34 +7,33 @@ use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use OpenApi\Attributes as OA;
-
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
     #[OA\Post(
-        path: "/api/register",
-        summary: "Registrar un usuario",
-        tags: ["Auth"]
+        path: '/api/register',
+        summary: 'Registrar un usuario',
+        tags: ['Auth']
     )]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            required: ["name", "surname", "username", "email", "password", "password_confirmation", "recaptcha_token"],
+            required: ['name', 'surname', 'username', 'email', 'password', 'password_confirmation', 'recaptcha_token'],
             properties: [
-                new OA\Property(property: "name", type: "string", example: "Prueba"),
-                new OA\Property(property: "surname", type: "string", example: "Prueba"),
-                new OA\Property(property: "username", type: "string", example: "Prueba"),
-                new OA\Property(property: "email", type: "string", example: "prueba@prueba.com"),
-                new OA\Property(property: "password", type: "string", format: "password", example: "prueba123"),
-                new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "prueba123"),
-                new OA\Property(property: "recaptcha_token", type: "string", description: "Token de reCAPTCHA v2 (g-recaptcha-response). Obligatorio salvo que RECAPTCHA_ENABLED=false")
+                new OA\Property(property: 'name', type: 'string', example: 'Prueba'),
+                new OA\Property(property: 'surname', type: 'string', example: 'Prueba'),
+                new OA\Property(property: 'username', type: 'string', example: 'Prueba'),
+                new OA\Property(property: 'email', type: 'string', example: 'prueba@prueba.com'),
+                new OA\Property(property: 'password', type: 'string', format: 'password', example: 'prueba123'),
+                new OA\Property(property: 'password_confirmation', type: 'string', format: 'password', example: 'prueba123'),
+                new OA\Property(property: 'recaptcha_token', type: 'string', description: 'Token de reCAPTCHA v2 (g-recaptcha-response). Obligatorio salvo que RECAPTCHA_ENABLED=false'),
             ]
         )
     )]
-    #[OA\Response(response: 201, description: "Usuario registrado correctamente")]
-    #[OA\Response(response: 422, description: "Error de validación")]
+    #[OA\Response(response: 201, description: 'Usuario registrado correctamente')]
+    #[OA\Response(response: 422, description: 'Error de validación')]
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -86,35 +85,35 @@ class AuthController extends Controller
     }
 
     #[OA\Post(
-        path: "/api/login",
-        summary: "Iniciar sesión",
-        description: "Devuelve un token JWT para usar en rutas protegidas. Usar en el botón Authorize",
-        tags: ["Auth"]
+        path: '/api/login',
+        summary: 'Iniciar sesión',
+        description: 'Devuelve un token JWT para usar en rutas protegidas. Usar en el botón Authorize',
+        tags: ['Auth']
     )]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            required: ["email", "password", "recaptcha_token"],
+            required: ['email', 'password', 'recaptcha_token'],
             properties: [
-                new OA\Property(property: "email", type: "string", format: "email", example: "admin@geekzone.com"),
-                new OA\Property(property: "password", type: "string", format: "password", example: "admin123"),
-                new OA\Property(property: "recaptcha_token", type: "string", description: "Token de reCAPTCHA v2 (g-recaptcha-response). Obligatorio salvo que RECAPTCHA_ENABLED=false")
+                new OA\Property(property: 'email', type: 'string', format: 'email', example: 'admin@geekzone.com'),
+                new OA\Property(property: 'password', type: 'string', format: 'password', example: 'admin123'),
+                new OA\Property(property: 'recaptcha_token', type: 'string', description: 'Token de reCAPTCHA v2 (g-recaptcha-response). Obligatorio salvo que RECAPTCHA_ENABLED=false'),
             ]
         )
     )]
     #[OA\Response(
         response: 200,
-        description: "Login exitoso. Copia el token y úsalo en Authorize",
+        description: 'Login exitoso. Copia el token y úsalo en Authorize',
         content: new OA\JsonContent(
             properties: [
-                new OA\Property(property: "message", type: "string", example: "¡Inicio de sesión exitoso!"),
-                new OA\Property(property: "token", type: "string", example: "eyJ0eXAiOiJKV1QiLCJhbGci.."),
-                new OA\Property(property: "type", type: "string", example: "Bearer")
+                new OA\Property(property: 'message', type: 'string', example: '¡Inicio de sesión exitoso!'),
+                new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGci..'),
+                new OA\Property(property: 'type', type: 'string', example: 'Bearer'),
             ]
         )
     )]
-    #[OA\Response(response: 422, description: "Error de Validación")]
-    #[OA\Response(response: 401, description: "Credenciales incorrectas")]
+    #[OA\Response(response: 422, description: 'Error de Validación')]
+    #[OA\Response(response: 401, description: 'Credenciales incorrectas')]
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -138,7 +137,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         $token = Auth::attempt($credentials);
 
-        if (!$token) {
+        if (! $token) {
             return response()->json([
                 'message' => 'Credenciales incorrectas. Verifica tu email y contraseña.',
             ], 401);
@@ -155,18 +154,20 @@ class AuthController extends Controller
     }
 
     #[OA\Post(
-        path: "/api/logout",
-        summary: "Cerrar sesión",
-        description: "Invalida el token JWT del usuario.",
-        tags: ["Auth"],
-        security: [["bearerAuth" => []]]
+        path: '/api/logout',
+        summary: 'Cerrar sesión',
+        description: 'Invalida el token JWT del usuario.',
+        tags: ['Auth'],
+        security: [['bearerAuth' => []]]
     )]
-    #[OA\Response(response: 200, description: "Sesión cerrada correctamente")]
-    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 200, description: 'Sesión cerrada correctamente')]
+    #[OA\Response(response: 401, description: 'No autorizado. Token inválido o no existe')]
     public function logout()
     {
         // Mete el token en la lista negra: deja de ser válido aunque no haya caducado
-        JWTAuth::invalidate(JWTAuth::getToken());
+        // Sin argumentos: el único parámetro es $forceForever (bool). Invalida el token de
+        // la petición (ya leído por JwtMiddleware) hasta su fecha de caducidad.
+        JWTAuth::invalidate();
 
         return response()->json([
             'message' => 'Sesión cerrada correctamente.',

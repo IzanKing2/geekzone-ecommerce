@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -26,7 +28,7 @@ class Product extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'stock' => 'integer',
-        'featured' => 'boolean'
+        'featured' => 'boolean',
     ];
 
     // ——————————————————————————————————————————————————————————————————————————
@@ -36,7 +38,7 @@ class Product extends Model
     protected function imageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value && !str_starts_with($value, 'http')
+            get: fn ($value) => $value && ! str_starts_with($value, 'http')
                 ? asset($value)
                 : $value
         );
@@ -46,12 +48,14 @@ class Product extends Model
     // RELACIONES
     // ——————————————————————————————————————————————————————————————————————————
 
-    public function category()
+    /** @return BelongsTo<Category, $this> */
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function favorites()
+    /** @return HasMany<Favorite, $this> */
+    public function favorites(): HasMany
     {
         return $this->hasMany(Favorite::class);
     }

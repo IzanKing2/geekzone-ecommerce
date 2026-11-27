@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
@@ -25,7 +26,7 @@ class Category extends Model
     protected function imageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value && !str_starts_with($value, 'http')
+            get: fn ($value) => $value && ! str_starts_with($value, 'http')
                 ? asset($value)
                 : $value
         );
@@ -35,7 +36,8 @@ class Category extends Model
     // RELACIONES
     // ——————————————————————————————————————————————————————————————————————————
 
-    public function products()
+    /** @return HasMany<Product, $this> */
+    public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'category_id');
     }

@@ -17,24 +17,24 @@ class CartController extends Controller
     private const MAX_QUANTITY = 99;
 
     #[OA\Get(
-        path: "/api/carrito",
-        summary: "Ver carrito del usuario",
-        description: "Devuelve todos los items del carrito del usuario autenticado. Requiere token JWT",
-        tags: ["Carrito"],
-        security: [["bearerAuth" => []]]
+        path: '/api/carrito',
+        summary: 'Ver carrito del usuario',
+        description: 'Devuelve todos los items del carrito del usuario autenticado. Requiere token JWT',
+        tags: ['Carrito'],
+        security: [['bearerAuth' => []]]
     )]
     #[OA\Response(
         response: 200,
-        description: "Carrito obtenido correctamente",
+        description: 'Carrito obtenido correctamente',
         content: new OA\JsonContent(
             properties: [
-                new OA\Property(property: "cart", type: "array", items: new OA\Items(type: "object")),
-                new OA\Property(property: "total", type: "number", example: 59.99),
-                new OA\Property(property: "items_count", type: "integer", example: 3)
+                new OA\Property(property: 'cart', type: 'array', items: new OA\Items(type: 'object')),
+                new OA\Property(property: 'total', type: 'number', example: 59.99),
+                new OA\Property(property: 'items_count', type: 'integer', example: 3),
             ]
         )
     )]
-    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 401, description: 'No autorizado. Token inválido o no existe')]
     public function index()
     {
         $user = Auth::user();
@@ -60,37 +60,37 @@ class CartController extends Controller
     }
 
     #[OA\Post(
-        path: "/api/carrito",
-        summary: "Añadir producto al carrito",
-        description: "Añade un producto al carrito del usuario. Requiere token JWT",
-        tags: ["Carrito"],
-        security: [["bearerAuth" => []]]
+        path: '/api/carrito',
+        summary: 'Añadir producto al carrito',
+        description: 'Añade un producto al carrito del usuario. Requiere token JWT',
+        tags: ['Carrito'],
+        security: [['bearerAuth' => []]]
     )]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            required: ["product_id"],
+            required: ['product_id'],
             properties: [
-                new OA\Property(property: "product_id", type: "integer", example: 1),
-                new OA\Property(property: "quantity", type: "integer", example: 2)
+                new OA\Property(property: 'product_id', type: 'integer', example: 1),
+                new OA\Property(property: 'quantity', type: 'integer', example: 2),
             ]
         )
     )]
-    #[OA\Response(response: 201, description: "Producto añadido al carrito correctamente")]
-    #[OA\Response(response: 400, description: "Stock insuficiente (se compara con la cantidad total que habría en el carrito) o cantidad máxima superada (99)")]
-    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
-    #[OA\Response(response: 404, description: "El producto ya no está disponible")]
-    #[OA\Response(response: 422, description: "Error de validación")]
+    #[OA\Response(response: 201, description: 'Producto añadido al carrito correctamente')]
+    #[OA\Response(response: 400, description: 'Stock insuficiente (se compara con la cantidad total que habría en el carrito) o cantidad máxima superada (99)')]
+    #[OA\Response(response: 401, description: 'No autorizado. Token inválido o no existe')]
+    #[OA\Response(response: 404, description: 'El producto ya no está disponible')]
+    #[OA\Response(response: 422, description: 'Error de validación')]
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'product_id' => ['required', 'integer', Rule::exists('products', 'id')->whereNull('deleted_at')],
-            'quantity' => 'integer|min:1|max:' . self::MAX_QUANTITY,
+            'quantity' => 'integer|min:1|max:'.self::MAX_QUANTITY,
         ], [
             'product_id.required' => 'El producto es requerido.',
             'product_id.exists' => 'El producto no existe.',
             'quantity.min' => 'La cantidad debe ser mayor a 0.',
-            'quantity.max' => 'La cantidad máxima por producto es ' . self::MAX_QUANTITY . '.',
+            'quantity.max' => 'La cantidad máxima por producto es '.self::MAX_QUANTITY.'.',
         ]);
 
         if ($validator->fails()) {
@@ -117,18 +117,18 @@ class CartController extends Controller
                 ->first();
 
             // El stock se compara con lo que habría en total en el carrito, no solo con lo que se añade
-            $total = ($item?->quantity ?? 0) + $quantity;
+            $total = ($item ? $item->quantity : 0) + $quantity;
 
             if ($product->stock < $total) {
                 return [
-                    'error' => 'No hay suficiente stock. Disponible: ' . $product->stock,
+                    'error' => 'No hay suficiente stock. Disponible: '.$product->stock,
                     'status' => 400,
                 ];
             }
 
             if ($total > self::MAX_QUANTITY) {
                 return [
-                    'error' => 'La cantidad máxima por producto es ' . self::MAX_QUANTITY . '.',
+                    'error' => 'La cantidad máxima por producto es '.self::MAX_QUANTITY.'.',
                     'status' => 400,
                 ];
             }
@@ -161,37 +161,37 @@ class CartController extends Controller
     }
 
     #[OA\Put(
-        path: "/api/carrito/{id}",
-        summary: "Actualizar cantidad de un item del carrito",
-        description: "Modifica la cantidad de un item en el carrito. Requiere token JWT",
-        tags: ["Carrito"],
-        security: [["bearerAuth" => []]]
+        path: '/api/carrito/{id}',
+        summary: 'Actualizar cantidad de un item del carrito',
+        description: 'Modifica la cantidad de un item en el carrito. Requiere token JWT',
+        tags: ['Carrito'],
+        security: [['bearerAuth' => []]]
     )]
     #[OA\Parameter(
-        name: "id",
-        in: "path",
+        name: 'id',
+        in: 'path',
         required: true,
-        description: "ID del item",
-        schema: new OA\Schema(type: "integer")
+        description: 'ID del item',
+        schema: new OA\Schema(type: 'integer')
     )]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            required: ["quantity"],
+            required: ['quantity'],
             properties: [
-                new OA\Property(property: "quantity", type: "integer", example: 3)
+                new OA\Property(property: 'quantity', type: 'integer', example: 3),
             ]
         )
     )]
-    #[OA\Response(response: 200, description: "Cantidad actualizada correctamente")]
-    #[OA\Response(response: 400, description: "Stock insuficiente")]
-    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
-    #[OA\Response(response: 404, description: "Item no encontrado en el carrito")]
-    #[OA\Response(response: 422, description: "Error de validación")]
+    #[OA\Response(response: 200, description: 'Cantidad actualizada correctamente')]
+    #[OA\Response(response: 400, description: 'Stock insuficiente')]
+    #[OA\Response(response: 401, description: 'No autorizado. Token inválido o no existe')]
+    #[OA\Response(response: 404, description: 'Item no encontrado en el carrito')]
+    #[OA\Response(response: 422, description: 'Error de validación')]
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'quantity' => 'required|integer|min:1|max:' . self::MAX_QUANTITY,
+            'quantity' => 'required|integer|min:1|max:'.self::MAX_QUANTITY,
         ]);
 
         if ($validator->fails()) {
@@ -207,7 +207,7 @@ class CartController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        if (!$item) {
+        if (! $item) {
             return response()->json([
                 'message' => 'Item no encontrado en el carrito.',
             ], 404);
@@ -226,7 +226,7 @@ class CartController extends Controller
 
         if ($product->stock < $request->quantity) {
             return response()->json([
-                'message' => 'No hay suficiente stock. Disponible: ' . $product->stock,
+                'message' => 'No hay suficiente stock. Disponible: '.$product->stock,
             ], 400);
         }
 
@@ -241,22 +241,22 @@ class CartController extends Controller
     }
 
     #[OA\Delete(
-        path: "/api/carrito/{id}",
-        summary: "Eliminar item del carrito",
-        description: "Elimina un producto del carrito del usuario. Requiere token JWT",
-        tags: ["Carrito"],
-        security: [["bearerAuth" => []]]
+        path: '/api/carrito/{id}',
+        summary: 'Eliminar item del carrito',
+        description: 'Elimina un producto del carrito del usuario. Requiere token JWT',
+        tags: ['Carrito'],
+        security: [['bearerAuth' => []]]
     )]
     #[OA\Parameter(
-        name: "id",
-        in: "path",
+        name: 'id',
+        in: 'path',
         required: true,
-        description: "ID del item",
-        schema: new OA\Schema(type: "integer")
+        description: 'ID del item',
+        schema: new OA\Schema(type: 'integer')
     )]
-    #[OA\Response(response: 200, description: "Item eliminado del carrito correctamente")]
-    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
-    #[OA\Response(response: 404, description: "Item no encontrado en el carrito")]
+    #[OA\Response(response: 200, description: 'Item eliminado del carrito correctamente')]
+    #[OA\Response(response: 401, description: 'No autorizado. Token inválido o no existe')]
+    #[OA\Response(response: 404, description: 'Item no encontrado en el carrito')]
     public function destroy($id)
     {
         $user = Auth::user();
@@ -265,7 +265,7 @@ class CartController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        if (!$item) {
+        if (! $item) {
             return response()->json([
                 'message' => 'Item no encontrado en el carrito.',
             ], 404);

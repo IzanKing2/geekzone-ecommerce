@@ -6,6 +6,10 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 
+/**
+ * Datos de prueba compartidos. Usan las factories de database/factories con valores
+ * fijos, para que los tests puedan hacer aserciones sobre ellos.
+ */
 trait CreateBaseData
 {
     // ——————————————————————————————————————————————————————————————————————————
@@ -13,16 +17,16 @@ trait CreateBaseData
     // ——————————————————————————————————————————————————————————————————————————
     protected function createCategoriesForTest(): array
     {
-        $marvel = Category::create([
-            'name'      => 'Marvel',
+        $marvel = Category::factory()->create([
+            'name' => 'Marvel',
             'description' => 'Productos de Marvel para testing',
-            'image_url'  => 'img/test/marvel.jpg',
+            'image_url' => 'img/test/marvel.jpg',
         ]);
 
-        $futbol = Category::create([
-            'name'      => 'Fútbol',
+        $futbol = Category::factory()->create([
+            'name' => 'Fútbol',
             'description' => 'Productos de Fútbol para testing',
-            'image_url'  => 'img/test/futbol.jpg',
+            'image_url' => 'img/test/futbol.jpg',
         ]);
 
         return [$marvel, $futbol];
@@ -30,30 +34,30 @@ trait CreateBaseData
 
     protected function createProductsForTest(int $categoryId): array
     {
-        $product1 = Product::create([
-            'name'       => 'Figura Spider-Man Test',
-            'description'  => 'Figura de acción de Spider-Man para tests',
-            'price'       => 29.99,
-            'stock'        => 10,
-            'image_url'   => 'img/test/spiderman.jpg',
+        $product1 = Product::factory()->create([
+            'name' => 'Figura Spider-Man Test',
+            'description' => 'Figura de acción de Spider-Man para tests',
+            'price' => 29.99,
+            'stock' => 10,
+            'image_url' => 'img/test/spiderman.jpg',
             'category_id' => $categoryId,
         ]);
 
-        $product2 = Product::create([
-            'name'       => 'Camiseta Iron Man Test',
-            'description'  => 'Camiseta oficial de Iron Man para tests',
-            'price'       => 19.99,
-            'stock'        => 5,
-            'image_url'   => 'img/test/ironman.jpg',
+        $product2 = Product::factory()->create([
+            'name' => 'Camiseta Iron Man Test',
+            'description' => 'Camiseta oficial de Iron Man para tests',
+            'price' => 19.99,
+            'stock' => 5,
+            'image_url' => 'img/test/ironman.jpg',
             'category_id' => $categoryId,
         ]);
 
-        $product3 = Product::create([
-            'name'       => 'Taza Thor Test',
-            'description'  => 'Taza de Thor para tests',
-            'price'       => 12.50,
-            'stock'        => 20,
-            'image_url'   => 'img/test/thor.jpg',
+        $product3 = Product::factory()->create([
+            'name' => 'Taza Thor Test',
+            'description' => 'Taza de Thor para tests',
+            'price' => 12.50,
+            'stock' => 20,
+            'image_url' => 'img/test/thor.jpg',
             'category_id' => $categoryId,
         ]);
 
@@ -66,29 +70,24 @@ trait CreateBaseData
 
     protected function createNormalUser(): User
     {
-        return User::create([
-            'name'     => 'Usuario Test',
-            'surname'  => 'Apellido Test',
+        return User::factory()->create([
+            'name' => 'Usuario Test',
+            'surname' => 'Apellido Test',
             'username' => 'usuario_test',
-            'email'    => 'test@geekzone.com',
+            'email' => 'test@geekzone.com',
             'password' => 'password123',
         ]);
     }
 
     protected function createAdminUser(): User
     {
-        $admin = User::create([
-            'name'     => 'Admin Test',
-            'surname'  => 'Admin Apellido',
+        return User::factory()->admin()->create([
+            'name' => 'Admin Test',
+            'surname' => 'Admin Apellido',
             'username' => 'admin_test',
-            'email'    => 'admin-test@geekzone.com',
+            'email' => 'admin-test@geekzone.com',
             'password' => 'admin123',
         ]);
-
-        // El rol no es asignable en masa: se fuerza explícitamente
-        $admin->forceFill(['role' => 'admin'])->save();
-
-        return $admin;
     }
 
     // ——————————————————————————————————————————————————————————————————————————
@@ -98,7 +97,7 @@ trait CreateBaseData
     protected function getTokenForUser(string $email, string $password): string
     {
         $response = $this->postJson('/api/login', [
-            'email'    => $email,
+            'email' => $email,
             'password' => $password,
         ]);
 
@@ -108,7 +107,7 @@ trait CreateBaseData
     protected function getHeadersWithToken(string $token): array
     {
         return [
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ];
     }
 
@@ -116,6 +115,7 @@ trait CreateBaseData
     {
         $this->createNormalUser();
         $token = $this->getTokenForUser('test@geekzone.com', 'password123');
+
         return $this->getHeadersWithToken($token);
     }
 
@@ -123,6 +123,7 @@ trait CreateBaseData
     {
         $this->createAdminUser();
         $token = $this->getTokenForUser('admin-test@geekzone.com', 'admin123');
+
         return $this->getHeadersWithToken($token);
     }
 }
