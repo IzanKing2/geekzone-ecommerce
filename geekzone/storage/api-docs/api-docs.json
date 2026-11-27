@@ -17,7 +17,7 @@
                     "Dashboard (Administrador)"
                 ],
                 "summary": "Resumen del dashboard (Administrador)",
-                "description": "Devuelve estadísticas generales: total de usuarios, productos, pedidos e ingresos. Requiere token JWT con rol de administrador.",
+                "description": "Devuelve estadísticas generales: total de usuarios, productos, pedidos e ingresos (sin contar pedidos cancelados). Requiere token JWT con rol de administrador.",
                 "operationId": "0d2cb52a63cf00d69b594293d2145a05",
                 "responses": {
                     "200": {
@@ -43,8 +43,22 @@
                     "Dashboard (Administrador)"
                 ],
                 "summary": "Ingresos mensuales (Administrador)",
-                "description": "Devuelve los ingresos agrupados por mes de los últimos 12 meses. Requiere token JWT con rol de administrador.",
+                "description": "Devuelve los ingresos agrupados por mes (sin contar pedidos cancelados). Por defecto los últimos 12 meses; se puede ajustar con `meses` (1-24). Requiere token JWT con rol de administrador.",
                 "operationId": "cc1815c2fc5f3462a4b2e350e883a95e",
+                "parameters": [
+                    {
+                        "name": "meses",
+                        "in": "query",
+                        "description": "Número de meses hacia atrás (1-24). Por defecto 12",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 12,
+                            "maximum": 24,
+                            "minimum": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Ingresos mensuales obtenidos correctamente"
@@ -69,11 +83,63 @@
                     "Dashboard (Administrador)"
                 ],
                 "summary": "Top 5 productos más vendidos (Administrador)",
-                "description": "Devuelve los 5 productos más vendidos con sus ingresos generados. Requiere token JWT con rol de administrador.",
+                "description": "Devuelve los 5 productos más vendidos con sus ingresos generados (sin contar pedidos cancelados; incluye productos ya eliminados). Requiere token JWT con rol de administrador.",
                 "operationId": "ffb1fe2a180f17c62eb1b54c3f73b32c",
                 "responses": {
                     "200": {
                         "description": "Top productos obtenidos correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "No tienes permisos de administrador"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/dashboard/ventas-por-categoria": {
+            "get": {
+                "tags": [
+                    "Dashboard (Administrador)"
+                ],
+                "summary": "Ventas por categoría (Administrador)",
+                "description": "Devuelve el total vendido por categoría, de mayor a menor (sin contar pedidos cancelados). Requiere token JWT con rol de administrador.",
+                "operationId": "2b64f358bd11b3cef9d13ac71157f37f",
+                "responses": {
+                    "200": {
+                        "description": "Ventas por categoría obtenidas correctamente"
+                    },
+                    "401": {
+                        "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "No tienes permisos de administrador"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/dashboard/pedidos-recientes": {
+            "get": {
+                "tags": [
+                    "Dashboard (Administrador)"
+                ],
+                "summary": "Últimos pedidos (Administrador)",
+                "description": "Devuelve los 8 pedidos más recientes con el cliente. Requiere token JWT con rol de administrador.",
+                "operationId": "409d8c2864fa72b3aaadba1667eab2b7",
+                "responses": {
+                    "200": {
+                        "description": "Pedidos recientes obtenidos correctamente"
                     },
                     "401": {
                         "description": "No autorizado. Token inválido o no existe"

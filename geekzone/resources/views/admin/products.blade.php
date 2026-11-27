@@ -473,9 +473,10 @@
     </div>
 </div>
 
+<script src="{{ asset('js/admin.js') }}"></script>
+<script>AdminUI.guard(); // sin sesión de administrador → login (la API valida el rol en cada petición)</script>
 <script>
     let searchDebounceTimeout;
-
     function doSearchAdmin() {
         const form = document.getElementById('filter-form');
         const url = form.action + '?' + new URLSearchParams(new FormData(form)).toString();

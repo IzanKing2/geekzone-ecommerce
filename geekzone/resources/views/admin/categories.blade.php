@@ -108,7 +108,8 @@
                             <p class="l">Productos</p>
                         </div>
                         <div class="cat-overview-stat">
-                            <p class="v" style="color:var(--gold)">{{ number_format($cat->total_ventas, 0, ',', '.') }}€</p>
+                            {{-- Ventas: dato sensible, se rellena por API (solo admin) --}}
+                            <p class="v" style="color:var(--gold)" data-ventas="{{ $cat->id }}">—</p>
                             <p class="l">Ventas</p>
                         </div>
                     </div>
@@ -223,6 +224,18 @@
     </div>
 </div>
 
+<script src="{{ asset('js/admin.js') }}"></script>
+<script>
+    // Ventas por categoría: se cargan por API, no vienen en el HTML del servidor
+    if (AdminUI.guard()) {
+        AdminUI.api('ventas-por-categoria').then(data => {
+            const ventas = new Map(data.ventas_por_categoria.map(c => [c.id, c.total_ventas]));
+            document.querySelectorAll('[data-ventas]').forEach(node => {
+                node.textContent = AdminUI.money(ventas.get(Number(node.dataset.ventas)) ?? 0, 0);
+            });
+        }).catch(() => { /* se queda en "—" */ });
+    }
+</script>
 <script>
     const API = '/api/categorias';
 

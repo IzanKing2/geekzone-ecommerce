@@ -65,6 +65,8 @@ Route::middleware([JwtMiddleware::class, 'admin'])->group(function () {
     Route::get('/admin/dashboard/resumen', [AdminDashboardController::class, 'resumen']);
     Route::get('/admin/dashboard/ingresos', [AdminDashboardController::class, 'ingresos']);
     Route::get('/admin/dashboard/top-productos', [AdminDashboardController::class, 'topProductos']);
+    Route::get('/admin/dashboard/ventas-por-categoria', [AdminDashboardController::class, 'ventasPorCategoria']);
+    Route::get('/admin/dashboard/pedidos-recientes', [AdminDashboardController::class, 'pedidosRecientes']);
     Route::get('/admin/dashboard/pedidos-por-cliente', [AdminDashboardController::class, 'pedidosPorCliente']);
 
     // ———— CRUD Categorías —————————————————————————————————
