@@ -53,10 +53,6 @@ Route::middleware(JwtMiddleware::class)->group(function () {
     Route::get('/favoritos', [FavoriteController::class, 'index']);
     Route::post('/favoritos', [FavoriteController::class, 'store']);
     Route::delete('/favoritos/{productId}', [FavoriteController::class, 'destroy']);
-
-    // ———— Subir imagen —————————————————————————————————
-    // Acepta archvos via multipart/form-data (no JSON)
-    Route::post('/imagenes', [ImageController::class, 'store']);
 });
 
 // ———————————————————————————————————————————————————————————————————————————
@@ -75,6 +71,10 @@ Route::middleware([JwtMiddleware::class, 'admin'])->group(function () {
     Route::post('/categorias', [CategoryController::class, 'store']);
     Route::put('/categorias/{id}', [CategoryController::class, 'update']);
     Route::delete('/categorias/{id}', [CategoryController::class, 'destroy']);
+
+    // ———— Subir imagen (solo admin) —————————————————————————————————
+    // Acepta archivos via multipart/form-data (no JSON)
+    Route::post('/imagenes', [ImageController::class, 'store']);
 
     // ———— CRUD Productos —————————————————————————————————
     Route::post('/productos', [ProductController::class, 'store']);
