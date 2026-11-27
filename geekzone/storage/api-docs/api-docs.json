@@ -1050,7 +1050,13 @@
                                         "type": "integer",
                                         "example": 50
                                     },
+                                    "featured": {
+                                        "description": "Producto destacado",
+                                        "type": "boolean",
+                                        "example": false
+                                    },
                                     "image_url": {
+                                        "description": "Ruta o URL. No se admiten javascript:, data: ni vbscript:",
                                         "type": "string",
                                         "example": "https://ejemplo.com/ejemplo.jpg"
                                     },
@@ -1159,7 +1165,13 @@
                                         "type": "integer",
                                         "example": 30
                                     },
+                                    "featured": {
+                                        "description": "Producto destacado",
+                                        "type": "boolean",
+                                        "example": true
+                                    },
                                     "image_url": {
+                                        "description": "Ruta o URL. No se admiten javascript:, data: ni vbscript:",
                                         "type": "string",
                                         "example": "https://ejemplo.com/actualizado.jpg"
                                     },

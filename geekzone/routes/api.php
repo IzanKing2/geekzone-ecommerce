@@ -12,6 +12,10 @@ use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\JwtMiddleware;
 
+// Los identificadores de ruta son siempre numéricos: un id no numérico da 404 en vez de un 500
+Route::pattern('id', '[0-9]+');
+Route::pattern('productId', '[0-9]+');
+
 // ———————————————————————————————————————————————————————————————————————————
 // RUTAS PÚBLICAS (sin autenticación)
 // ———————————————————————————————————————————————————————————————————————————

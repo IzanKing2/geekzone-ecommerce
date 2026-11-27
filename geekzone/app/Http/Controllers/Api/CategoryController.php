@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\DTOs\CategoryDTO;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
 
@@ -44,11 +45,9 @@ class CategoryController extends Controller
                 'categories' => $dtos,
             ]);
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al obtener las categorías.',
-                500,
-                ['exception' => [$e->getMessage()]]
-            );
+            Log::error('Error al obtener las categorías.', ['exception' => $e]);
+
+            return $this->errorResponse('Error al obtener las categorías.', 500);
         }
     }
 
@@ -83,7 +82,7 @@ class CategoryController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image_url' => 'nullable|string|max:500',
+            'image_url' => ['nullable', 'string', 'max:500', 'not_regex:/^\s*(javascript|data|vbscript):/i'],
         ], [
             'name.required' => 'El nombre de la categoría es obligatorio.',
         ]);
@@ -173,7 +172,7 @@ class CategoryController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'sometimes|string|max:255',
                 'description' => 'sometimes|nullable|string',
-                'image_url' => 'sometimes|nullable|string|max:500',
+                'image_url' => ['sometimes', 'nullable', 'string', 'max:500', 'not_regex:/^\s*(javascript|data|vbscript):/i'],
             ]);
 
             if ($validator->fails()) {
@@ -219,11 +218,9 @@ class CategoryController extends Controller
                 'Categoría actualizada correctamente.'
             );
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al actualizar la categoría.',
-                500,
-                ['exception' => [$e->getMessage()]]
-            );
+            Log::error('Error al actualizar la categoría.', ['exception' => $e]);
+
+            return $this->errorResponse('Error al actualizar la categoría.', 500);
         }
     }
 
@@ -283,11 +280,9 @@ class CategoryController extends Controller
                 'Categoría eliminada correctamente.'
             );
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al eliminar la categoría.',
-                500,
-                ['exception' => [$e->getMessage()]]
-            );
+            Log::error('Error al eliminar la categoría.', ['exception' => $e]);
+
+            return $this->errorResponse('Error al eliminar la categoría.', 500);
         }
     }
 }

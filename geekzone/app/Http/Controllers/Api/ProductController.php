@@ -4,11 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
 
 class ProductController extends Controller
 {
+    /**
+     * image_url: ruta o URL de imagen. Se rechazan esquemas ejecutables (javascript:, data:, vbscript:)
+     * porque el valor acaba en atributos src/href del frontend.
+     */
+    private const IMAGE_URL_RULES = ['nullable', 'string', 'max:500', 'not_regex:/^\s*(javascript|data|vbscript):/i'];
+
     #[OA\Get(
         path: "/api/productos",
         summary: "Obtener lista de productos",
@@ -45,11 +52,9 @@ class ProductController extends Controller
                 'last_page' => $products->lastPage(),
             ]);
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al obtener los productos.',
-                500,
-                ['exception' => [$e->getMessage()]]
-            );
+            Log::error('Error al obtener los productos.', ['exception' => $e]);
+
+            return $this->errorResponse('Error al obtener los productos.', 500);
         }
     }
 
@@ -79,11 +84,9 @@ class ProductController extends Controller
 
             return $this->successResponse(['product' => $product]);
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al obtener el producto.',
-                500,
-                ['exception' => [$e->getMessage()]]
-            );
+            Log::error('Error al obtener el producto.', ['exception' => $e]);
+
+            return $this->errorResponse('Error al obtener el producto.', 500);
         }
     }
 
@@ -107,7 +110,8 @@ class ProductController extends Controller
                 new OA\Property(property: "description", type: "string", example: "Producto ejemplo"),
                 new OA\Property(property: "price", type: "number", format: "float", example: 79.99),
                 new OA\Property(property: "stock", type: "integer", example: 50),
-                new OA\Property(property: "image_url", type: "string", example: "https://ejemplo.com/ejemplo.jpg"),
+                new OA\Property(property: "featured", type: "boolean", example: false, description: "Producto destacado"),
+                new OA\Property(property: "image_url", type: "string", example: "https://ejemplo.com/ejemplo.jpg", description: "Ruta o URL. No se admiten javascript:, data: ni vbscript:"),
                 new OA\Property(property: "category_id", type: "integer", example: 1)
             ]
         )
@@ -125,7 +129,8 @@ class ProductController extends Controller
                 'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0.01',
                 'stock' => 'required|integer|min:0',
-                'image_url' => 'nullable|string|max:500',
+                'featured' => 'sometimes|boolean',
+                'image_url' => self::IMAGE_URL_RULES,
                 'category_id' => 'required|integer|exists:categories,id',
             ]);
 
@@ -133,7 +138,8 @@ class ProductController extends Controller
                 return $this->validationErrorResponse($validator->errors());
             }
 
-            $product = Product::create($request->all());
+            // Solo los campos validados: nunca $request->all()
+            $product = Product::create($validator->validated());
             $product->load('category');
 
             return $this->successResponse(
@@ -142,11 +148,9 @@ class ProductController extends Controller
                 201
             );
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al crear el producto.',
-                500,
-                ['exception' => [$e->getMessage()]]
-            );
+            Log::error('Error al crear el producto.', ['exception' => $e]);
+
+            return $this->errorResponse('Error al crear el producto.', 500);
         }
     }
 
@@ -172,7 +176,8 @@ class ProductController extends Controller
                 new OA\Property(property: "description", type: "string", example: "Producto actualizado"),
                 new OA\Property(property: "price", type: "number", format: "float", example: 89.99),
                 new OA\Property(property: "stock", type: "integer", example: 30),
-                new OA\Property(property: "image_url", type: "string", example: "https://ejemplo.com/actualizado.jpg"),
+                new OA\Property(property: "featured", type: "boolean", example: true, description: "Producto destacado"),
+                new OA\Property(property: "image_url", type: "string", example: "https://ejemplo.com/actualizado.jpg", description: "Ruta o URL. No se admiten javascript:, data: ni vbscript:"),
                 new OA\Property(property: "category_id", type: "integer", example: 2)
             ]
         )
@@ -196,7 +201,8 @@ class ProductController extends Controller
                 'description' => 'sometimes|nullable|string',
                 'price' => 'sometimes|numeric|min:0.01',
                 'stock' => 'sometimes|integer|min:0',
-                'image_url' => 'sometimes|nullable|string|max:500',
+                'featured' => 'sometimes|boolean',
+                'image_url' => ['sometimes', ...self::IMAGE_URL_RULES],
                 'category_id' => 'sometimes|integer|exists:categories,id',
             ]);
 
@@ -204,7 +210,7 @@ class ProductController extends Controller
                 return $this->validationErrorResponse($validator->errors());
             }
 
-            $product->update($request->all());
+            $product->update($validator->validated());
             $product->load('category');
 
             return $this->successResponse(
@@ -212,11 +218,9 @@ class ProductController extends Controller
                 'Producto actualizado correctamente.'
             );
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al actualizar el producto.',
-                500,
-                ['exception' => [$e->getMessage()]]
-            );
+            Log::error('Error al actualizar el producto.', ['exception' => $e]);
+
+            return $this->errorResponse('Error al actualizar el producto.', 500);
         }
     }
 
@@ -255,11 +259,9 @@ class ProductController extends Controller
                 'Producto eliminado correctamente.'
             );
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error al eliminar el producto.',
-                500,
-                ['exception' => [$e->getMessage()]]
-            );
+            Log::error('Error al eliminar el producto.', ['exception' => $e]);
+
+            return $this->errorResponse('Error al eliminar el producto.', 500);
         }
     }
 }
