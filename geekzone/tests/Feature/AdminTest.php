@@ -7,8 +7,7 @@ use Tests\TestCase;
 
 class AdminTest extends TestCase
 {
-    use RefreshDatabase, CreateBaseData;
-
+    use CreateBaseData, RefreshDatabase;
 
     // ══════════════════════════════════════════════════════════════════════════
     // TEST DE PRODUCTOS (ADMIN)
@@ -53,10 +52,10 @@ class AdminTest extends TestCase
         $headers = $this->loginAsUser();
 
         $response = $this->postJson('/api/productos', [
-            'name'       => 'Intento Ilegal',
-            'description'  => 'Un usuario normal no debería poder crear',
-            'price'       => 10.00,
-            'stock'        => 5,
+            'name' => 'Intento Ilegal',
+            'description' => 'Un usuario normal no debería poder crear',
+            'price' => 10.00,
+            'stock' => 5,
             'category_id' => $marvel->id,
         ], $headers);
 
@@ -71,7 +70,7 @@ class AdminTest extends TestCase
         $headers = $this->loginAsAdmin();
 
         // Editar el nombre del producto
-        $response = $this->putJson('/api/productos/' . $product1->id, [
+        $response = $this->putJson('/api/productos/'.$product1->id, [
             'name' => 'Figura Spider-Man Edición Especial',
             'price' => 39.99,
         ], $headers);
@@ -81,7 +80,7 @@ class AdminTest extends TestCase
 
         // Verificar que los cambios se guardaron
         $this->assertDatabaseHas('products', [
-            'id'     => $product1->id,
+            'id' => $product1->id,
             'name' => 'Figura Spider-Man Edición Especial',
             'price' => 39.99,
         ]);
@@ -94,7 +93,7 @@ class AdminTest extends TestCase
         [$product1] = $this->createProductsForTest($marvel->id);
         $headers = $this->loginAsAdmin();
 
-        $response = $this->deleteJson('/api/productos/' . $product1->id, [], $headers);
+        $response = $this->deleteJson('/api/productos/'.$product1->id, [], $headers);
 
         $response->assertStatus(200)
             ->assertJson(['message' => 'Producto eliminado correctamente.']);
@@ -114,9 +113,9 @@ class AdminTest extends TestCase
         $headers = $this->loginAsAdmin();
 
         $response = $this->postJson('/api/categorias', [
-            'name'      => 'Anime',
+            'name' => 'Anime',
             'description' => 'Productos de anime y manga',
-            'image_url'  => 'img/test/anime.jpg',
+            'image_url' => 'img/test/anime.jpg',
         ], $headers);
 
         $response->assertStatus(201)
@@ -126,7 +125,7 @@ class AdminTest extends TestCase
             'name' => 'Anime',
         ]);
     }
-    
+
     // ══════════════════════════════════════════════════════════════════════════
     // TEST DE DASHBOARD
     // ══════════════════════════════════════════════════════════════════════════
@@ -134,7 +133,7 @@ class AdminTest extends TestCase
     // ———— Test para obtener el resumen de la dashboard ——————————————————————————————————————————————————————————————————
     public function test_get_dashboard_summary(): void
     {
-        
+
         $headers = $this->loginAsAdmin();
 
         $response = $this->getJson('/api/admin/dashboard/resumen', $headers);
@@ -159,4 +158,4 @@ class AdminTest extends TestCase
 
         $response->assertStatus(403);
     }
-    }   
+}

@@ -24,7 +24,7 @@ class CategorySeeder extends Seeder
                 'name' => 'Fútbol',
                 'description' => 'Equipamiento y merchandising de fútbol: camisetas oficiales, balones, bufandas, figuras de jugadores y accesorios de los mejores equipos del mundo.',
                 'image_url' => 'img/categories/futbol.jpg',
-            ]
+            ],
         ];
 
         foreach ($categories as $category) {

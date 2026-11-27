@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class CartTest extends TestCase
 {
-    use RefreshDatabase, CreateBaseData;
+    use CreateBaseData, RefreshDatabase;
 
     // ══════════════════════════════════════════════════════════════════════════
     // TEST DE AÑADIR PRODUCTO
@@ -26,7 +26,7 @@ class CartTest extends TestCase
             ->assertJsonStructure([
                 'cart',
                 'total',
-                'items_count'
+                'items_count',
             ]);
     }
 
@@ -63,7 +63,7 @@ class CartTest extends TestCase
             'product_id' => $product1->id,
         ], $headers);
 
-        $response = $this->putJson('/api/carrito/' . $product1->id, [
+        $response = $this->putJson('/api/carrito/'.$product1->id, [
             'quantity' => 2,
         ], $headers);
 
@@ -93,7 +93,7 @@ class CartTest extends TestCase
             'product_id' => $product1->id,
         ], $headers);
 
-        $response = $this->deleteJson('/api/carrito/' . $product1->id, [], $headers);
+        $response = $this->deleteJson('/api/carrito/'.$product1->id, [], $headers);
 
         $response->assertStatus(200)
             ->assertJson(['message' => 'Item eliminado del carrito correctamente.']);

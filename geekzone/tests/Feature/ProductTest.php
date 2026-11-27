@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class ProductTest extends TestCase
 {
-    use RefreshDatabase, CreateBaseData;
+    use CreateBaseData, RefreshDatabase;
 
     // ══════════════════════════════════════════════════════════════════════════
     // TEST DE LISTADO
@@ -16,7 +16,7 @@ class ProductTest extends TestCase
     // ———— Listado de productos exitoso ——————————————————————————————————————————————————————————————————
     public function test_list_products_successfully(): void
     {
-        [$marvel] = 
+        [$marvel] =
         $this->createCategoriesForTest();
         $this->createProductsForTest($marvel->id);
 
@@ -49,7 +49,7 @@ class ProductTest extends TestCase
         $this->createProductsForTest($marvel->id);
         $this->createProductsForTest($futbol->id);
 
-        $response = $this->getJson('/api/productos?category_id=' . $marvel->id);
+        $response = $this->getJson('/api/productos?category_id='.$marvel->id);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -77,11 +77,11 @@ class ProductTest extends TestCase
     // ———— Detalle de producto exitoso ——————————————————————————————————————————————————————————————————
     public function test_show_product_successfully(): void
     {
-        [$marvel] = 
+        [$marvel] =
         $this->createCategoriesForTest();
         $this->createProductsForTest($marvel->id);
 
-        $response = $this->getJson('/api/productos/' . $marvel->products->first()->id);
+        $response = $this->getJson('/api/productos/'.$marvel->products->first()->id);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -127,7 +127,6 @@ class ProductTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertEquals(2, $response->json('data.total'));
-
 
         // Verificar que el producto eliminado sigue en la BD
         // pero con deleted_at marcado

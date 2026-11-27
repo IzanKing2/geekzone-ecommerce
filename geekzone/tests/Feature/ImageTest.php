@@ -27,7 +27,7 @@ class ImageTest extends TestCase
         ]);
 
         $response->assertStatus(200)->assertJsonStructure(['message', 'image']);
-        Storage::disk('public')->assertExists('images/' . basename($response->json('image')));
+        Storage::disk('public')->assertExists('images/'.basename($response->json('image')));
     }
 
     public function test_uploaded_file_name_is_generated_by_server(): void

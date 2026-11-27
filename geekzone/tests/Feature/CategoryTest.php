@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class CategoryTest extends TestCase
 {
-    use RefreshDatabase, CreateBaseData;
+    use CreateBaseData, RefreshDatabase;
 
     // ══════════════════════════════════════════════════════════════════════════
     // GET /api/categorias  —  índice público
@@ -91,9 +91,9 @@ class CategoryTest extends TestCase
         $headers = $this->loginAsAdmin();
 
         $response = $this->postJson('/api/categorias', [
-            'name'        => 'Anime',
+            'name' => 'Anime',
             'description' => 'Productos de anime y manga',
-            'image_url'   => 'img/test/anime.jpg',
+            'image_url' => 'img/test/anime.jpg',
         ], $headers);
 
         $response->assertStatus(201)
@@ -111,13 +111,13 @@ class CategoryTest extends TestCase
         $headers = $this->loginAsAdmin();
 
         $this->postJson('/api/categorias', [
-            'name'        => 'Anime',
+            'name' => 'Anime',
             'description' => 'Productos de anime y manga',
-            'image_url'   => 'img/test/anime.jpg',
+            'image_url' => 'img/test/anime.jpg',
         ], $headers);
 
         $this->assertDatabaseHas('categories', [
-            'name'        => 'Anime',
+            'name' => 'Anime',
             'description' => 'Productos de anime y manga',
         ]);
     }
@@ -218,10 +218,10 @@ class CategoryTest extends TestCase
     public function test_update_modifies_category_successfully(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
-        $response = $this->putJson('/api/categorias/' . $marvel->id, [
-            'name'        => 'Marvel Actualizado',
+        $response = $this->putJson('/api/categorias/'.$marvel->id, [
+            'name' => 'Marvel Actualizado',
             'description' => 'Nueva descripción',
         ], $headers);
 
@@ -238,14 +238,14 @@ class CategoryTest extends TestCase
     public function test_update_persists_changes_in_database(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
-        $this->putJson('/api/categorias/' . $marvel->id, [
+        $this->putJson('/api/categorias/'.$marvel->id, [
             'name' => 'Marvel Editado',
         ], $headers);
 
         $this->assertDatabaseHas('categories', [
-            'id'   => $marvel->id,
+            'id' => $marvel->id,
             'name' => 'Marvel Editado',
         ]);
     }
@@ -254,16 +254,16 @@ class CategoryTest extends TestCase
     public function test_update_partial_fields_only_description(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
-        $this->putJson('/api/categorias/' . $marvel->id, [
+        $this->putJson('/api/categorias/'.$marvel->id, [
             'description' => 'Solo actualizando descripción',
         ], $headers);
 
         // El nombre original debe mantenerse
         $this->assertDatabaseHas('categories', [
-            'id'          => $marvel->id,
-            'name'        => 'Marvel',
+            'id' => $marvel->id,
+            'name' => 'Marvel',
             'description' => 'Solo actualizando descripción',
         ]);
     }
@@ -272,14 +272,14 @@ class CategoryTest extends TestCase
     public function test_update_partial_fields_only_image_url(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
-        $this->putJson('/api/categorias/' . $marvel->id, [
+        $this->putJson('/api/categorias/'.$marvel->id, [
             'image_url' => 'img/new/marvel.jpg',
         ], $headers);
 
         $this->assertDatabaseHas('categories', [
-            'id'        => $marvel->id,
+            'id' => $marvel->id,
             'image_url' => 'img/new/marvel.jpg',
         ]);
     }
@@ -288,9 +288,9 @@ class CategoryTest extends TestCase
     public function test_update_returns_updated_data(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
-        $response = $this->putJson('/api/categorias/' . $marvel->id, [
+        $response = $this->putJson('/api/categorias/'.$marvel->id, [
             'name' => 'Marvel Nuevo',
         ], $headers);
 
@@ -301,9 +301,9 @@ class CategoryTest extends TestCase
     public function test_update_fails_with_duplicate_name(): void
     {
         [$marvel, $futbol] = $this->createCategoriesForTest();
-        $headers           = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
-        $response = $this->putJson('/api/categorias/' . $futbol->id, [
+        $response = $this->putJson('/api/categorias/'.$futbol->id, [
             'name' => 'Marvel', // nombre ya usado por otra categoría
         ], $headers);
 
@@ -315,9 +315,9 @@ class CategoryTest extends TestCase
     public function test_update_allows_same_name_for_same_category(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
-        $response = $this->putJson('/api/categorias/' . $marvel->id, [
+        $response = $this->putJson('/api/categorias/'.$marvel->id, [
             'name' => 'Marvel', // mismo nombre, mismo id
         ], $headers);
 
@@ -341,9 +341,9 @@ class CategoryTest extends TestCase
     public function test_update_forbidden_for_regular_user(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsUser();
+        $headers = $this->loginAsUser();
 
-        $response = $this->putJson('/api/categorias/' . $marvel->id, [
+        $response = $this->putJson('/api/categorias/'.$marvel->id, [
             'name' => 'Intento Ilegal',
         ], $headers);
 
@@ -355,7 +355,7 @@ class CategoryTest extends TestCase
     {
         [$marvel] = $this->createCategoriesForTest();
 
-        $response = $this->putJson('/api/categorias/' . $marvel->id, [
+        $response = $this->putJson('/api/categorias/'.$marvel->id, [
             'name' => 'Sin Token',
         ]);
 
@@ -370,9 +370,9 @@ class CategoryTest extends TestCase
     public function test_destroy_deletes_empty_category(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
-        $response = $this->deleteJson('/api/categorias/' . $marvel->id, [], $headers);
+        $response = $this->deleteJson('/api/categorias/'.$marvel->id, [], $headers);
 
         $response->assertStatus(200)
             ->assertJson(['message' => 'Categoría eliminada correctamente.']);
@@ -382,9 +382,9 @@ class CategoryTest extends TestCase
     public function test_destroy_removes_from_database(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
-        $this->deleteJson('/api/categorias/' . $marvel->id, [], $headers);
+        $this->deleteJson('/api/categorias/'.$marvel->id, [], $headers);
 
         $this->assertDatabaseMissing('categories', ['id' => $marvel->id]);
     }
@@ -396,7 +396,7 @@ class CategoryTest extends TestCase
         $this->createProductsForTest($marvel->id); // 3 productos asociados
         $headers = $this->loginAsAdmin();
 
-        $response = $this->deleteJson('/api/categorias/' . $marvel->id, [], $headers);
+        $response = $this->deleteJson('/api/categorias/'.$marvel->id, [], $headers);
 
         $response->assertStatus(400);
         // El mensaje menciona la cantidad de productos bloqueantes
@@ -410,7 +410,7 @@ class CategoryTest extends TestCase
         $this->createProductsForTest($marvel->id);
         $headers = $this->loginAsAdmin();
 
-        $this->deleteJson('/api/categorias/' . $marvel->id, [], $headers);
+        $this->deleteJson('/api/categorias/'.$marvel->id, [], $headers);
 
         $this->assertDatabaseHas('categories', ['id' => $marvel->id]);
     }
@@ -430,9 +430,9 @@ class CategoryTest extends TestCase
     public function test_destroy_forbidden_for_regular_user(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsUser();
+        $headers = $this->loginAsUser();
 
-        $response = $this->deleteJson('/api/categorias/' . $marvel->id, [], $headers);
+        $response = $this->deleteJson('/api/categorias/'.$marvel->id, [], $headers);
 
         $response->assertStatus(403);
         $this->assertDatabaseHas('categories', ['id' => $marvel->id]);
@@ -443,7 +443,7 @@ class CategoryTest extends TestCase
     {
         [$marvel] = $this->createCategoriesForTest();
 
-        $response = $this->deleteJson('/api/categorias/' . $marvel->id);
+        $response = $this->deleteJson('/api/categorias/'.$marvel->id);
 
         $response->assertStatus(401);
     }
@@ -459,7 +459,7 @@ class CategoryTest extends TestCase
 
         // Crear
         $createResponse = $this->postJson('/api/categorias', [
-            'name'        => 'Ciclo Completo',
+            'name' => 'Ciclo Completo',
             'description' => 'Categoría para test de ciclo',
         ], $headers);
         $createResponse->assertStatus(201);
@@ -472,17 +472,17 @@ class CategoryTest extends TestCase
         $this->assertContains('Ciclo Completo', $names);
 
         // Actualizar
-        $updateResponse = $this->putJson('/api/categorias/' . $id, [
+        $updateResponse = $this->putJson('/api/categorias/'.$id, [
             'name' => 'Ciclo Completo Actualizado',
         ], $headers);
         $updateResponse->assertStatus(200);
         $this->assertDatabaseHas('categories', [
-            'id'   => $id,
+            'id' => $id,
             'name' => 'Ciclo Completo Actualizado',
         ]);
 
         // Eliminar
-        $deleteResponse = $this->deleteJson('/api/categorias/' . $id, [], $headers);
+        $deleteResponse = $this->deleteJson('/api/categorias/'.$id, [], $headers);
         $deleteResponse->assertStatus(200);
         $this->assertDatabaseMissing('categories', ['id' => $id]);
     }
@@ -508,14 +508,14 @@ class CategoryTest extends TestCase
     public function test_update_refreshes_updated_at_via_raw_sql(): void
     {
         [$marvel] = $this->createCategoriesForTest();
-        $headers  = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
         $before = DB::select('SELECT updated_at FROM categories WHERE id = ?', [$marvel->id]);
 
         // Esperar 1 segundo para que el timestamp sea diferente
         sleep(1);
 
-        $this->putJson('/api/categorias/' . $marvel->id, ['name' => 'Marvel v2'], $headers);
+        $this->putJson('/api/categorias/'.$marvel->id, ['name' => 'Marvel v2'], $headers);
 
         $after = DB::select('SELECT updated_at FROM categories WHERE id = ?', [$marvel->id]);
 
@@ -526,9 +526,9 @@ class CategoryTest extends TestCase
     public function test_destroy_deletes_exactly_one_row(): void
     {
         [$marvel, $futbol] = $this->createCategoriesForTest();
-        $headers           = $this->loginAsAdmin();
+        $headers = $this->loginAsAdmin();
 
-        $this->deleteJson('/api/categorias/' . $marvel->id, [], $headers);
+        $this->deleteJson('/api/categorias/'.$marvel->id, [], $headers);
 
         $count = DB::select('SELECT COUNT(*) AS total FROM categories');
         $this->assertEquals(1, $count[0]->total); // solo queda Fútbol

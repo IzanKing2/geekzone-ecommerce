@@ -17,8 +17,8 @@ return new class extends Migration
             $table->boolean('featured')->default(false);
             $table->string('image_url')->nullable();
             $table->foreignId('category_id')
-                  ->constrained('categories')
-                  ->onDelete('cascade');
+                ->constrained('categories')
+                ->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
             $table->index('category_id');

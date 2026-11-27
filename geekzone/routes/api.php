@@ -9,8 +9,8 @@ use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\JwtMiddleware;
+use Illuminate\Support\Facades\Route;
 
 // Los identificadores de ruta son siempre numéricos: un id no numérico da 404 en vez de un 500
 Route::pattern('id', '[0-9]+');

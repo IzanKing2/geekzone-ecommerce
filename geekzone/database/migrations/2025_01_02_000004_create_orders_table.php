@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
-                  ->constrained('users')
-                  ->onDelete('cascade');
+                ->constrained('users')
+                ->onDelete('cascade');
             $table->enum('status', ['pendiente', 'procesando', 'enviado', 'entregado', 'cancelado'])
-                  ->default('pendiente');
+                ->default('pendiente');
             $table->decimal('total', 10, 2);
             $table->timestamps();
             $table->index('user_id');
@@ -29,11 +29,11 @@ return new class extends Migration
         Schema::create('order_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')
-                  ->constrained('orders')
-                  ->onDelete('cascade');
+                ->constrained('orders')
+                ->onDelete('cascade');
             $table->foreignId('product_id')
-                  ->constrained('products')
-                  ->onDelete('restrict');
+                ->constrained('products')
+                ->onDelete('restrict');
             $table->integer('quantity')->unsigned();
             $table->decimal('price', 10, 2);
             $table->timestamps();

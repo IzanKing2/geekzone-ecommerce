@@ -37,8 +37,8 @@ return [
 
     'recaptcha' => [
         // Activo por defecto. Solo desactivar en local/tests (RECAPTCHA_ENABLED=false).
-        'enabled'    => env('RECAPTCHA_ENABLED', true),
-        'site_key'   => env('RECAPTCHA_SITE_KEY'),
+        'enabled' => env('RECAPTCHA_ENABLED', true),
+        'site_key' => env('RECAPTCHA_SITE_KEY'),
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),
     ],
 

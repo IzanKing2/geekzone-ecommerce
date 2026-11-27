@@ -23,7 +23,7 @@ class JwtMiddleware
             // Verificamos si el token es válido
             $user = JWTAuth::parseToken()->authenticate();
 
-            if (!$user) {
+            if (! $user) {
                 return response()->json([
                     'message' => 'Usuario no encontrado',
                 ], 401);

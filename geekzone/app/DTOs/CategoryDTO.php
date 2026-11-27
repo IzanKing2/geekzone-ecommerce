@@ -9,13 +9,13 @@ namespace App\DTOs;
 class CategoryDTO
 {
     public function __construct(
-        public readonly int     $id,
-        public readonly string  $name,
+        public readonly int $id,
+        public readonly string $name,
         public readonly ?string $description,
         public readonly ?string $image_url,
-        public readonly string  $created_at,
-        public readonly string  $updated_at,
-        public readonly int     $products_count = 0,
+        public readonly string $created_at,
+        public readonly string $updated_at,
+        public readonly int $products_count = 0,
     ) {}
 
     /**
@@ -24,12 +24,12 @@ class CategoryDTO
     public static function fromRow(object $row): self
     {
         return new self(
-            id:             (int) $row->id,
-            name:           $row->name,
-            description:    $row->description  ?? null,
-            image_url:      $row->image_url    ?? null,
-            created_at:     $row->created_at,
-            updated_at:     $row->updated_at,
+            id: (int) $row->id,
+            name: $row->name,
+            description: $row->description ?? null,
+            image_url: $row->image_url ?? null,
+            created_at: $row->created_at,
+            updated_at: $row->updated_at,
             products_count: isset($row->products_count) ? (int) $row->products_count : 0,
         );
     }
@@ -40,12 +40,12 @@ class CategoryDTO
     public function toArray(): array
     {
         return [
-            'id'             => $this->id,
-            'name'           => $this->name,
-            'description'    => $this->description,
-            'image_url'      => $this->image_url,
-            'created_at'     => $this->created_at,
-            'updated_at'     => $this->updated_at,
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'image_url' => $this->image_url,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
             'products_count' => $this->products_count,
         ];
     }

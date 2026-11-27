@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class OrderTest extends TestCase
 {
-    use RefreshDatabase, CreateBaseData;
+    use CreateBaseData, RefreshDatabase;
 
     // ══════════════════════════════════════════════════════════════════════════════════════════════════
     // TEST DE PEDIDOS

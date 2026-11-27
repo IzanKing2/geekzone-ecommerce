@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\AplicationController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AplicationController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,15 +13,15 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 
-Route::get('/cart', function() {
+Route::get('/cart', function () {
     return view('cart.cart');
 })->name('cart');
 
-Route::get('/panel', function() {
+Route::get('/panel', function () {
     return view('userPanel');
 })->name('panel');
 
-Route::get('/favoritos', function() {
+Route::get('/favoritos', function () {
     return view('favorites');
 })->name('favorites');
 

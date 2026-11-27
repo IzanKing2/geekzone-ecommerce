@@ -12,12 +12,12 @@ use OpenApi\Attributes as OA;
 class CategoryController extends Controller
 {
     #[OA\Get(
-        path: "/api/categorias",
-        summary: "Obtener lista de categorías",
-        description: "Devuelve todas las categorías disponibles",
-        tags: ["Categorías"]
+        path: '/api/categorias',
+        summary: 'Obtener lista de categorías',
+        description: 'Devuelve todas las categorías disponibles',
+        tags: ['Categorías']
     )]
-    #[OA\Response(response: 200, description: "Lista de categorías devuelta")]
+    #[OA\Response(response: 200, description: 'Lista de categorías devuelta')]
     public function index()
     {
         try {
@@ -37,7 +37,7 @@ class CategoryController extends Controller
             ');
 
             $dtos = array_map(
-                fn(object $row) => CategoryDTO::fromRow($row)->toArray(),
+                fn (object $row) => CategoryDTO::fromRow($row)->toArray(),
                 $categories
             );
 
@@ -56,27 +56,27 @@ class CategoryController extends Controller
     // ——————————————————————————————————————————————————————————————————————————
 
     #[OA\Post(
-        path: "/api/categorias",
-        summary: "Crear una nueva categoría",
-        description: "Crea una nueva categoría. Requiere token JWT con rol de administrador",
-        tags: ["Categorías (Administrador)"],
-        security: [["bearerAuth" => []]]
+        path: '/api/categorias',
+        summary: 'Crear una nueva categoría',
+        description: 'Crea una nueva categoría. Requiere token JWT con rol de administrador',
+        tags: ['Categorías (Administrador)'],
+        security: [['bearerAuth' => []]]
     )]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            required: ["name"],
+            required: ['name'],
             properties: [
-                new OA\Property(property: "name", type: "string", example: "Categoria ejemplo"),
-                new OA\Property(property: "description", type: "string", example: "Descripcion categoria ejemplo"),
-                new OA\Property(property: "image_url", type: "string", example: "https://categoria.com/imagen.jpg")
+                new OA\Property(property: 'name', type: 'string', example: 'Categoria ejemplo'),
+                new OA\Property(property: 'description', type: 'string', example: 'Descripcion categoria ejemplo'),
+                new OA\Property(property: 'image_url', type: 'string', example: 'https://categoria.com/imagen.jpg'),
             ]
         )
     )]
-    #[OA\Response(response: 201, description: "Categoría creada exitosamente")]
-    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
-    #[OA\Response(response: 403, description: "Error. No tiene permisos de administrador")]
-    #[OA\Response(response: 422, description: "Error de validación")]
+    #[OA\Response(response: 201, description: 'Categoría creada exitosamente')]
+    #[OA\Response(response: 401, description: 'No autorizado. Token inválido o no existe')]
+    #[OA\Response(response: 403, description: 'Error. No tiene permisos de administrador')]
+    #[OA\Response(response: 422, description: 'Error de validación')]
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -97,7 +97,7 @@ class CategoryController extends Controller
             [$request->name]
         );
 
-        if (!empty($exists)) {
+        if (! empty($exists)) {
             return $this->validationErrorResponse(
                 ['name' => ['Ya existe una categoría con ese nombre.']]
             );
@@ -132,31 +132,31 @@ class CategoryController extends Controller
     }
 
     #[OA\Put(
-        path: "/api/categorias/{id}",
-        summary: "Actualizar categoría",
-        description: "Actualiza los datos de una categoría existente. Requiere token JWT con rol de administrador",
-        tags: ["Categorías (Administrador)"],
-        security: [["bearerAuth" => []]]
+        path: '/api/categorias/{id}',
+        summary: 'Actualizar categoría',
+        description: 'Actualiza los datos de una categoría existente. Requiere token JWT con rol de administrador',
+        tags: ['Categorías (Administrador)'],
+        security: [['bearerAuth' => []]]
     )]
     #[OA\Parameter(
-        name: "id",
-        in: "path",
+        name: 'id',
+        in: 'path',
         required: true,
-        description: "ID de la categoría",
-        schema: new OA\Schema(type: "integer")
+        description: 'ID de la categoría',
+        schema: new OA\Schema(type: 'integer')
     )]
     #[OA\RequestBody(
         required: false,
         content: new OA\JsonContent(
             properties: [
-                new OA\Property(property: "name", type: "string", example: "Ejemplo Nombre"),
-                new OA\Property(property: "description", type: "string", example: "Ejemplo Descripcion"),
-                new OA\Property(property: "image_url", type: "string", example: "https://foto.com/foto.jpg")
+                new OA\Property(property: 'name', type: 'string', example: 'Ejemplo Nombre'),
+                new OA\Property(property: 'description', type: 'string', example: 'Ejemplo Descripcion'),
+                new OA\Property(property: 'image_url', type: 'string', example: 'https://foto.com/foto.jpg'),
             ]
         )
     )]
-    #[OA\Response(response: 200, description: "Categoría actualizada correctamente")]
-    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
+    #[OA\Response(response: 200, description: 'Categoría actualizada correctamente')]
+    #[OA\Response(response: 401, description: 'No autorizado. Token inválido o no existe')]
     public function update(Request $request, int $id)
     {
         try {
@@ -186,7 +186,7 @@ class CategoryController extends Controller
                     [$request->name, $id]
                 );
 
-                if (!empty($duplicate)) {
+                if (! empty($duplicate)) {
                     return $this->validationErrorResponse(
                         ['name' => ['Ya existe una categoría con ese nombre.']]
                     );
@@ -225,24 +225,24 @@ class CategoryController extends Controller
     }
 
     #[OA\Delete(
-        path: "/api/categorias/{id}",
-        summary: "Eliminar categoría (Admin)",
-        description: "Elimina una categoría. No se puede eliminar si tiene productos asociados. Requiere token JWT con rol de administrador.",
-        tags: ["Categorías (Administrador)"],
-        security: [["bearerAuth" => []]]
+        path: '/api/categorias/{id}',
+        summary: 'Eliminar categoría (Admin)',
+        description: 'Elimina una categoría. No se puede eliminar si tiene productos asociados. Requiere token JWT con rol de administrador.',
+        tags: ['Categorías (Administrador)'],
+        security: [['bearerAuth' => []]]
     )]
     #[OA\Parameter(
-        name: "id",
-        in: "path",
+        name: 'id',
+        in: 'path',
         required: true,
-        description: "ID de la categoría",
-        schema: new OA\Schema(type: "integer")
+        description: 'ID de la categoría',
+        schema: new OA\Schema(type: 'integer')
     )]
-    #[OA\Response(response: 200, description: "Categoría eliminada correctamente")]
-    #[OA\Response(response: 400, description: "No se puede eliminar: tiene productos asociados")]
-    #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
-    #[OA\Response(response: 403, description: "No tienes permisos de administrador")]
-    #[OA\Response(response: 404, description: "Categoría no encontrada")]
+    #[OA\Response(response: 200, description: 'Categoría eliminada correctamente')]
+    #[OA\Response(response: 400, description: 'No se puede eliminar: tiene productos asociados')]
+    #[OA\Response(response: 401, description: 'No autorizado. Token inválido o no existe')]
+    #[OA\Response(response: 403, description: 'No tienes permisos de administrador')]
+    #[OA\Response(response: 404, description: 'Categoría no encontrada')]
     public function destroy(int $id)
     {
         try {
@@ -265,7 +265,7 @@ class CategoryController extends Controller
 
             if ($total > 0) {
                 return $this->errorResponse(
-                    'No se puede eliminar: esta categoría tiene ' . $total . ' productos asociados. Elimina o mueve los productos primero.',
+                    'No se puede eliminar: esta categoría tiene '.$total.' productos asociados. Elimina o mueve los productos primero.',
                     400
                 );
             }

@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
-    use RefreshDatabase, CreateBaseData;
+    use CreateBaseData, RefreshDatabase;
 
     // ══════════════════════════════════════════════════════════════════════════
     // TEST DE REGISTER
@@ -17,11 +17,11 @@ class AuthTest extends TestCase
     public function test_register_successfully(): void
     {
         $response = $this->postJson('/api/register', [
-            'name'                  => 'Nuevo Usuario',
-            'surname'               => 'Apellido Nuevo',
-            'username'              => 'nuevo_usuario',
-            'email'                 => 'nuevo@geekzone.com',
-            'password'              => 'test12345',
+            'name' => 'Nuevo Usuario',
+            'surname' => 'Apellido Nuevo',
+            'username' => 'nuevo_usuario',
+            'email' => 'nuevo@geekzone.com',
+            'password' => 'test12345',
             'password_confirmation' => 'test12345',
         ]);
 
