@@ -75,9 +75,7 @@
           }
 
           // Contador del carrito
-          fetch('/api/carrito', {
-            headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
-          })
+          Api.fetch('/api/carrito')
           .then(r => r.ok ? r.json() : null)
           .then(data => {
             if (data?.data) {
@@ -101,14 +99,7 @@
         // Función de logout reutilizable
         async function doLogout() {
           try {
-            await fetch('/api/logout', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${Auth.getToken()}`
-              }
-            });
+            await Api.fetch('/api/logout', { method: 'POST' });
           } catch (e) {
             console.error('Error al cerrar sesión:', e);
           } finally {

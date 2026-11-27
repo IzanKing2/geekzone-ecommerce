@@ -122,13 +122,8 @@
                 btn.disabled = true;
                 const productId = btn.dataset.productId;
 
-                const res = await fetch('/api/carrito', {
+                const res = await Api.fetch('/api/carrito', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
                     body: JSON.stringify({ product_id: parseInt(productId), quantity: 1 })
                 });
 

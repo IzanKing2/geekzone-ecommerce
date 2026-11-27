@@ -508,10 +508,6 @@
 
     const API_PROD = '/api/productos';
 
-    function getToken() {
-        return Auth.getToken();
-    }
-
     // ── Modales ─────────────────────────────────────────────────────
     document.getElementById('btn-add-product').addEventListener('click', () => {
         ['add-name', 'add-desc'].forEach(id => document.getElementById(id).value = '');
@@ -610,13 +606,8 @@
         if (!valid) return;
 
         setLoading('btn-create-prod', true);
-        const res = await fetch(API_PROD, {
+        const res = await Api.fetch(API_PROD, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${getToken()}`
-            },
             body: JSON.stringify({
                 name,
                 category_id: parseInt(catId),
@@ -658,13 +649,8 @@
         }
 
         setLoading('btn-save-prod', true);
-        const res = await fetch(`${API_PROD}/${id}`, {
+        const res = await Api.fetch(`${API_PROD}/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${getToken()}`
-            },
             body: JSON.stringify({
                 name,
                 category_id: parseInt(catId),
@@ -690,13 +676,7 @@
     // ── Eliminar (desde botón de la tabla) ────────────────────────────
     async function deleteProduct(id, name) {
         if (!confirm(`¿Eliminar "${name}"? Esta acción no se puede deshacer.`)) return;
-        const res = await fetch(`${API_PROD}/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${getToken()}`
-            },
-        });
+        const res = await Api.fetch(`${API_PROD}/${id}`, { method: 'DELETE' });
         const json = await res.json();
         if (!res.ok) {
             showAlert(json.message || 'No se pudo eliminar.', 'error');
@@ -793,12 +773,9 @@
         form.append('image', file);
 
         try {
-            const res = await fetch('/api/imagenes', {
+            // FormData: Api.fetch no fuerza Content-Type (lo pone el navegador con el boundary)
+            const res = await Api.fetch('/api/imagenes', {
                 method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${getToken()}`
-                },
                 body: form,
             });
             const json = await res.json();
@@ -821,14 +798,7 @@
     document.getElementById('admin-logout')?.addEventListener('click', async (e) => {
         e.preventDefault();
         try {
-            await fetch('/api/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${getToken()}`
-                }
-            });
+            await Api.fetch('/api/logout', { method: 'POST' });
         } catch {}
         Auth.clear();
         window.location.href = "{{ route('shop') }}";

@@ -160,13 +160,8 @@
         const token = Auth.getToken();
         if (!token) { showToast('Inicia sesión para añadir productos', '#c0392b'); return; }
 
-        const res = await fetch('/api/carrito', {
+        const res = await Api.fetch('/api/carrito', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
             body: JSON.stringify({ product_id: parseInt(productId), quantity })
         });
 
@@ -206,9 +201,7 @@
     async function initWishBtn() {
         if (!Auth.isLoggedIn()) return;
         try {
-            const res  = await fetch('/api/favoritos', {
-                headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${Auth.getToken()}` }
-            });
+            const res  = await Api.fetch('/api/favoritos');
             if (!res.ok) return;
             const data = await res.json();
             const found = (data.data?.favorites ?? []).some(f => f.product_id === PRODUCT_ID);
@@ -230,15 +223,11 @@
 
             try {
                 if (isFav) {
-                    const res = await fetch(`/api/favoritos/${PRODUCT_ID}`, {
-                        method: 'DELETE',
-                        headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${Auth.getToken()}` }
-                    });
+                    const res = await Api.fetch(`/api/favoritos/${PRODUCT_ID}`, { method: 'DELETE' });
                     if (res.ok) { setWishState(false); showToast('Eliminado de favoritos'); }
                 } else {
-                    const res = await fetch('/api/favoritos', {
+                    const res = await Api.fetch('/api/favoritos', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${Auth.getToken()}` },
                         body: JSON.stringify({ product_id: PRODUCT_ID })
                     });
                     if (res.ok) { setWishState(true); showToast('Añadido a favoritos ♥', '#e01020'); }

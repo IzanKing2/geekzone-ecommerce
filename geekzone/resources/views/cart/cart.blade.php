@@ -138,17 +138,8 @@
       t._timer = setTimeout(() => t.style.opacity = '0', 2500);
     }
 
-    async function apiFetch(url, opts = {}) {
-      return fetch(url, {
-        ...opts,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          ...(opts.headers || {}),
-        },
-      });
-    }
+    // Cliente común (public/js/api.js): token, JSON y manejo de sesión caducada
+    const apiFetch = (url, opts = {}) => Api.fetch(url, opts);
 
     function updateSummary(items) {
       const subtotal = items.reduce((a, i) => a + i.product.price * i.quantity, 0);

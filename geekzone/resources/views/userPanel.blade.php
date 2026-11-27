@@ -187,19 +187,8 @@
     // ── Utilidades ─────────────────────────────────────────────────────────────
     const token = () => Auth.getToken();
 
-    const api = async (url, options = {}) => {
-        const res = await fetch(url, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token()}`,
-                ...options.headers,
-            },
-            ...options,
-        });
-        const data = await res.json().catch(() => ({}));
-        return { ok: res.ok, status: res.status, data };
-    };
+    // Cliente común (public/js/api.js): token, JSON y manejo de sesión caducada
+    const api = (url, options = {}) => Api.request(url, options);
 
     const initials = (name, surname) =>
         ((name?.[0] ?? '') + (surname?.[0] ?? '')).toUpperCase() || '?';

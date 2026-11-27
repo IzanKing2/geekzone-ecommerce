@@ -239,7 +239,6 @@
 <script>
     const API = '/api/categorias';
 
-    function getToken() { return Auth.getToken(); }
 
     // ── Modales ─────────────────────────────────────────────────────
     document.getElementById('btn-nueva-cat').addEventListener('click', () => {
@@ -361,9 +360,9 @@
         form.append('image', file);
 
         try {
-            const res = await fetch('/api/imagenes', {
+            // FormData: Api.fetch no fuerza Content-Type (lo pone el navegador con el boundary)
+            const res = await Api.fetch('/api/imagenes', {
                 method: 'POST',
-                headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${getToken()}` },
                 body: form,
             });
             const json = await res.json();
@@ -395,9 +394,8 @@
         }
 
         setLoading('btn-create', true);
-        const res = await fetch(API, {
+        const res = await Api.fetch(API, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${getToken()}` },
             body: JSON.stringify({ name, description: desc || null, image_url: image || null }),
         });
         const json = await res.json();
@@ -430,9 +428,8 @@
         }
 
         setLoading('btn-save', true);
-        const res = await fetch(`${API}/${id}`, {
+        const res = await Api.fetch(`${API}/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${getToken()}` },
             body: JSON.stringify({ name, description: desc || null, image_url: image || null }),
         });
         const json = await res.json();
@@ -458,10 +455,7 @@
         if (!confirm(`¿Eliminar la categoría "${name}"? Esta acción no se puede deshacer.`)) return;
 
         setLoading('btn-delete', true);
-        const res = await fetch(`${API}/${id}`, {
-            method: 'DELETE',
-            headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${getToken()}` },
-        });
+        const res = await Api.fetch(`${API}/${id}`, { method: 'DELETE' });
         const json = await res.json();
         setLoading('btn-delete', false);
 
@@ -480,10 +474,7 @@
     document.getElementById('admin-logout')?.addEventListener('click', async (e) => {
         e.preventDefault();
         try {
-            await fetch('/api/logout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${getToken()}` }
-            });
+            await Api.fetch('/api/logout', { method: 'POST' });
         } catch {}
         Auth.clear();
         window.location.href = "{{ route('shop') }}";

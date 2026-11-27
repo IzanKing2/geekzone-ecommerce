@@ -23,16 +23,10 @@ const AdminUI = (() => {
 
     /** GET a /api/admin/dashboard/{path}; devuelve el campo `data` de la respuesta. */
     async function api(path) {
-        const res = await fetch('/api/admin/dashboard/' + path, {
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + Auth.getToken(),
-            },
-        });
+        // Api.fetch añade el token y, ante un 401, borra la sesión y redirige al login
+        const res = await Api.fetch('/api/admin/dashboard/' + path);
 
         if (res.status === 401) {
-            Auth.clear();
-            window.location.replace(LOGIN_URL);
             throw new Error('Sesión no válida');
         }
         if (res.status === 403) {
@@ -97,13 +91,7 @@ const AdminUI = (() => {
     /** Cierra sesión (invalida el token en la API) y vuelve a la tienda. */
     async function logout() {
         try {
-            await fetch('/api/logout', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + Auth.getToken(),
-                },
-            });
+            await Api.fetch('/api/logout', { method: 'POST' });
         } catch { /* sin red: igualmente se limpia la sesión local */ }
         Auth.clear();
         window.location.href = SHOP_URL;
