@@ -26,13 +26,18 @@ class JwtMiddleware
             if (!$user) {
                 return response()->json([
                     'message' => 'Usuario no encontrado',
-                ], 404);
+                ], 401);
             }
         } catch (TokenExpiredException $e) {
             return response()->json([
                 'message' => 'Token expirado',
             ], 401);
-        } catch (TokenInvalidException|JWTException $e) {
+        } catch (TokenInvalidException $e) {
+            // Incluye tokens en la lista negra (sesión cerrada)
+            return response()->json([
+                'message' => 'Token inválido',
+            ], 401);
+        } catch (JWTException $e) {
             return response()->json([
                 'message' => 'Token no encontrado',
             ], 401);

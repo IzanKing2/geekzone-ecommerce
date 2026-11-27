@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -20,14 +21,15 @@ class AuthController extends Controller
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            required: ["name", "surname", "username", "email", "password", "password_confirmation"],
+            required: ["name", "surname", "username", "email", "password", "password_confirmation", "recaptcha_token"],
             properties: [
                 new OA\Property(property: "name", type: "string", example: "Prueba"),
                 new OA\Property(property: "surname", type: "string", example: "Prueba"),
                 new OA\Property(property: "username", type: "string", example: "Prueba"),
                 new OA\Property(property: "email", type: "string", example: "prueba@prueba.com"),
                 new OA\Property(property: "password", type: "string", format: "password", example: "prueba123"),
-                new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "prueba123")
+                new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "prueba123"),
+                new OA\Property(property: "recaptcha_token", type: "string", description: "Token de reCAPTCHA v2 (g-recaptcha-response). Obligatorio salvo que RECAPTCHA_ENABLED=false")
             ]
         )
     )]
@@ -41,6 +43,7 @@ class AuthController extends Controller
             'username' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+            'recaptcha_token' => ['bail', new Recaptcha],
         ], [
             // Mensajes de error personalizados en español
             'name.required' => 'El nombre es obligatorio.',
@@ -90,10 +93,11 @@ class AuthController extends Controller
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            required: ["email", "password"],
+            required: ["email", "password", "recaptcha_token"],
             properties: [
                 new OA\Property(property: "email", type: "string", format: "email", example: "admin@geekzone.com"),
-                new OA\Property(property: "password", type: "string", format: "password", example: "admin123")
+                new OA\Property(property: "password", type: "string", format: "password", example: "admin123"),
+                new OA\Property(property: "recaptcha_token", type: "string", description: "Token de reCAPTCHA v2 (g-recaptcha-response). Obligatorio salvo que RECAPTCHA_ENABLED=false")
             ]
         )
     )]
@@ -115,6 +119,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string',
+            'recaptcha_token' => ['bail', new Recaptcha],
         ], [
             'email.required' => 'El email es obligatorio.',
             'email.email' => 'El formato del email no es válido.',
@@ -159,7 +164,8 @@ class AuthController extends Controller
     #[OA\Response(response: 401, description: "No autorizado. Token inválido o no existe")]
     public function logout()
     {
-        Auth::logout();
+        // Mete el token en la lista negra: deja de ser válido aunque no haya caducado
+        JWTAuth::invalidate(JWTAuth::getToken());
 
         return response()->json([
             'message' => 'Sesión cerrada correctamente.',

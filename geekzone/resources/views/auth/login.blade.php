@@ -102,7 +102,8 @@
         
         const data = {
             email: document.getElementById('email').value,
-            password: document.getElementById('password').value
+            password: document.getElementById('password').value,
+            recaptcha_token: grecaptcha.getResponse()
         };
 
         const response = await fetch('/api/login', {
@@ -123,6 +124,7 @@
         } else {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Iniciar sesión';
+            grecaptcha.reset(); // el token de Google es de un solo uso
 
             if (result.errors) {
                 // Errores de validación campo por campo

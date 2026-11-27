@@ -143,7 +143,7 @@ class AuthTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'message' => 'Token no encontrado',
+                'message' => 'Token inválido',
             ]);
     }
 }

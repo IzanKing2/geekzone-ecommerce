@@ -201,6 +201,7 @@
                 email:                 document.getElementById('email').value.trim(),
                 password:              document.getElementById('password').value,
                 password_confirmation: document.getElementById('passwordConfirm').value,
+                recaptcha_token:       grecaptcha.getResponse(),
             };
 
             try {
@@ -217,6 +218,8 @@
                     window.location.href = "{{ route('shop') }}";
                     return;
                 }
+
+                grecaptcha.reset(); // el token de Google es de un solo uso
 
                 // Errores de validación del servidor (422)
                 if (result.errors) {

@@ -133,7 +133,8 @@
                                     "username",
                                     "email",
                                     "password",
-                                    "password_confirmation"
+                                    "password_confirmation",
+                                    "recaptcha_token"
                                 ],
                                 "properties": {
                                     "name": {
@@ -161,6 +162,10 @@
                                         "type": "string",
                                         "format": "password",
                                         "example": "prueba123"
+                                    },
+                                    "recaptcha_token": {
+                                        "description": "Token de reCAPTCHA v2 (g-recaptcha-response). Obligatorio salvo que RECAPTCHA_ENABLED=false",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -193,7 +198,8 @@
                             "schema": {
                                 "required": [
                                     "email",
-                                    "password"
+                                    "password",
+                                    "recaptcha_token"
                                 ],
                                 "properties": {
                                     "email": {
@@ -205,6 +211,10 @@
                                         "type": "string",
                                         "format": "password",
                                         "example": "admin123"
+                                    },
+                                    "recaptcha_token": {
+                                        "description": "Token de reCAPTCHA v2 (g-recaptcha-response). Obligatorio salvo que RECAPTCHA_ENABLED=false",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -758,7 +768,7 @@
                     "Imágenes"
                 ],
                 "summary": "Subir imagen",
-                "description": "Sube una imagen al servidor y devuelve la URL pública. Requiere token JWT.",
+                "description": "Sube una imagen al servidor y devuelve la URL pública. Requiere token JWT con rol admin. El nombre del archivo lo genera el servidor.",
                 "operationId": "9989b3de9d998fc535f86f1ddef79c1f",
                 "requestBody": {
                     "required": true,
@@ -770,7 +780,7 @@
                                 ],
                                 "properties": {
                                     "image": {
-                                        "description": "Archivo de imagen (jpeg, png, jpg, gif, svg)",
+                                        "description": "Archivo de imagen (jpeg, png, jpg, gif, webp; máx. 2 MB)",
                                         "type": "string",
                                         "format": "binary"
                                     }
@@ -793,7 +803,7 @@
                                         },
                                         "image": {
                                             "type": "string",
-                                            "example": "/storage/images/1713100000.jpg"
+                                            "example": "/storage/images/Qx3b9kLmN0pZ.jpg"
                                         }
                                     },
                                     "type": "object"
@@ -803,6 +813,9 @@
                     },
                     "401": {
                         "description": "No autorizado. Token inválido o no existe"
+                    },
+                    "403": {
+                        "description": "Prohibido. Solo administradores"
                     },
                     "422": {
                         "description": "Error de validación. Archivo inválido o grande"
