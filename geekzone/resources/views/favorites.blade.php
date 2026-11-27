@@ -118,7 +118,8 @@
     async function loadProfile() {
         const { ok, data } = await api('/api/perfil');
         if (!ok) { window.location.href = "{{ route('login') }}"; return; }
-        const u = data.user;
+        const u = data.data?.user;
+        if (!u) return;
         document.getElementById('sidebar-initials').textContent = initials(u.name, u.surname);
         document.getElementById('sidebar-name').textContent = `${u.name} ${u.surname ?? ''}`.trim();
         document.getElementById('sidebar-role').textContent = u.role === 'admin' ? '⚙️ Administrador' : 'Cliente';
@@ -129,7 +130,7 @@
         const { ok, data } = await api('/api/favoritos');
         if (!ok) { renderEmpty('No se pudieron cargar los favoritos.'); return; }
 
-        allFavorites = data.favorites ?? [];
+        allFavorites = data.data?.favorites ?? [];
         buildFilterPills();
         renderGrid();
         updateCountLabel();

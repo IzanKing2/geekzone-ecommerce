@@ -724,15 +724,34 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "favorites": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         },
-                                        "count": {
-                                            "type": "integer",
-                                            "example": 5
+                                        "message": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "favorites": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "count": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
                                         }
                                     },
                                     "type": "object"
@@ -778,13 +797,46 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Producto añadido a favoritos correctamente"
+                        "description": "Producto añadido a favoritos correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Producto añadido a favoritos."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "favorite": {
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "401": {
                         "description": "No autorizado. Token inválido o no existe"
                     },
                     "409": {
                         "description": "El producto ya está en favoritos"
+                    },
+                    "422": {
+                        "description": "Error de validación (el producto no existe o fue eliminado)"
                     }
                 },
                 "security": [

@@ -139,8 +139,8 @@ class CartOrderRobustnessTest extends TestCase
 
         $response = $this->withHeaders($this->headers)->getJson('/api/favoritos')->assertStatus(200);
 
-        $this->assertSame(1, $response->json('count'));
-        $this->assertSame($this->productos[1]->id, $response->json('favorites.0.product.id'));
+        $this->assertSame(1, $response->json('data.count'));
+        $this->assertSame($this->productos[1]->id, $response->json('data.favorites.0.product.id'));
     }
 
     // ——— Pedidos ———

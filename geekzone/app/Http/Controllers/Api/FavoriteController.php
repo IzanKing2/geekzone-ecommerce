@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Favorite;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use OpenApi\Attributes as OA;
 
@@ -23,8 +23,17 @@ class FavoriteController extends Controller
         description: 'Favoritos obtenidos correctamente',
         content: new OA\JsonContent(
             properties: [
-                new OA\Property(property: 'favorites', type: 'array', items: new OA\Items(type: 'object')),
-                new OA\Property(property: 'count', type: 'integer', example: 5),
+                new OA\Property(property: 'success', type: 'boolean', example: true),
+                new OA\Property(property: 'message', type: 'string', nullable: true, example: null),
+                new OA\Property(
+                    property: 'data',
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'favorites', type: 'array', items: new OA\Items(type: 'object')),
+                        new OA\Property(property: 'count', type: 'integer', example: 5),
+                    ]
+                ),
+                new OA\Property(property: 'errors', type: 'object', nullable: true, example: null),
             ]
         )
     )]
@@ -38,7 +47,7 @@ class FavoriteController extends Controller
             ->latest()
             ->get();
 
-        return response()->json([
+        return $this->successResponse([
             'favorites' => $favorites,
             'count' => $favorites->count(),
         ]);
@@ -60,24 +69,44 @@ class FavoriteController extends Controller
             ]
         )
     )]
-    #[OA\Response(response: 201, description: 'Producto añadido a favoritos correctamente')]
+    #[OA\Response(
+        response: 201,
+        description: 'Producto añadido a favoritos correctamente',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'success', type: 'boolean', example: true),
+                new OA\Property(property: 'message', type: 'string', example: 'Producto añadido a favoritos.'),
+                new OA\Property(
+                    property: 'data',
+                    type: 'object',
+                    properties: [new OA\Property(property: 'favorite', type: 'object')]
+                ),
+                new OA\Property(property: 'errors', type: 'object', nullable: true, example: null),
+            ]
+        )
+    )]
     #[OA\Response(response: 401, description: 'No autorizado. Token inválido o no existe')]
     #[OA\Response(response: 409, description: 'El producto ya está en favoritos')]
+    #[OA\Response(response: 422, description: 'Error de validación (el producto no existe o fue eliminado)')]
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'product_id' => ['required', 'integer', Rule::exists('products', 'id')->whereNull('deleted_at')],
         ], [
             'product_id.required' => 'El producto es requerido.',
             'product_id.exists' => 'El producto no existe.',
         ]);
 
+        if ($validator->fails()) {
+            return $this->validationErrorResponse($validator->errors());
+        }
+
         $exists = Favorite::where('user_id', Auth::id())
             ->where('product_id', $request->product_id)
             ->exists();
 
         if ($exists) {
-            return response()->json(['message' => 'El producto ya está en favoritos.'], 409);
+            return $this->errorResponse('El producto ya está en favoritos.', 409);
         }
 
         $favorite = Favorite::create([
@@ -87,10 +116,7 @@ class FavoriteController extends Controller
 
         $favorite->load('product.category');
 
-        return response()->json([
-            'message' => 'Producto añadido a favoritos.',
-            'favorite' => $favorite,
-        ], 201);
+        return $this->successResponse(['favorite' => $favorite], 'Producto añadido a favoritos.', 201);
     }
 
     #[OA\Delete(
@@ -117,11 +143,11 @@ class FavoriteController extends Controller
             ->first();
 
         if (! $favorite) {
-            return response()->json(['message' => 'Favorito no encontrado.'], 404);
+            return $this->errorResponse('Favorito no encontrado.', 404);
         }
 
         $favorite->delete();
 
-        return response()->json(['message' => 'Producto eliminado de favoritos.']);
+        return $this->successResponse(null, 'Producto eliminado de favoritos.');
     }
 }

@@ -211,7 +211,7 @@
             });
             if (!res.ok) return;
             const data = await res.json();
-            const found = (data.favorites ?? []).some(f => f.product_id === PRODUCT_ID);
+            const found = (data.data?.favorites ?? []).some(f => f.product_id === PRODUCT_ID);
             setWishState(found);
         } catch {}
     }

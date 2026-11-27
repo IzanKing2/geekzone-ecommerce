@@ -383,7 +383,7 @@
     async function loadFavorites() {
         const { ok, data } = await api('/api/favoritos');
         if (!ok) { renderFavEmpty('No se pudieron cargar los favoritos.'); return; }
-        allFavorites = data.favorites ?? [];
+        allFavorites = data.data?.favorites ?? [];
         favLoaded = true;
         buildFavPills();
         renderFavGrid();
