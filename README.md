@@ -24,7 +24,7 @@ Proyecto intermodular de **2º DAW** — IES Villa de Agüimes (Curso 2025/2026)
 
 | Componente | Tecnología |
 |------------|-----------|
-| **Backend** | Laravel (PHP 8.2) |
+| **Backend** | Laravel 12 (PHP 8.4) |
 | **Base de datos** | MySQL 8.0 |
 | **Autenticación** | JWT (`php-open-source-saver/jwt-auth`) |
 | **Frontend** | Blade + HTML5 + CSS nativo + JavaScript (async/await) |
@@ -49,8 +49,10 @@ Proyecto intermodular de **2º DAW** — IES Villa de Agüimes (Curso 2025/2026)
 git clone <url-del-repositorio>
 cd geekzone-ecommerce
 
-# 2. Copiar el archivo de configuración
-cp .env.example geekzone/.env
+# 2. Copiar el archivo de configuración (la plantilla de la app está en geekzone/.env.example)
+cp geekzone/.env.example geekzone/.env
+#    Opcional: copia .env.example (raíz) a .env para cambiar las contraseñas de MySQL de Docker.
+#    Opcional en local: RECAPTCHA_ENABLED=false en geekzone/.env para entrar sin captcha.
 
 # 3. Levantar los contenedores Docker
 docker-compose up -d --build
@@ -87,6 +89,9 @@ docker-compose exec app php artisan l5-swagger:generate
 |-----|-------|-----------|
 | Admin | admin@geekzone.com | admin123 |
 | Cliente | user@geekzone.com | user123 |
+
+> Solo existen con `APP_ENV=local` (o `testing`). Fuera de local el seeder **no** crea usuarios conocidos:
+> define `ADMIN_EMAIL` y `ADMIN_PASSWORD` para crear el administrador inicial.
 
 ---
 
@@ -236,7 +241,17 @@ L5_SWAGGER_GENERATE_ALWAYS=false
 
 RECAPTCHA_SITE_KEY=<tu-site-key>
 RECAPTCHA_SECRET_KEY=<tu-secret-key>
+# El captcha se verifica en el servidor (login y registro). Nunca RECAPTCHA_ENABLED=false en producción.
+
+# Administrador inicial (el seeder no crea usuarios de prueba fuera de local)
+ADMIN_EMAIL=<email-del-admin>
+ADMIN_PASSWORD=<contraseña-larga-y-propia>
+
+# OPcache sin comprobar el disco en cada petición (Docker: variables del servicio app)
+PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
 ```
+
+Antes de desplegar: no publiques MySQL ni phpMyAdmin a Internet (en `docker-compose.yml` solo escuchan en `127.0.0.1`; phpMyAdmin es solo para desarrollo) y cambia las contraseñas de la base de datos.
 
 Comandos adicionales tras el despliegue:
 
