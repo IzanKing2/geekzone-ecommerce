@@ -37,3 +37,12 @@ desktop.ini
 # ———— Docker ————————————————————————
 # Los volúmenes de datos de MySQL se gestionan por Docker, no por Git
 geekzone-db-data/
+
+# ———— Claude Code ————————————————————————
+# Se versionan: CLAUDE.md, .agents/ (skills instaladas), skills-lock.json
+# y las skills propias del proyecto (.claude/skills/new-endpoint/).
+# Se ignoran los enlaces/copias de skills instaladas (dependen de la máquina;
+# se recrean con `npx skills add`) y la configuración personal.
+.claude/settings.local.json
+.claude/skills/*
+!.claude/skills/new-endpoint/
