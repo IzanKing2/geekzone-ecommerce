@@ -23,6 +23,9 @@ RUN docker-php-ext-install \
     gd \
     xml
 
+# OPcache (viene activado con valores por defecto; aquí se ajusta, ver docker/php/opcache.ini)
+COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
